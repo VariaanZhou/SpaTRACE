@@ -1,6 +1,5 @@
 """
 Take a h5ad file and txt files as input. Sample the cell trajectories and save them to local.
-(Logging added; fixes to args and IO paths.)
 """
 
 import argparse
