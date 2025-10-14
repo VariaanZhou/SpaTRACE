@@ -46,3 +46,62 @@ python run_preprocess.py \
   --project MyProj \
   --n_neighbors 15 \
   --len_path 3
+```
+## Outputs
+```bash
+outputs_preprocess/
+└── data_triple/
+    ├── MyProj_tensors_train.npz
+    ├── MyProj_tensors_test.npz
+    ├── recep_array_train.npy
+    ├── ligand_array_train.npy
+    ├── tf_array_train.npy
+    ├── target_array_train.npy
+    ├── label_array_train.npy
+    ├── lr_pair_array_train.npy
+    ├── all_paths_train.npy
+    ├── recep_array_test.npy
+    ├── ligand_array_test.npy
+    ├── tf_array_test.npy
+    ├── target_array_test.npy
+    ├── label_array_test.npy
+    ├── lr_pair_array_test.npy
+    ├── all_paths_test.npy
+    └── fig/ (diagnostic plots)
+```
+## 🚀 Step 2: Training & Experiment
+### Run
+```bash
+python run_experiment.py \
+  --input_dir ./outputs_preprocess/data_triple \
+  --project MyProj \
+  --out_dir ./outputs_experiment \
+  --epochs 50 \
+  --tlength 3 \
+  --batch_size 16
+```
+
+## Outputs
+```bash
+outputs_experiment/
+├── weights/
+│   └── weights.weights.h5
+├── embeddings/
+│   ├── global_embeddings/
+│   │   ├── embeddings_batch_0000.npz
+│   │   ├── embeddings_batch_0001.npz
+│   │   └── ...
+│   └── percell_embeddings/
+│       ├── embeddings_batch_0000.npz
+│       ├── embeddings_batch_0001.npz
+│       └── ...
+└── attentions/
+    ├── global_attentions/
+    │   ├── attn_global_tf_topk_batch_0000.npz
+    │   ├── attn_global_lr_topk_batch_0000.npz
+    │   └── ...
+    └── percell_attentions/
+        ├── attn_percell_tf_topk_batch_0000.npz
+        ├── attn_percell_lr_topk_batch_0000.npz
+        └── ...
+```
