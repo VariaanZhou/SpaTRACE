@@ -1,6 +1,6 @@
 # GREATEST_Chat
 
-This repository provides a **two-step pipeline** for preparing temporal ligand–receptor / transcription factor / target features from single-cell data and training a transformer model (**GRAEST_Chat**) on those features.
+This repository provides a **two-step pipeline** for preparing temporal ligand–receptor / transcription factor / target features from single-cell data and training a transformer model (**GREAEST_Chat**) on those features.
 
 ---
 
