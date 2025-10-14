@@ -8,14 +8,14 @@ import logging
 import squidpy as sq
 from scipy import sparse as sp
 
-# Local utils (as you had)
 from datasets.utils import gene_intersection, read_list_txt, verify_cell_types_exist, setup_logging, _write_one_list, _ensure_dir, _combine_lr_names
 from datasets.preprocessing import *
+
 # ---------------------- Helpers ----------------------
 def _combine_name(dir, name, suffix):
     return os.path.join(dir, name + suffix)
 
-# ---------------------- DE Genes ----------------------
+# ---------------------- Identify DE Genes ----------------------
 def identify_de_genes_for_cell_types(
     adata,
     gene_set,
