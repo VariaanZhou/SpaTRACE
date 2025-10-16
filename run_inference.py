@@ -7,9 +7,10 @@ import logging
 import os
 import sys
 import glob
+from pathlib import Path
 
-from analysis.analysis_tools import aggregate_from_global_embeddings, aggregate_lr_tg_by_bio_batch
-
+from analysis.aggregate_intensity import aggregate_percell_intensity_from_embeddings
+from analysis.utils import plot_lr_tg_heatmaps
 
 REL_GLOBAL_EMB_DIR   = os.path.join("embeddings", "global_embeddings")
 REL_PERCELL_EMB_DIR  = os.path.join("embeddings", "percell_embeddings")
@@ -46,105 +47,82 @@ def main():
         prog="graest-post",
         description="Aggregate attentions/embeddings from GRAEST outputs using a specified input root.",
     )
-    ap.add_argument("--in_dir", required=True, help="Input directory containing embeddings/ and data_triple/ subfolders.")
-    ap.add_argument("--out_dir", required=True, help="Output directory to store results.")
-    ap.add_argument("--data_dir", required=True, help="Data directory containing the paths, ligand, receptors, TG identities, and metacell memberships.")
-    ap.add_argument("--threshold", type=float, default=50.0, help="Filter threshold (> keeps).")
+    ap.add_argument("-d", "--data_dir", required=True, help="Data directory containing the original .h5ad, as well as the preprocessed data folder; should be the same as the input to run_preprocess.py.")
+    ap.add_argument("-i", "--input_dir", required=True,
+                    help="Input directory containing embeddings/; should be the output of run_experiments.py.")
+    ap.add_argument("-o", "--out_dir", required=True, help="Output directory to store analysis results.")
+    ap.add_argument(
+        "-n", "--project_name", type=str, default=None,
+        help="Project prefix used by preprocess (e.g., 'MyProj'). If omitted, will auto-detect a single *_tensors_train.npz."
+    )
+    ap.add_argument("-b", "--batch_key", type=str, default='batch')
+    ap.add_argument("-t", "--radius", type=float, default=50.0, help="Filter threshold (> keeps).")
     ap.add_argument("--topk_per_col", type=int, default=100, help="Top-K per column for filtering.")
     ap.add_argument("--log_level", type=_log_level, default=logging.INFO)
-    ap.add_argument("--no-heatmaps", dest="make_heatmaps", action="store_false", help="Disable heatmap PNGs.")
+    ap.add_argument("--no_heatmaps", dest="make_heatmaps", action="store_false", help="Disable heatmap PNGs.")
     ap.set_defaults(make_heatmaps=True)
     args = ap.parse_args()
 
     logging.basicConfig(level=args.log_level, format="%(levelname)s: %(message)s")
 
-    in_root  = os.path.abspath(args.in_dir)
-    out_root = os.path.abspath(args.out_dir)
-    os.makedirs(out_root, exist_ok=True)
+    DATA_DIR = Path(args.data_dir)
+    INPUT_DIR = Path(args.input_dir)
+    OUTPUT_DIR = Path(args.out_dir)
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    PROJECT_NAME = args.project_name
+    BATCH_KEY = args.batch_key
+    RADIUS = args.radius
+    TOPK_PER_COL = args.topk_per_col
 
     # Resolve inputs under in_root
-    global_emb_dir  = os.path.join(in_root, REL_GLOBAL_EMB_DIR)
-    percell_emb_dir = os.path.join(in_root, REL_PERCELL_EMB_DIR)
-    percell_att_dir = os.path.join(in_root, REL_PERCELL_ATT_DIR)
+    global_emb_dir  = os.path.join(INPUT_DIR, REL_GLOBAL_EMB_DIR)
+    percell_emb_dir = os.path.join(INPUT_DIR, REL_PERCELL_EMB_DIR)
+    percell_att_dir = os.path.join(INPUT_DIR, REL_PERCELL_ATT_DIR)
 
-    paths_file         = os.path.join(in_root, REL_PATHS_FILE)
-    labels_candidates  = [os.path.join(in_root, p) for p in REL_LABELS_CANDIDATES]
-    label2batch_csv    = os.path.join(in_root, REL_LABEL2BATCH_CSV)
-    members_long_csv   = os.path.join(in_root, REL_MEMBERS_LONG_CSV)
+    test_npz_path = os.path.join(DATA_DIR, PROJECT_NAME, 'data_triple', f'{PROJECT_NAME}_tensors_test.npz')
+    meta_labels_npy = os.path.join(DATA_DIR, PROJECT_NAME, f'{PROJECT_NAME}_metacell_membership.csv')
+    batchmap_csv = os.path.join(DATA_DIR, PROJECT_NAME, f'{PROJECT_NAME}_metacell_batchmap.csv')
 
-    # ---------------- GLOBAL aggregation (from global embeddings) ----------------
-    if _exists_with_files(global_emb_dir, EMB_BATCH_PATTERN):
-        out_global = os.path.join(out_root, "global")
-        os.makedirs(out_global, exist_ok=True)
-        logging.info("Global-embeddings aggregation → %s", out_global)
-        try:
-            aggregate_from_global_embeddings(
-                DATA_DIR=global_emb_dir,
-                PATTERN=EMB_BATCH_PATTERN,
-                OUT_DIR=out_global,
-                THRESHOLD=args.threshold,
-                TOPK_PER_COL=args.topk_per_col,
-                MAKE_HEATMAPS=args.make_heatmaps,
-                LOGGER_LEVEL=args.log_level,
-            )
-        except RuntimeError as e:
-            logging.error("Global aggregation failed: %s", e)
-            sys.exit(1)
-    else:
-        logging.info("Global step skipped (no files like %s/%s).", global_emb_dir, EMB_BATCH_PATTERN)
+    paths_file         = os.path.join(INPUT_DIR, REL_PATHS_FILE)
+    labels_candidates  = [os.path.join(INPUT_DIR, p) for p in REL_LABELS_CANDIDATES]
+    label2batch_csv    = os.path.join(INPUT_DIR, REL_LABEL2BATCH_CSV)
+    members_long_csv   = os.path.join(INPUT_DIR, REL_MEMBERS_LONG_CSV)
 
-    # ---------------- BIO aggregation (auto-detect mode) ----------------
-    # Priority: precomputed TopK → dense Full → compute from percell Embeddings
-    if _exists_with_files(percell_att_dir, BIO_TOPK_PATTERN):
-        bio_mode     = "topk"
-        bio_data_dir = percell_att_dir
-        bio_pattern  = BIO_TOPK_PATTERN
-        emb_pattern_override = None
-    elif _exists_with_files(percell_att_dir, BIO_FULL_PATTERN):
-        bio_mode     = "full"
-        bio_data_dir = percell_att_dir
-        bio_pattern  = BIO_FULL_PATTERN
-        emb_pattern_override = None
-    elif _exists_with_files(percell_emb_dir, EMB_BATCH_PATTERN):
-        bio_mode     = "embeddings"
-        bio_data_dir = percell_emb_dir
-        bio_pattern  = EMB_BATCH_PATTERN
-        emb_pattern_override = EMB_BATCH_PATTERN
-    else:
-        logging.info("Bio-batch step skipped (no TopK, no Full, no percell embeddings under %s).", in_root)
-        return
 
-    # Sanity check for metadata
-    missing_meta = [p for p in [paths_file, label2batch_csv, members_long_csv] if not os.path.exists(p)]
-    if missing_meta:
-        logging.error("Missing required metadata files under --in_dir: %s", ", ".join(missing_meta))
-        sys.exit(1)
+    # Aggregate percell intensity
+    stage_sums = aggregate_percell_intensity_from_embeddings(
+            percell_emb_dir = percell_emb_dir,  # directory with per-cell embeddings: embeddings_batch_*.npz
+            test_npz_path = test_npz_path,  # <project>_tensors_test.npz (must contain 'paths')
+            batchmap_csv = batchmap_csv,  # CSV with columns: metacell,batch (or override via args below)
+            label_col = "metacell",
+            stage_col = BATCH_KEY ,
+            top_k = TOPK_PER_COL,  # filtering: keep top-k per TG column (None to disable)
+            threshold = RADIUS,  # filtering: zero-out values <= threshold (None to disable)
+            save_dir = args.out_dir,  # if provided, save per-stage .npz and a CSV summary
+    )
 
-    out_bio = os.path.join(out_root, f"bio_{bio_mode}")
-    os.makedirs(out_bio, exist_ok=True)
-    logging.info("Bio-batch aggregation (mode=%s) → %s", bio_mode, out_bio)
 
-    try:
-        aggregate_lr_tg_by_bio_batch(
-            DATA_DIR=bio_data_dir,
-            MODE=bio_mode,
-            PATTERN=bio_pattern,
-            PATHS_FILE=paths_file,
-            LABELS_NPY_CANDIDATES=labels_candidates,
-            LABEL2BATCH_CSV=label2batch_csv,
-            MEMBERS_LONG_CSV=members_long_csv,
-            THRESHOLD=args.threshold,
-            TOPK_PER_COL=args.topk_per_col,
-            OUT_DIR=out_bio,
-            DENSE_KEY="weight_nt_lr",
-            EMB_PATTERN=emb_pattern_override,   # only used if MODE="embeddings"
-            NUMERIC_REGEX=NUMERIC_REGEX,
-            MAKE_HEATMAPS=args.make_heatmaps,
-            LOGGER_LEVEL=args.log_level,
+    for stage, blobs in stage_sums.items():
+        plot_lr_tg_heatmaps(
+            sum_arr=blobs["lr_tg_sum"],
+            count_arr=blobs["lr_tg_count"],
+            stage=stage,
+            out_dir=f"{args.out_dir}/figures/lr_heatmaps",
+            title_prefix="Per-cell LR→TG",
+            figsize=(10, 8),
+            fontsize=14,
         )
-    except RuntimeError as e:
-        logging.error("Bio aggregation failed: %s", e)
-        sys.exit(1)
+        plot_lr_tg_heatmaps(
+            sum_arr=blobs["tf_tg_sum"],
+            count_arr=blobs["tg_tg_count"],
+            stage=stage,
+            out_dir=f"{args.out_dir}/figures/tf_heatmaps",
+            title_prefix="Per-cell TF→TG",
+            figsize=(10, 8),
+            fontsize=14,
+        )
+
 
 if __name__ == "__main__":
     main()

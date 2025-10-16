@@ -11,6 +11,97 @@ from model.GRAEST_Chat_v1_0 import (
     Transformer, CustomSchedule, masked_mse, l1_reg_loss, infer_cpu
 )
 
+# ---- single-save helpers for GLOBAL embeddings/attentions ----
+_GLOBAL_SAVED = {"emb": False, "attn": False}
+
+def _select_first_instance(arr: np.ndarray) -> np.ndarray:
+    # Reduce embedding tensors to shape (G, d) by taking first instance/first time step.
+    if arr.ndim == 4:   # (B, L, G, d)
+        return arr[0, 0]
+    if arr.ndim == 3:   # (B, G, d)
+        return arr[0]
+    if arr.ndim == 2:   # (G, d)
+        return arr
+    raise ValueError(f"Unexpected embedding shape: {arr.shape}")
+
+def _save_global_embeddings_once(out_dir: Path, x_vq1_global, tf_vk1_global, recp_vk1_global, to_np16):
+    # Save a single NPZ of global embeddings only once.
+    if _GLOBAL_SAVED["emb"]:
+        return
+    out_dir.mkdir(parents=True, exist_ok=True)
+    X = _select_first_instance(x_vq1_global)
+    TF = _select_first_instance(tf_vk1_global)
+    LR = _select_first_instance(recp_vk1_global)
+    np.savez_compressed(
+        out_dir / "global_embeddings.npz",
+        x_vq1=to_np16(X),
+        tf_vq1=to_np16(TF),
+        recp_vq1=to_np16(LR),
+        meta={"note": "first instance/time-step only"}
+    )
+    _GLOBAL_SAVED["emb"] = True
+
+def _save_global_attentions_once(kind: str,
+                                 x_vq, tf_vk, recp_vk,
+                                 out_dir: Path,
+                                 *,
+                                 to_np16,
+                                 save_full: bool,
+                                 topk_per_row: int,
+                                 save_visuals: bool,
+                                 save_npz,
+                                 save_png,
+                                 topk_sparse_rows):
+    # Save one set of global attentions only once. `kind` must be "global".
+    if kind != "global" or _GLOBAL_SAVED["attn"]:
+        return
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Collapse (B,L,G,d) -> (G,d) by mean over B and L
+    x_vq_mean  = tf.reduce_mean(tf.reduce_mean(x_vq, axis=0), axis=0)     # (G_tgt, d)
+    tf_vk_mean = tf.reduce_mean(tf.reduce_mean(tf_vk, axis=0), axis=0)    # (G_tf,  d)
+    lr_vk_mean = tf.reduce_mean(tf.reduce_mean(recp_vk, axis=0), axis=0)  # (G_lr, d)
+
+    # Two attention maps: TF->TG and LR->TG
+    weight_nt    = tf.abs(tf.matmul(tf_vk_mean,  x_vq_mean, transpose_b=True))  # (G_tf, G_tg)
+    weight_nt_lr = tf.abs(tf.matmul(lr_vk_mean,  x_vq_mean, transpose_b=True))  # (G_lr, G_tg)
+
+    if not save_full:
+        nt_vals, nt_cols = topk_sparse_rows(weight_nt, topk_per_row)
+        lr_vals, lr_cols = topk_sparse_rows(weight_nt_lr, topk_per_row)
+
+        save_npz(out_dir / "attn_global_tf_topk.npz",
+                 vals=to_np16(nt_vals),
+                 cols=nt_cols.numpy().astype(np.int32, copy=False))
+        save_npz(out_dir / "attn_global_lr_topk.npz",
+                 vals=to_np16(lr_vals),
+                 cols=lr_cols.numpy().astype(np.int32, copy=False))
+
+        if save_visuals:
+            R_nt = int(weight_nt.shape[0]);  C = int(weight_nt.shape[1])
+            R_lr = int(weight_nt_lr.shape[0]); preview_cap = 4096
+            if C <= preview_cap:
+                nt_preview = np.zeros((R_nt, C), dtype=to_np16(np.array([0.], dtype=np.float32)).dtype)
+                lr_preview = np.zeros((R_lr, C), dtype=nt_preview.dtype)
+                rows_nt = np.arange(R_nt, dtype=np.int32)[:, None]
+                rows_lr = np.arange(R_lr, dtype=np.int32)[:, None]
+                nt_preview[rows_nt, nt_cols.numpy()] = to_np16(nt_vals)
+                lr_preview[rows_lr, lr_cols.numpy()] = to_np16(lr_vals)
+                save_png(out_dir / "attn_global_tf_preview.png", nt_preview)
+                save_png(out_dir / "attn_global_lr_preview.png", lr_preview)
+    else:
+        nt_np = to_np16(weight_nt)
+        lr_np = to_np16(weight_nt_lr)
+        save_npz(out_dir / "attn_global_tf_full.npz", weight_nt=nt_np)
+        save_npz(out_dir / "attn_global_lr_full.npz", weight_nt_lr=lr_np)
+        if save_visuals:
+            save_png(out_dir / "attn_global_tf_full.png", nt_np)
+            save_png(out_dir / "attn_global_lr_full.png", lr_np)
+
+    _GLOBAL_SAVED["attn"] = True
+
+
 def _feat_dim(x):
     return x.shape[2] if x.ndim == 3 else x.shape[1]
 
@@ -28,22 +119,25 @@ def _auto_detect_project(base: Path) -> str:
 
 def _load_npz_split(path: Path, tlen: int):
     Z = np.load(path)
-    # keys from preprocess: tf, lr_pair, target, label (plus others we ignore)
-    tf_exp = Z["tf"].astype("float32")[:, :tlen, :]
-    ligrecp_exp = Z["lr_pair"].astype("float32")[:, :tlen, :]
-    target_exp = Z["target"].astype("float32")
+    tf_exp       = Z["tf"].astype("float32")[:, :tlen, :]
+    ligrecp_exp  = Z["lr_pair"].astype("float32")[:, :tlen, :]
+    target_full  = Z["target"].astype("float32")
+    target_exp   = target_full[:, :tlen, :]
     target_exp_y = Z["label"].astype("float32")
+    # Sanity check:
+    assert target_full.shape[1] == target_exp_y.shape[1] + 1
     return tf_exp, ligrecp_exp, target_exp, target_exp_y
+
 def main():
     parser = argparse.ArgumentParser(prog="GREATEST_Chat")
 
     # IO + data
     parser.add_argument(
         "-i", "--input_dir", required=True, type=str,
-        help="Directory containing <project>_tensors_train.npz / _test.npz"
+        help="Directory containing data_triple, which contains <project>_tensors_train.npz / _test.npz"
     )
     parser.add_argument(
-        "-p", "--project", type=str, default=None,
+        "-n", "--project_name", type=str, default=None,
         help="Project prefix used by preprocess (e.g., 'MyProj'). If omitted, will auto-detect a single *_tensors_train.npz."
     )
     parser.add_argument(
@@ -61,6 +155,7 @@ def main():
     parser.add_argument("--dff", type=int, default=256, help="Feed-forward hidden size")
     parser.add_argument("--num_heads", type=int, default=5, help="Number of attention heads")
     parser.add_argument("--dropout_rate", type=float, default=0.0, help="Dropout rate")
+    parser.add_argument("--l1_reg", type=float, default=0.5, help="The regularization parameter of l1 loss")
 
     # Export / inference controls
     parser.add_argument("--infer_batch_size", type=int, default=1,
@@ -90,10 +185,11 @@ def main():
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    project = args.project or _auto_detect_project(in_dir)
+    project = args.project_name or _auto_detect_project(in_dir / "data_triple")
 
-    train_npz = in_dir / f"{project}_tensors_train.npz"
-    test_npz = in_dir / f"{project}_tensors_test.npz"
+
+    train_npz = in_dir / f"data_triple/{project}_tensors_train.npz"
+    test_npz = in_dir / f"data_triple/{project}_tensors_test.npz"
 
     if not train_npz.is_file():
         raise FileNotFoundError(f"Required file not found: {train_npz}")
@@ -173,7 +269,7 @@ def main():
         },
         loss_weights={
             "output_1": 1.0, "output_2": 1.0, "output_3": 1.0, "output_4": 1.0,
-            "output_5": 0.5, "output_6": 0.5, "output_7": 0.5, "output_8": 0.5,
+            "output_5": args.l1_reg, "output_6": args.l1_reg, "output_7": args.l1_reg, "output_8": args.l1_reg,
         },
         metrics={"output_1": tf.keras.metrics.MeanSquaredError()},
     )
@@ -181,6 +277,9 @@ def main():
     y_train = {f"output_{k}": target_exp_y for k in range(1, 9)}
     y_val   = {f"output_{k}": target_exp_y_val for k in range(1, 9)}
 
+    print(ligrecp_exp.shape)
+    print(tf_exp.shape)
+    print(target_exp.shape)
     history = transformer.fit(
         (ligrecp_exp, tf_exp, target_exp),
         y_train,
@@ -237,14 +336,31 @@ def main():
         return vals, idxs
 
     def _summarize_and_save_attentions(kind, x_vq, tf_vk, recp_vk, out_dir, batch_idx_base):
+        # If global: save ONCE and return (no per-batch files).
+        if kind == "global":
+            _save_global_attentions_once(
+                kind="global",
+                x_vq=x_vq, tf_vk=tf_vk, recp_vk=recp_vk,
+                out_dir=out_dir,
+                to_np16=_to_np16,
+                save_full=SAVE_FULL_WEIGHTS,
+                topk_per_row=TOPK_PER_ROW,
+                save_visuals=SAVE_VISUALS,
+                save_npz=_save_npz,
+                save_png=_save_heatmap_png,
+                topk_sparse_rows=_topk_sparse_rows,
+            )
+            return
+
+        # ---------- per-cell path: unchanged ----------
         if not SAVE_ATTENTIONS:
             return
         # collapse (B,L)
-        x_vq_mean    = tf.reduce_mean(tf.reduce_mean(x_vq, axis=0), axis=0)     # (G_tgt, d)
-        tf_vk_mean   = tf.reduce_mean(tf.reduce_mean(tf_vk, axis=0), axis=0)    # (G_tf,  d)
+        x_vq_mean = tf.reduce_mean(tf.reduce_mean(x_vq, axis=0), axis=0)  # (G_tgt, d)
+        tf_vk_mean = tf.reduce_mean(tf.reduce_mean(tf_vk, axis=0), axis=0)  # (G_tf,  d)
         recp_vk_mean = tf.reduce_mean(tf.reduce_mean(recp_vk, axis=0), axis=0)  # (G_rec, d)
 
-        weight_nt    = tf.abs(tf.matmul(tf_vk_mean,   x_vq_mean, transpose_b=True))
+        weight_nt = tf.abs(tf.matmul(tf_vk_mean, x_vq_mean, transpose_b=True))
         weight_nt_lr = tf.abs(tf.matmul(recp_vk_mean, x_vq_mean, transpose_b=True))
 
         if not SAVE_FULL_WEIGHTS:
@@ -257,8 +373,10 @@ def main():
                       vals=_to_np16(lr_vals), cols=lr_cols.numpy().astype(np.int32, copy=False))
 
             if SAVE_VISUALS:
-                R_nt = int(weight_nt.shape[0]);  C = int(weight_nt.shape[1])
-                R_lr = int(weight_nt_lr.shape[0]); preview_cap = 4096
+                R_nt = int(weight_nt.shape[0]);
+                C = int(weight_nt.shape[1])
+                R_lr = int(weight_nt_lr.shape[0]);
+                preview_cap = 4096
                 if C <= preview_cap:
                     nt_preview = np.zeros((R_nt, C), dtype=DTYPE_ON_DISK)
                     lr_preview = np.zeros((R_lr, C), dtype=DTYPE_ON_DISK)
@@ -297,18 +415,17 @@ def main():
         # embeddings
         batch_indices = np.arange(sl.start, sl.stop, dtype=np.int64)
         np.savez_compressed(
-            global_emb_dir / f"embeddings_batch_{b:04d}.npz",
-            idx=batch_indices,
-            x_vq1=_to_np16(x_vq1_global),
-            tf_vq1=_to_np16(tf_vk1_global),
-            recp_vq1=_to_np16(recp_vk1_global),
-        )
-        np.savez_compressed(
             percell_emb_dir / f"embeddings_batch_{b:04d}.npz",
             idx=batch_indices,
             x_vq1=_to_np16(x_vq1_percell),
             tf_vq1=_to_np16(tf_vk1_percell),
             recp_vq1=_to_np16(recp_vk1_percell),
+        )
+
+        _save_global_embeddings_once(
+            global_emb_dir,
+            x_vq1_global, tf_vk1_global, recp_vk1_global,
+            _to_np16
         )
 
         # attentions

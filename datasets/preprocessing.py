@@ -155,6 +155,40 @@ def draw_path(adata, path, cnt, t):
         plt.scatter(spatial[path[i + 1], 0], spatial[path[i + 1], 1], color='red', s=1)
     plt.savefig('fig/path_' + str(t) + '_' + str(cnt) + '_temporal.png')
 
+
+import scanpy as sc
+
+
+def log_normalize(adata, target_sum=1e4, copy=False):
+    """
+    Normalize total counts per cell to `target_sum` (default: 1e4),
+    then apply log1p transformation.
+
+    Parameters
+    ----------
+    adata : AnnData
+        AnnData object to normalize and log-transform.
+    target_sum : float, optional (default: 1e4)
+        Total counts per cell after normalization.
+    copy : bool, optional (default: False)
+        If True, return a copy instead of modifying adata in place.
+
+    Returns
+    -------
+    AnnData
+        If copy=True, returns a new AnnData with normalized+logged data.
+        Otherwise modifies adata in place and returns None.
+    """
+    if copy:
+        adata = adata.copy()
+
+    sc.pp.normalize_total(adata, target_sum=target_sum, inplace=True)
+    sc.pp.log1p(adata)
+
+    if copy:
+        return adata
+
+
 def run_umap(adata, n_neighbors=100, min_dist=0.01):
     """
     Run PCA + UMAP on the AnnData object unless both 'X_pca' and 'X_umap'
@@ -228,6 +262,7 @@ def build_neighbor_and_lr(
     all_lig,
     all_recept,
     *,
+    simulation: bool,
     coords_key: str = "spatial",
     radius: float = 50.0,
     n_jobs: int = -1,
@@ -320,19 +355,28 @@ def build_neighbor_and_lr(
     lr_var_names = [f"{lig}_to_{rec}" for lig in present_lig for rec in present_rec]
     adata_lr = sc.AnnData(X=X_lr)
     adata_lr.var_names = lr_var_names
-    adata_lr.obs = adata_all.obs.copy()
-    adata_lr.uns = adata_all.uns
-    adata_lr.obsm = adata_all.obsm
-    adata_lr.obsp = adata_all.obsp
-
     # Start neighbor output as a full copy to preserve meta
-    adata_neighbor = adata_all.copy()
-    # If you want to store the smoothed matrix back onto adata_neighbor, uncomment:
-    # adata_neighbor.X = X_smooth
 
-    # Align both to adata_dp.obs_names (no deep copy of var)
-    adata_neighbor = adata_neighbor[adata_dp.obs_names, :]
-    adata_lr = adata_lr[adata_dp.obs_names, :]
+
+    if simulation:
+        # Align both to adata_dp.obs_names (no deep copy of var)
+        adata_neighbor = adata_dp.copy()
+        adata_lr = adata_lr[adata_dp.obs_names, :]
+        adata_lr.obs = adata_dp.obs.copy()
+        adata_lr.uns = adata_dp.uns
+        adata_lr.obsm = adata_dp.obsm
+        adata_lr.obsp = adata_dp.obsp
+
+    else:
+        adata_neighbor = adata_all.copy()
+        adata_lr.obs = adata_all.obs.copy()
+        adata_lr.uns = adata_all.uns
+        adata_lr.obsm = adata_all.obsm
+        adata_lr.obsp = adata_all.obsp
+
+        # Align both to adata_dp.obs_names (no deep copy of var)
+        adata_neighbor = adata_neighbor[adata_dp.obs_names, :]
+        adata_lr = adata_lr[adata_dp.obs_names, :]
 
     return adata_neighbor, adata_lr, lr_var_names, present_lig, present_rec
 
