@@ -1,6 +1,6 @@
 # GREATEST_Chat
 
-This repository provides Granger REcurrent AuToEncoder for SpatialTemporal transcriptomics Cell-Cell Communication Inference (GREATEST_Cell) a **three-step pipeline** for preparing temporal ligand–receptor / transcription factor / target features from single-cell data, training a transformer model (**GREAEST_Chat**) on those features, and final downstream feature selections, reconstruction of ligand-receptor pairs, Gene Regulatory Networks, and Cellular interactions.
+This repository provides Granger REcurrent AuToEncoder for SpatialTemporal transcriptomics (GREATEST_Cell) tool for Cell-Cell Communication, Gene Regulatory Network Reconstruction, as well as Ligand-Receptor Pair Predictions on large-scale developmental spatial transcriptomics. Inference a **three-step pipeline** for preparing temporal ligand–receptor / transcription factor / target features from single-cell data, training a transformer model (**GREAEST_Chat**) on those features, and final downstream feature selections, reconstruction of ligand-receptor pairs, Gene Regulatory Networks, and Cellular interactions.
 
 
 ---
