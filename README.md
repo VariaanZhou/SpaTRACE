@@ -15,7 +15,8 @@ GREATEST_Chat is a recurrent autoencoder trained on sampled cell trajectories fr
 
 ### What this repo provides
 - A **user-friendly interface** to run GREATEST_Chat on your own datasets  
-- **Documentation and examples** from our experiments on:  
+- **Documentation and examples** from our experiments on:
+  - Simulation Datasets (and their generation code)  
   - Mouse midbrain development  
   - Axolotl brain regeneration  
 
