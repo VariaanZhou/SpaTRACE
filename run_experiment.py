@@ -71,10 +71,10 @@ def _save_global_attentions_once(kind: str,
         nt_vals, nt_cols = topk_sparse_rows(weight_nt, topk_per_row)
         lr_vals, lr_cols = topk_sparse_rows(weight_nt_lr, topk_per_row)
 
-        save_npz(out_dir / "attn_global_tf_topk.npz",
+        save_npz(out_dir / "attn_global_tf.npz",
                  vals=to_np16(nt_vals),
                  cols=nt_cols.numpy().astype(np.int32, copy=False))
-        save_npz(out_dir / "attn_global_lr_topk.npz",
+        save_npz(out_dir / "attn_global_lr.npz",
                  vals=to_np16(lr_vals),
                  cols=lr_cols.numpy().astype(np.int32, copy=False))
 
@@ -88,16 +88,16 @@ def _save_global_attentions_once(kind: str,
                 rows_lr = np.arange(R_lr, dtype=np.int32)[:, None]
                 nt_preview[rows_nt, nt_cols.numpy()] = to_np16(nt_vals)
                 lr_preview[rows_lr, lr_cols.numpy()] = to_np16(lr_vals)
-                save_png(out_dir / "attn_global_tf_preview.png", nt_preview)
-                save_png(out_dir / "attn_global_lr_preview.png", lr_preview)
+                save_png(out_dir / "attn_global_tf.png", nt_preview)
+                save_png(out_dir / "attn_global_lr.png", lr_preview)
     else:
         nt_np = to_np16(weight_nt)
         lr_np = to_np16(weight_nt_lr)
-        save_npz(out_dir / "attn_global_tf_full.npz", weight_nt=nt_np)
-        save_npz(out_dir / "attn_global_lr_full.npz", weight_nt_lr=lr_np)
+        save_npz(out_dir / "attn_global_tf.npz", weight_nt=nt_np)
+        save_npz(out_dir / "attn_global_lr.npz", weight_nt_lr=lr_np)
         if save_visuals:
-            save_png(out_dir / "attn_global_tf_full.png", nt_np)
-            save_png(out_dir / "attn_global_lr_full.png", lr_np)
+            save_png(out_dir / "attn_global_tf.png", nt_np)
+            save_png(out_dir / "attn_global_lr.png", lr_np)
 
     _GLOBAL_SAVED["attn"] = True
 
@@ -122,8 +122,20 @@ def _load_npz_split(path: Path, tlen: int):
     tf_exp       = Z["tf"].astype("float32")[:, :tlen, :]
     ligrecp_exp  = Z["lr_pair"].astype("float32")[:, :tlen, :]
     target_full  = Z["target"].astype("float32")
-    target_exp   = target_full[:, :tlen, :]
+    target_exp   = target_full[:, 1:, :]
     target_exp_y = Z["label"].astype("float32")
+
+    ligand_names = Z["ligand_names"],
+    receptor_names = Z["receptor_names"],
+    tf_names = Z["tf_names"],
+    target_names = Z["target_names"],
+    lr_pair_names = Z["lr_pair_names"]
+    print("ligand names: ", ligand_names)
+    print("receptor names: " , receptor_names)
+    print("tf_names: ", tf_names)
+    print("target_names: ", target_names)
+    print("lr_pair_names: ", lr_pair_names)
+
     # Sanity check:
     assert target_full.shape[1] == target_exp_y.shape[1] + 1
     return tf_exp, ligrecp_exp, target_exp, target_exp_y
@@ -134,7 +146,7 @@ def main():
     # IO + data
     parser.add_argument(
         "-i", "--input_dir", required=True, type=str,
-        help="Directory containing data_triple, which contains <project>_tensors_train.npz / _test.npz"
+        help="Directory containing your project, should be the same directory as run_preprocess.py"
     )
     parser.add_argument(
         "-n", "--project_name", type=str, default=None,
@@ -158,10 +170,10 @@ def main():
     parser.add_argument("--l1_reg", type=float, default=0.5, help="The regularization parameter of l1 loss")
 
     # Export / inference controls
-    parser.add_argument("--infer_batch_size", type=int, default=1,
+    parser.add_argument("--infer_batch_size", type=int, default=16,
                         help="Batch size for inference/exports")
-    parser.add_argument("--save_attentions", dest="save_attentions", action="store_true", default=True,
-                        help="Save attention matrices (default: True)")
+    parser.add_argument("--save_attentions", dest="save_attentions", action="store_true", default=False,
+                        help="Save percell attention matrices (default: True)")
     parser.add_argument("--no-save_attentions", dest="save_attentions", action="store_false",
                         help="Disable saving attention matrices")
     parser.add_argument("--save_visuals", dest="save_visuals", action="store_true", default=True,
@@ -172,7 +184,7 @@ def main():
                         help="Save full dense attention matrices (default: False = top-k sparse)")
     parser.add_argument("--no-save_full_weights", dest="save_full_weights", action="store_false",
                         help="Save sparse top-k per row (recommended)")
-    parser.add_argument("--topk_per_row", type=int, default=50, help="Top-k per row when saving sparse")
+    parser.add_argument("--topk_per_row", type=int, default=100, help="Top-k per row when saving sparse")
     parser.add_argument("--dtype_on_disk", type=str, choices=["float16", "float32"], default="float16",
                         help="Disk dtype for exported arrays")
 
@@ -188,8 +200,8 @@ def main():
     project = args.project_name or _auto_detect_project(in_dir / "data_triple")
 
 
-    train_npz = in_dir / f"data_triple/{project}_tensors_train.npz"
-    test_npz = in_dir / f"data_triple/{project}_tensors_test.npz"
+    train_npz = in_dir / project / f"data_triple/{project}_tensors_train.npz"
+    test_npz = in_dir / project / f"data_triple/{project}_tensors_test.npz"
 
     if not train_npz.is_file():
         raise FileNotFoundError(f"Required file not found: {train_npz}")
@@ -327,9 +339,29 @@ def main():
     def _save_npz(path, **arrays):
         np.savez_compressed(path, **arrays)
 
-    def _save_heatmap_png(path, arr_2d):
-        plt.imsave(path, arr_2d, format="png")
+    def _save_heatmap_png(path, arr_2d, figsize=(12, 10), dpi=150, cmap="viridis"):
+        """
+        Save a heatmap image from a 2D array with configurable size.
 
+        Parameters
+        ----------
+        path : str
+            File path for saving.
+        arr_2d : np.ndarray
+            2D array of values.
+        figsize : tuple
+            Size of the figure in inches (width, height).
+        dpi : int
+            Resolution of the saved figure.
+        cmap : str
+            Matplotlib colormap.
+        """
+        fig, ax = plt.subplots(figsize=figsize)
+        im = ax.imshow(arr_2d, aspect="auto", cmap=cmap)
+        plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+        plt.tight_layout()
+        fig.savefig(path, dpi=dpi)
+        plt.close(fig)
     def _topk_sparse_rows(mat, k):
         k = tf.minimum(k, tf.shape(mat)[1])
         vals, idxs = tf.math.top_k(mat, k=k, sorted=False)
@@ -356,36 +388,40 @@ def main():
         if not SAVE_ATTENTIONS:
             return
         # collapse (B,L)
-        x_vq_mean = tf.reduce_mean(tf.reduce_mean(x_vq, axis=0), axis=0)  # (G_tgt, d)
-        tf_vk_mean = tf.reduce_mean(tf.reduce_mean(tf_vk, axis=0), axis=0)  # (G_tf,  d)
-        recp_vk_mean = tf.reduce_mean(tf.reduce_mean(recp_vk, axis=0), axis=0)  # (G_rec, d)
+        for idx in range(x_vq.shape[0]):
+            x_vq_ = x_vq[idx]
+            tf_vk_ = tf_vk[idx]
+            recp_vk_ = recp_vk[idx]
+            x_vq_mean = tf.reduce_mean(tf.reduce_mean(x_vq_, axis=0), axis = 0) # (G_tgt, d)
+            tf_vk_mean = tf.reduce_mean(tf.reduce_mean(tf_vk_, axis=0), axis = 0)  # (G_tf,  d)
+            recp_vk_mean = tf.reduce_mean(tf.reduce_mean(recp_vk_, axis=0), axis = 0)  # (G_rec, d)
 
-        weight_nt = tf.abs(tf.matmul(tf_vk_mean, x_vq_mean, transpose_b=True))
-        weight_nt_lr = tf.abs(tf.matmul(recp_vk_mean, x_vq_mean, transpose_b=True))
+            weight_nt = tf.abs(tf.matmul(tf_vk_mean, x_vq_mean, transpose_b=True))
+            weight_nt_lr = tf.abs(tf.matmul(recp_vk_mean, x_vq_mean, transpose_b=True))
 
-        if not SAVE_FULL_WEIGHTS:
-            nt_vals, nt_cols = _topk_sparse_rows(weight_nt, TOPK_PER_ROW)
-            lr_vals, lr_cols = _topk_sparse_rows(weight_nt_lr, TOPK_PER_ROW)
+            if not SAVE_FULL_WEIGHTS:
+                nt_vals, nt_cols = _topk_sparse_rows(weight_nt, TOPK_PER_ROW)
+                lr_vals, lr_cols = _topk_sparse_rows(weight_nt_lr, TOPK_PER_ROW)
 
-            _save_npz(out_dir / f"attn_{kind}_tf_topk_batch_{batch_idx_base:04d}.npz",
-                      vals=_to_np16(nt_vals), cols=nt_cols.numpy().astype(np.int32, copy=False))
-            _save_npz(out_dir / f"attn_{kind}_lr_topk_batch_{batch_idx_base:04d}.npz",
-                      vals=_to_np16(lr_vals), cols=lr_cols.numpy().astype(np.int32, copy=False))
+                _save_npz(out_dir / f"attn_{kind}_tf_topk_batch_{batch_idx_base + idx:04d}.npz",
+                          vals=_to_np16(nt_vals), cols=nt_cols.numpy().astype(np.int32, copy=False))
+                _save_npz(out_dir / f"attn_{kind}_lr_topk_batch_{batch_idx_base + idx:04d}.npz",
+                          vals=_to_np16(lr_vals), cols=lr_cols.numpy().astype(np.int32, copy=False))
 
-            if SAVE_VISUALS:
-                R_nt = int(weight_nt.shape[0]);
-                C = int(weight_nt.shape[1])
-                R_lr = int(weight_nt_lr.shape[0]);
-                preview_cap = 4096
-                if C <= preview_cap:
-                    nt_preview = np.zeros((R_nt, C), dtype=DTYPE_ON_DISK)
-                    lr_preview = np.zeros((R_lr, C), dtype=DTYPE_ON_DISK)
-                    rows_nt = np.arange(R_nt, dtype=np.int32)[:, None]
-                    rows_lr = np.arange(R_lr, dtype=np.int32)[:, None]
-                    nt_preview[rows_nt, nt_cols.numpy()] = _to_np16(nt_vals)
-                    lr_preview[rows_lr, lr_cols.numpy()] = _to_np16(lr_vals)
-                    _save_heatmap_png(out_dir / f"attn_{kind}_tf_preview_{batch_idx_base:04d}.png", nt_preview)
-                    _save_heatmap_png(out_dir / f"attn_{kind}_lr_preview_{batch_idx_base:04d}.png", lr_preview)
+                if SAVE_VISUALS:
+                    R_nt = int(weight_nt.shape[0]);
+                    C = int(weight_nt.shape[1])
+                    R_lr = int(weight_nt_lr.shape[0]);
+                    preview_cap = 4096
+                    if C <= preview_cap:
+                        nt_preview = np.zeros((R_nt, C), dtype=DTYPE_ON_DISK)
+                        lr_preview = np.zeros((R_lr, C), dtype=DTYPE_ON_DISK)
+                        rows_nt = np.arange(R_nt, dtype=np.int32)[:, None]
+                        rows_lr = np.arange(R_lr, dtype=np.int32)[:, None]
+                        nt_preview[rows_nt, nt_cols.numpy()] = _to_np16(nt_vals)
+                        lr_preview[rows_lr, lr_cols.numpy()] = _to_np16(lr_vals)
+                        _save_heatmap_png(out_dir / f"attn_{kind}_tf_preview_{batch_idx_base:04d}.png", nt_preview)
+                        _save_heatmap_png(out_dir / f"attn_{kind}_lr_preview_{batch_idx_base:04d}.png", lr_preview)
         else:
             nt_np = _to_np16(weight_nt)
             lr_np = _to_np16(weight_nt_lr)

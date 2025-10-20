@@ -25,8 +25,9 @@ def merge_metacell_with_batch(
     meta : AnnData
         Metacell-level AnnData with:
           - meta.obs.index == metacell IDs (cluster labels)
-          - meta.obs['batch'] == majority batch per metacell
+          - meta.obs[batch_key] == majority batch per metacell
           - meta.obsm['X_umap'] == mean UMAP per metacell
+          - meta.obs[pseudotime_key] == mean pseudotime per metacell (if available)
     merge_idx : str or int
         Cluster label of the cell with minimal pseudotime (if available), else -1.
     membership : dict[str, list[str]]
@@ -34,10 +35,20 @@ def merge_metacell_with_batch(
     batch_map : dict[str, str]
         Mapping: metacell ID -> majority batch.
     """
+    import numpy as np
+    import pandas as pd
+    import scanpy as sc
+    from scipy.sparse import csr_matrix
+
     # --- Determine merge target via pseudotime, if provided
     if pseudotime_key in adata.obs.columns:
-        min_cell = adata.obs[pseudotime_key].idxmin()
-        merge_idx = adata.obs.loc[min_cell, clusters_key]
+        print("Pseudotime found, computing the mean pseudotime per metacell...")
+        # idxmin skips NA by default; raises if all NA — guard it
+        if adata.obs[pseudotime_key].notna().any():
+            min_cell = adata.obs[pseudotime_key].idxmin()
+            merge_idx = adata.obs.loc[min_cell, clusters_key]
+        else:
+            merge_idx = -1
     else:
         merge_idx = -1
 
@@ -60,24 +71,28 @@ def merge_metacell_with_batch(
 
     # --- Aggregate expression and UMAP
     X = adata.X.toarray() if hasattr(adata.X, "toarray") else adata.X
+    if "X_umap" not in adata.obsm:
+        raise KeyError("Expected 'X_umap' in adata.obsm for metacell UMAP aggregation.")
     umap = adata.obsm["X_umap"]
 
     counts = np.asarray(H.sum(axis=1)).ravel()
+    # avoid divide-by-zero: counts should be >=1 for present categories
     cluster_mean_X = H.dot(X) / counts[:, None]
     mean_umap = H.dot(umap) / counts[:, None]
 
-    # --- Majority batch per metacell + membership map
-    # indices of cells per metacell (list of arrays)
-    # For each metacell k, member indices are np.where(inv == k)[0]
+    # --- Majority batch per metacell + membership map (+ mean pseudotime if available)
     membership = {}
     batch_map = {}
+    meta_pt_means = None
+    have_pt = pseudotime_key in adata.obs.columns
 
-    # materialize obs_names, batch col
     obs_names = np.asarray(adata.obs_names)
     if batch_key not in adata.obs.columns:
         raise ValueError(f"batch_key '{batch_key}' not found in adata.obs")
-
     cell_batches = adata.obs[batch_key].astype(str).values
+
+    if have_pt:
+        cell_pt = adata.obs[pseudotime_key].to_numpy()
 
     for k, mc in enumerate(new_categories):
         member_idx = np.where(inv == k)[0]
@@ -92,6 +107,15 @@ def merge_metacell_with_batch(
             winners = sorted(vc[vc == max_count].index.tolist())
             batch_map[str(mc)] = winners[0]
 
+        # mean pseudotime per metacell (NaN if no members or all-NaN)
+        if have_pt:
+            if meta_pt_means is None:
+                meta_pt_means = np.full(len(new_categories), np.nan, dtype=float)
+            if member_idx.size > 0:
+                vals = cell_pt[member_idx]
+                if np.isfinite(vals).any():
+                    meta_pt_means[k] = np.nanmean(vals)
+
     # --- Assemble meta AnnData
     meta = sc.AnnData(
         X=cluster_mean_X,
@@ -101,14 +125,18 @@ def merge_metacell_with_batch(
     meta.obsm["X_umap"] = mean_umap
     meta.obs[batch_key] = pd.Series([batch_map[str(mc)] for mc in new_categories],
                                     index=new_categories, dtype="category")
-
-    # Optional: keep the compact cluster label as a column too
     meta.obs[clusters_key] = meta.obs.index.astype("category")
+
+    # attach mean pseudotime per metacell if available
+    if have_pt and meta_pt_means is not None:
+        # keep float; do not cast to category
+        meta.obs[pseudotime_key] = pd.Series(meta_pt_means, index=new_categories, dtype=float)
 
     # --- Rebuild neighbor graph on metacells
     sc.pp.neighbors(meta, n_neighbors=n_neighbors, use_rep="X_umap")
 
     return meta, merge_idx, membership, batch_map
+
 
 
 def save_metacell_membership_and_batch(membership, batch_map, out_dir, project):
@@ -189,31 +217,51 @@ def log_normalize(adata, target_sum=1e4, copy=False):
         return adata
 
 
-def run_umap(adata, n_neighbors=100, min_dist=0.01):
+def run_umap(
+    adata,
+    n_neighbors=30,
+    min_dist=0.1,
+    *,
+    drop_genes_for_umap: Optional[List[str]] = None  # NEW
+):
     """
-    Run PCA + UMAP on the AnnData object unless both 'X_pca' and 'X_umap'
-    already exist in adata.obsm. Returns the updated AnnData.
+    Run PCA + UMAP on a temporary view:
+      - optionally square selected columns (receptors) for graph construction,
+      - optionally exclude some genes (e.g., ligands) from UMAP features.
+    Never mutates adata.X.
     """
-    # If PCA and UMAP already exist, skip computation
-    if "X_umap" in adata.obsm:
-        print("Skipping neighbors+UMAP: 'X_umap' already present.")
-        return adata
+    # if "X_umap" in adata.obsm and "X_pca" in adata.obsm:
+    #     print("Skipping neighbors+UMAP: 'X_umap' and 'X_pca' already present.")
+    #     return adata
 
-    # Compute PCA
-    sc.pp.pca(
-        adata,
-        n_comps=50,
-        svd_solver='arpack'
-    )
+    # Build a temporary matrix for graph/UMAP
+    X = adata.X.toarray() if hasattr(adata.X, "toarray") else np.asarray(adata.X)
+    var_names = np.asarray(adata.var_names)
 
-    # Build graph & run UMAP on PCA space
-    sc.pp.neighbors(
-        adata,
-        n_neighbors=n_neighbors,
-        use_rep='X_pca'
-    )
-    sc.tl.umap(adata, min_dist=min_dist)
+    # Drop genes for the UMAP view (e.g., ligands)
+    keep_mask = np.ones_like(var_names, dtype=bool)
+    if drop_genes_for_umap:
+        drop_set = set(drop_genes_for_umap)
+        keep_mask &= ~np.isin(var_names, list(drop_set))
+
+    Xv = X[:, keep_mask]
+
+    # Compute PCA/knn/UMAP on the temporary view
+    # Stuff Xv into obsm for sc.pp.neighbors(use_rep='X_tmp')
+    adata.obsm["X_tmp"] = Xv
+
+    if not "X_pca" in adata.obsm:
+        print('PCA computed')
+        sc.pp.pca(adata, n_comps=50, svd_solver='arpack', use_highly_variable=False)
+    if not "neighbors" in adata.obsm:
+        print('Neighbors computed')
+        sc.pp.neighbors(adata, n_neighbors=n_neighbors, use_rep="X_pca")
+    if not "X_umap" in adata.obsm:
+        print('UMAP computed')
+        sc.tl.umap(adata, min_dist=min_dist)
+    del adata.obsm["X_tmp"]
     return adata
+
 
 # helper to extract and squeeze .X with sparse-check
 def extract_array(adata_obj, obs_idx, var_idx):
@@ -222,39 +270,6 @@ def extract_array(adata_obj, obs_idx, var_idx):
         subX = subX.toarray()
     return np.squeeze(subX)
 
-
-
-# def derive_spatial_neighbors(
-#     adata,
-#     *,
-#     coords_key: str = "spatial",
-#     radius: float = 50.0,
-#     include_self: bool = True,
-#     n_jobs: int = -1
-# ):
-#     """
-#     Build a sparse radius-neighborhood graph from 2D coordinates in `adata.obsm[coords_key]`.
-#
-#     Returns
-#     -------
-#     A : scipy.sparse.csr_matrix
-#         (n_cells x n_cells) binary connectivity (1 if within radius).
-#     """
-#     if coords_key not in adata.obsm_keys():
-#         raise ValueError(f"'{coords_key}' not found in adata.obsm")
-#
-#     A = radius_neighbors_graph(
-#         adata.obsm[coords_key],
-#         radius=radius,
-#         mode="connectivity",
-#         include_self=False,  # add explicitly below to keep behavior consistent across sklearn
-#         n_jobs=n_jobs,
-#     ).tocsr()
-#
-#     if include_self:
-#         A.setdiag(1)
-#
-#     return A
 
 def build_neighbor_and_lr(
     adata_all,
@@ -317,6 +332,7 @@ def build_neighbor_and_lr(
     var_index = {g: i for i, g in enumerate(adata_all.var_names)}
     present_lig = [g for g in all_lig if g in var_index]
     present_rec = [g for g in all_recept if g in var_index]
+
     if not present_lig or not present_rec:
         raise ValueError("No overlap between provided ligands/receptors and adata_all.var_names.")
 
@@ -325,24 +341,21 @@ def build_neighbor_and_lr(
         adata_all.obsm[coords_key],
         radius=radius,
         mode="connectivity",
-        include_self=False,  # add explicitly below
+        include_self=True,  # add explicitly below
         n_jobs=n_jobs,
     ).tocsr()
-    A.setdiag(1)
+    # A.setdiag(1)
 
     # Make a neighbor-smoothed version of expm1(X)
-    X_all = adata_all.X
+    X_all = adata_all[:, present_lig].X # Only the ligand expression values are of interest
     if hasattr(X_all, "toarray"):
         X_all = X_all.toarray()
     X_all = X_all.astype(dtype, copy=False)
     X_lin = np.expm1(X_all)                      # undo log1p if present
     X_smooth = A.dot(X_lin)                      # sum over neighbors
 
-    # Build LR features: log1p( expm1(lig_smooth) * expm1(receptor) )
-    lig_idx = [var_index[g] for g in present_lig]
-    rec_idx = [var_index[g] for g in present_rec]
 
-    X_lig = X_smooth[:, lig_idx].astype(dtype, copy=False)          # (n, L)
+    X_lig = X_smooth.astype(dtype, copy=False)          # (n, L)
     X_rec = adata_all[:, present_rec].X
     if hasattr(X_rec, "toarray"):
         X_rec = X_rec.toarray()
@@ -514,46 +527,62 @@ def collect_expression_tensors_for_paths(
     *,
     adata_neighbor,           # ligand source (smoothed)
     adata,                    # receptor/TF/target source
-    adata_lr,                 # LR-pair source (all columns used)
-    lig_genes: List[str],
-    rec_genes: List[str],
-    tf_genes: List[str],
-    target_genes: List[str],
-    lr_var_names: Optional[List[str]] = None,  # if None, will use adata_lr.var_names
+    adata_lr,                 # LR-pair source
+    lig_genes: List[str],     # <-- pass in TXT order
+    rec_genes: List[str],     # <-- pass in TXT order
+    tf_genes: List[str],      # <-- pass in TXT order
+    target_genes: List[str],  # <-- pass in TXT order
+    lr_var_names: Optional[List[str]] = None,  # if provided, this is the canonical LR order (e.g., from file)
     len_path: int = 3,
+    strict: bool = False,     # ### NEW: if True, error if any gene is missing
 ) -> List[Dict[str, np.ndarray]]:
     """
-    For each round, materialize expression tensors along sampled paths:
-      - ligand:  (n_paths, len_path+1, |lig_genes|)        from adata_neighbor
-      - receptor:(n_paths, len_path+1, |rec_genes|)        from adata
-      - tf:      (n_paths, len_path+1, |tf_genes|)         from adata
-      - target:  (n_paths, len_path+1, |target_genes|)     from adata
-      - lr_pair: (n_paths, len_path+1, |adata_lr.var|)     from adata_lr
-      - label:   shifted targets = target[:, 1:, :]        (n_paths, len_path, |target_genes|)
-      - target_trunc: target[:, :len_path, :]              (n_paths, len_path, |target_genes|)
+    Materialize expression tensors along sampled paths with gene/LR columns ordered
+    exactly as provided in lig_genes/rec_genes/tf_genes/target_genes/lr_var_names.
 
-    Returns
-    -------
-    per_round : list of dict
-        Each dict has keys:
-        ['paths','ligand','receptor','tf','target','lr_pair','label','target_trunc'].
+      - ligand:  (n_paths, len_path+1, |lig_genes_kept|)
+      - receptor:(n_paths, len_path+1, |rec_genes_kept|)
+      - tf:      (n_paths, len_path+1, |tf_genes_kept|)
+      - target:  (n_paths, len_path+1, |target_genes_kept|)
+      - lr_pair: (n_paths, len_path+1, |lr_var_names| or |adata_lr.var_names|)
+      - label:   target[:, 1:, :]
+      - target_trunc: target[:, :len_path, :]
+
+    Returns a list of dicts, each including the corresponding *_names arrays.
     """
 
-    # Build quick var_name -> idx maps (safe if some genes missing)
+    # --- Name -> index maps
     var_idx_neighbor = {g: i for i, g in enumerate(adata_neighbor.var_names)}
     var_idx_main     = {g: i for i, g in enumerate(adata.var_names)}
-    lr_names         = list(adata_lr.var_names) if lr_var_names is None else lr_var_names
+    var_idx_lr       = {g: i for i, g in enumerate(adata_lr.var_names)}
 
-    lig_idx = [var_idx_neighbor[g] for g in lig_genes if g in var_idx_neighbor]
-    rec_idx = [var_idx_main[g]     for g in rec_genes   if g in var_idx_main]
-    tf_idx  = [var_idx_main[g]     for g in tf_genes    if g in var_idx_main]
-    tgt_idx = [var_idx_main[g]     for g in target_genes if g in var_idx_main]
+    # --- Build ordered index lists matching the incoming (file) orders
+    def _build_kept(names, index_map, what):
+        missing = [g for g in names if g not in index_map]
+        if missing and strict:
+            raise ValueError(f"{what}: missing genes in AnnData: {missing}")
+        kept_names = [g for g in names if g in index_map]   # preserves input order
+        kept_idx   = [index_map[g] for g in kept_names]
+        return kept_names, kept_idx, missing
 
-    if lr_var_names is not None:
-        assert list(adata_lr.var_names) == list(lr_var_names), "lr_var_names mismatch adata_lr.var_names"
+    lig_names_kept, lig_idx, lig_missing = _build_kept(lig_genes,    var_idx_neighbor, "ligand")
+    rec_names_kept, rec_idx, rec_missing = _build_kept(rec_genes,    var_idx_main,     "receptor")
+    tf_names_kept,  tf_idx,  tf_missing  = _build_kept(tf_genes,     var_idx_main,     "tf")
+    tgt_names_kept, tgt_idx, tgt_missing = _build_kept(target_genes, var_idx_main,     "target")
 
-    # Sparse-safe .X getter
+    # LR columns: follow lr_var_names if provided; else current adata_lr.var_names
+    if lr_var_names is None:
+        lr_names_kept = list(adata_lr.var_names)           # current order
+        lr_idx        = list(range(adata_lr.n_vars))
+        lr_missing    = []
+    else:
+        lr_names_kept, lr_idx, lr_missing = _build_kept(lr_var_names, var_idx_lr, "lr_pair")
+
+    # --- Sparse-safe slice helper (keeps var order given by var_idx list)
     def _get_block(adata_obj, obs_idx: List[int], var_idx: List[int]) -> np.ndarray:
+        if not var_idx:
+            # no columns to take -> (len_path+1, 0)
+            return np.zeros((len(obs_idx), 0), dtype=float)
         X = adata_obj[obs_idx, var_idx].X
         if hasattr(X, "toarray"):
             X = X.toarray()
@@ -562,38 +591,46 @@ def collect_expression_tensors_for_paths(
     per_round: List[Dict[str, Any]] = []
 
     for round_paths in paths_per_round:
-        # Collect per-path matrices
         lig_list, rec_list, tf_list, tgt_list, lr_list = [], [], [], [], []
+        kept_paths = []  # store only complete paths to keep in sync with arrays
 
         for p in round_paths:
             if len(p) != (len_path + 1):
-                # only keep complete paths
                 continue
 
-            # Extract along the path
-            lig  = _get_block(adata_neighbor, p, lig_idx)             # (len_path+1, L)
-            rec  = _get_block(adata,          p, rec_idx)             # (len_path+1, R)
-            tf   = _get_block(adata,          p, tf_idx)              # (len_path+1, T)
-            tgt  = _get_block(adata,          p, tgt_idx)             # (len_path+1, G)
-            lrp  = _get_block(adata_lr,       p, list(range(adata_lr.n_vars)))  # all LR vars
+            lig  = _get_block(adata_neighbor, p, lig_idx)
+            rec  = _get_block(adata,          p, rec_idx)
+            tf   = _get_block(adata,          p, tf_idx)
+            tgt  = _get_block(adata,          p, tgt_idx)
+            lrp  = _get_block(adata_lr,       p, lr_idx)  # ### CHANGED: use lr_idx (file order)
 
             lig_list.append(lig)
             rec_list.append(rec)
             tf_list.append(tf)
             tgt_list.append(tgt)
             lr_list.append(lrp)
+            kept_paths.append(p)
 
         if len(lig_list) == 0:
-            # round with no complete paths
             per_round.append({
                 "paths": [],
                 "ligand": np.empty((0, len_path+1, len(lig_idx))),
                 "receptor": np.empty((0, len_path+1, len(rec_idx))),
                 "tf": np.empty((0, len_path+1, len(tf_idx))),
                 "target": np.empty((0, len_path+1, len(tgt_idx))),
-                "lr_pair": np.empty((0, len_path+1, adata_lr.n_vars)),
+                "lr_pair": np.empty((0, len_path+1, len(lr_idx))),
                 "label": np.empty((0, len_path,   len(tgt_idx))),
                 "target_trunc": np.empty((0, len_path, len(tgt_idx))),
+                # ### NEW: carry names (even if empty)
+                "ligand_names":  np.array(lig_names_kept),
+                "receptor_names":np.array(rec_names_kept),
+                "tf_names":      np.array(tf_names_kept),
+                "target_names":  np.array(tgt_names_kept),
+                "lr_pair_names": np.array(lr_names_kept),
+                "missing": {  # optional diagnostics
+                    "ligand": lig_missing, "receptor": rec_missing,
+                    "tf": tf_missing, "target": tgt_missing, "lr_pair": lr_missing
+                }
             })
             continue
 
@@ -603,12 +640,11 @@ def collect_expression_tensors_for_paths(
         target_array  = np.stack(tgt_list, axis=0)    # (N, len_path+1, G)
         lr_pair_array = np.stack(lr_list,  axis=0)    # (N, len_path+1, LR)
 
-        # shift labels: next-step targets
         label_array   = target_array[:, 1:, :]        # (N, len_path, G)
         target_trunc  = target_array[:, :len_path, :] # (N, len_path, G)
 
         per_round.append({
-            "paths": round_paths,
+            "paths": kept_paths,                      # keep only complete paths
             "ligand": ligand_array,
             "receptor": recep_array,
             "tf": tf_array,
@@ -616,10 +652,20 @@ def collect_expression_tensors_for_paths(
             "lr_pair": lr_pair_array,
             "label": label_array,
             "target_trunc": target_trunc,
+            # ### NEW: names matching the column orders of the arrays above
+            "ligand_names":  np.array(lig_names_kept),
+            "receptor_names":np.array(rec_names_kept),
+            "tf_names":      np.array(tf_names_kept),
+            "target_names":  np.array(tgt_names_kept),
+            "lr_pair_names": np.array(lr_names_kept),
+            # Optional: report what was missing (useful for logs/debugging)
+            "missing": {
+                "ligand": lig_missing, "receptor": rec_missing,
+                "tf": tf_missing, "target": tgt_missing, "lr_pair": lr_missing
+            }
         })
 
     return per_round
-
 
 def save_round_tensors_npz(
     per_round: List[Dict[str, np.ndarray]],
@@ -659,6 +705,11 @@ def save_round_tensors_npz(
                 label=blobs["label"],
                 target_trunc=blobs["target_trunc"],
                 paths=np.array(blobs["paths"], dtype=object),
+                ligand_names = blobs["ligand_names"],
+                receptor_names = blobs["receptor_names"],
+                tf_names = blobs["tf_names"],
+                target_names = blobs["target_names"],
+                lr_pair_names = blobs["lr_pair_names"]
             )
 
         if also_save_npy:

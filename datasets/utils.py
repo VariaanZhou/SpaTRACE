@@ -109,14 +109,33 @@ def _pt_exists(adata, pt_key: str = "dpt_pseudotime", cell_types=None, groupby: 
 
     return adata.obs.loc[mask, pt_key].notna().any()
 
+def _check_no_reserved_strings(adata):
+    '''
+    _to_ string is used to represent the LR names, all genes must not contain these as substrings.
 
+    Parameters
+    ----------
+    adata
+
+    Returns
+    -------
+
+    '''
+    pass
+
+def _sort_gene_by_values(list):
+    try:
+        # For simulation data only
+        return sorted(list, key=lambda x: int(x), reverse=True)
+    except ValueError:
+        return list
 def _combine_lr_names(ligands, receptors):
-    return [f"{ligand}_{receptor}" for ligand in ligands for receptor in receptors]
+    return [f"{ligand}_to_{receptor}" for ligand in ligands for receptor in receptors]
 
 def _write_one_list(path, genes):
     # Accept list/set/iterable of strings; write sorted, unique
     with open(path, "w") as f:
-        for g in sorted(set(genes)):
+        for g in genes:
             f.write(f"{g}\n")
 
 def _ensure_dir(path):

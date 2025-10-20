@@ -59,9 +59,9 @@ class BaseAttentionGene(tf.keras.layers.Layer):
                         use_causal_mask=False,
                         attention_mask=mask,
                         training=training)
-        x = self.add([x, self.dropout(attn, training=training)])
-        x = self.layernorm(x)
-        return x
+        # x = self.add([x, self.dropout(attn, training=training)])
+        # x = self.layernorm(x)
+        return attn
 
     def build(self, input_shape):
         super().build(input_shape)
@@ -82,7 +82,7 @@ class GeneEmbedding(tf.keras.layers.Layer):
         self.proj_kernel2_value = None
         self.scale_factor = None
         self.leaky_relu = tf.keras.layers.LeakyReLU(alpha=0.1)
-        self.self_attention = BaseAttentionGene(num_heads=1, key_dim=d_model, dropout=0.1)
+        self.self_attention = BaseAttentionGene(num_heads=1, key_dim=d_model, dropout=0)
 
     def build(self, input_shape):
         self.proj_kernel_token = self.add_weight(
@@ -408,6 +408,18 @@ def masked_mse(y_true, y_pred, sentinel=-99999.0):
     diff = tf.where(mask, diff, tf.zeros_like(diff))
     denom = tf.maximum(tf.reduce_sum(tf.cast(mask, y_pred.dtype)), 1.0)
     return tf.reduce_sum(tf.square(diff)) / denom
+
+# def masked_mse(label, pred):
+#   mask = label != -99999
+#   loss_object = tf.keras.losses.MeanSquaredError(
+#     name='mean_squared_error')
+#   loss = loss_object(label, pred)
+#
+#   mask = tf.cast(mask, dtype=loss.dtype)
+#   loss *= mask
+#
+#   loss = tf.reduce_sum(loss)/tf.reduce_sum(mask)
+#   return loss
 
 def l1_reg_loss(y_true, y_pred):
     # Regularization-style L1: ignores y_true on purpose
