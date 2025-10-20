@@ -1,6 +1,35 @@
 # GREATEST_Chat
+## Introduction
 
-This repository provides a **two-step pipeline** for preparing temporal ligand–receptor / transcription factor / target features from single-cell data and training a transformer model (**GREAEST_Chat**) on those features.
+**GREATEST_Chat** (Granger REcurrent AuToEncoder for SpatialTemporal transcriptomics) is a pathway-free tool for **cell–cell communication (CCC) inference**, designed specifically for **developmental spatial transcriptomics** (or spatio-temporal transcriptomics) datasets.  
+
+It enables:  
+- **Cell–cell communication analysis**  
+- **Gene regulatory network reconstruction**  
+- **Ligand–receptor pair prediction**  
+
+### How it works
+GREATEST_Chat is a recurrent autoencoder trained on sampled cell trajectories from pseudotime. By learning the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene**, it captures semantic representations of cellular interactions. These embeddings can then be used to:  
+- Reconstruct ligand–receptor interaction networks  
+- Infer gene regulatory networks via score matching between LR/TF and TG embeddings  
+
+### What this repo provides
+- A **user-friendly interface** to run GREATEST_Chat on your own datasets  
+- **Documentation and examples** from our experiments on:
+  - Simulation Datasets (and their generation code)  
+  - Mouse midbrain development  
+  - Axolotl brain regeneration  
+
+
+
+## Pipeline Overview
+
+The workflow is organized into a **three-step pipeline**:
+
+1. **Data preparation**: Taken an .h5ad data and given lists of ligands, receptors, TFs as inputs, it automatically extract DE genes, perform pseudotime analysis, and prepare input data for the model training.
+2. **Model training**: Train the transformer model **GREATEST_Chat** on the prepared features.  
+3. **Downstream analysis**: Perform feature selection and reconstruct ligand–receptor interactions, gene regulatory networks, and cellular interactions.
+
 
 ---
 
