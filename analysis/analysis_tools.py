@@ -2,11 +2,12 @@ import os, glob, re, logging
 from typing import Dict, List, Tuple, Optional
 import numpy as np
 import matplotlib.pyplot as plt
-
+import tqdm
 __all__ = [
     "aggregate_from_global_embeddings",
     "aggregate_lr_tg_by_bio_batch",
 ]
+
 
 # module-scoped logger
 logger = logging.getLogger(__name__)
@@ -101,7 +102,7 @@ def aggregate_from_global_embeddings(
     dtype_lr = dtype_tf = None
     required = {"x_vq1", "tf_vq1", "recp_vq1"}
 
-    for fn in files:
+    for fn in tqdm.tqdm(files):
         try:
             with np.load(fn) as data:
                 if not required.issubset(data.files):

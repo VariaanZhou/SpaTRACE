@@ -392,9 +392,9 @@ def main():
             x_vq_ = x_vq[idx]
             tf_vk_ = tf_vk[idx]
             recp_vk_ = recp_vk[idx]
-            x_vq_mean = tf.reduce_mean(tf.reduce_mean(x_vq_, axis=0), axis = 0) # (G_tgt, d)
-            tf_vk_mean = tf.reduce_mean(tf.reduce_mean(tf_vk_, axis=0), axis = 0)  # (G_tf,  d)
-            recp_vk_mean = tf.reduce_mean(tf.reduce_mean(recp_vk_, axis=0), axis = 0)  # (G_rec, d)
+            x_vq_mean = tf.reduce_mean(x_vq_, axis=0) # (G_tgt, d)
+            tf_vk_mean = tf.reduce_mean(tf_vk_, axis=0) # (G_tf,  d)
+            recp_vk_mean = tf.reduce_mean(recp_vk_, axis=0)  # (G_rec, d)
 
             weight_nt = tf.abs(tf.matmul(tf_vk_mean, x_vq_mean, transpose_b=True))
             weight_nt_lr = tf.abs(tf.matmul(recp_vk_mean, x_vq_mean, transpose_b=True))
@@ -422,14 +422,14 @@ def main():
                         lr_preview[rows_lr, lr_cols.numpy()] = _to_np16(lr_vals)
                         _save_heatmap_png(out_dir / f"attn_{kind}_tf_preview_{batch_idx_base:04d}.png", nt_preview)
                         _save_heatmap_png(out_dir / f"attn_{kind}_lr_preview_{batch_idx_base:04d}.png", lr_preview)
-        else:
-            nt_np = _to_np16(weight_nt)
-            lr_np = _to_np16(weight_nt_lr)
-            _save_npz(out_dir / f"attn_{kind}_tf_full_batch_{batch_idx_base:04d}.npz", weight_nt=nt_np)
-            _save_npz(out_dir / f"attn_{kind}_lr_full_batch_{batch_idx_base:04d}.npz", weight_nt_lr=lr_np)
-            if SAVE_VISUALS:
-                _save_heatmap_png(out_dir / f"attn_{kind}_tf_full_{batch_idx_base:04d}.png", nt_np)
-                _save_heatmap_png(out_dir / f"attn_{kind}_lr_full_{batch_idx_base:04d}.png", lr_np)
+            else:
+                nt_np = _to_np16(weight_nt)
+                lr_np = _to_np16(weight_nt_lr)
+                _save_npz(out_dir / f"attn_{kind}_tf_full_batch_{batch_idx_base:04d}.npz", weight_nt=nt_np)
+                _save_npz(out_dir / f"attn_{kind}_lr_full_batch_{batch_idx_base:04d}.npz", weight_nt_lr=lr_np)
+                if SAVE_VISUALS:
+                    _save_heatmap_png(out_dir / f"attn_{kind}_tf_full_{batch_idx_base:04d}.png", nt_np)
+                    _save_heatmap_png(out_dir / f"attn_{kind}_lr_full_{batch_idx_base:04d}.png", lr_np)
 
     for b in range(n_batches):
         sl = slice(b * BATCH_SIZE, min((b + 1) * BATCH_SIZE, len(ligrecp_exp_val)))

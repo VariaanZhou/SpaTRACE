@@ -1,5 +1,5 @@
 import numpy as np
-
+import seaborn as sns
 
 def combine_embedding_file_name(input_dir, file_name, mode = 'global'):
     return input_dir / 'embeddings' / f'{mode}_embeddings' / file_name
@@ -83,24 +83,20 @@ def plot_lr_tg_heatmaps(
 
     # summed weights heatmap
     plt.figure(figsize=figsize)
-    im = plt.imshow(sum_arr, aspect="auto", interpolation="nearest")
-    cbar = plt.colorbar(im)
-    cbar.set_label("Summed weight", fontsize=fontsize)
-    plt.xlabel("Target genes (TG)", fontsize=fontsize)
-    plt.ylabel("Ligand–Receptor (LR)", fontsize=fontsize)
-    plt.title(f"{title_prefix} Intensity — {stage}", fontsize=fontsize+2)
+    ax = sns.heatmap(sum_arr, cmap="viridis", cbar_kws={"label": "Summed weight"})
+    ax.set_xlabel("Target genes (TG)", fontsize=fontsize)
+    ax.set_ylabel("Ligand–Receptor (LR)", fontsize=fontsize)
+    ax.set_title(f"{title_prefix} Intensity — {stage}", fontsize=fontsize + 2)
     plt.tight_layout()
     plt.savefig(os.path.join(out_dir, f"lr_tg_sum__{stage}.png"), dpi=dpi)
     plt.close()
 
     # counts heatmap
     plt.figure(figsize=figsize)
-    im = plt.imshow(count_arr, aspect="auto", interpolation="nearest")
-    cbar = plt.colorbar(im)
-    cbar.set_label("Counts (survived filtering)", fontsize=fontsize)
-    plt.xlabel("Target genes (TG)", fontsize=fontsize)
-    plt.ylabel("Ligand–Receptor (LR)", fontsize=fontsize)
-    plt.title(f"{title_prefix} Count — {stage}", fontsize=fontsize+2)
+    ax = sns.heatmap(count_arr, cmap="viridis", cbar_kws={"label": "Counts (survived filtering)"})
+    ax.set_xlabel("Target genes (TG)", fontsize=fontsize)
+    ax.set_ylabel("Ligand–Receptor (LR)", fontsize=fontsize)
+    ax.set_title(f"{title_prefix} Count — {stage}", fontsize=fontsize + 2)
     plt.tight_layout()
     plt.savefig(os.path.join(out_dir, f"lr_tg_count__{stage}.png"), dpi=dpi)
     plt.close()
@@ -109,32 +105,21 @@ def plot_lr_tg_heatmaps(
 def plot_lr_heatmap(
     *,
     lr_intensity: np.ndarray,  # (G_lr, G_tg) summed intensities
-    ligands: list,             # ligand/receptor labels for rows
-    receptors: list,           # TG labels for columns
-    stage: str,                 # stage label (e.g., "E12.5")
-    out_dir: str,               # directory to save the figures
-    mode: str,
+    ligands: list,             # row labels
+    receptors: list,           # column labels
+    stage: str,                # stage label (optional)
+    out_dir: str,              # directory to save the figure
+    mode: str,                 # "global" or "percell"
     title_prefix: str = "LR→TG",
     figsize: tuple = (8, 6),
     fontsize: int = 12,
     dpi: int = 300,
 ):
     """
-    Plot a ligand/receptor → target gene intensity heatmap.
-
-    Parameters
-    ----------
-    lr_intensity : np.ndarray
-        Array of shape (G_lr, G_tg) with summed intensities.
-    ligands : list
-        Row labels (ligands/receptors).
-    receptors : list
-        Column labels (target genes).
-    stage : str
-        Stage label for the plot title and filename.
-    out_dir : str
-        Directory where the figure will be saved.
+    Plot a ligand/receptor → target gene intensity heatmap using seaborn.
     """
+
+    # Sanity check for matrix shape
     if lr_intensity.shape != (len(ligands), len(receptors)):
         raise ValueError(
             f"Shape mismatch: lr_intensity {lr_intensity.shape} "
@@ -144,22 +129,30 @@ def plot_lr_heatmap(
     os.makedirs(out_dir, exist_ok=True)
 
     plt.figure(figsize=figsize, dpi=dpi)
-    im = plt.imshow(lr_intensity, aspect="auto", cmap="viridis")
+    ax = sns.heatmap(
+        lr_intensity,
+        cmap="viridis",
+        xticklabels=receptors,
+        yticklabels=ligands,
+        cbar_kws={"label": "Summed Intensity"}
+    )
 
-    plt.colorbar(im, fraction=0.046, pad=0.04, label="Summed Intensity")
-    if mode == 'percell':
-        plt.title(f"{title_prefix} Heatmap — Stage {stage}", fontsize=fontsize+2)
+    if mode == "percell" and stage is not None:
+        ax.set_title(f"{title_prefix} Heatmap — Stage {stage}", fontsize=fontsize+2)
     else:
-        plt.title(f"{title_prefix} Heatmap", fontsize=fontsize+2)
+        ax.set_title(f"{title_prefix} Heatmap", fontsize=fontsize+2)
 
-    # axis ticks
-    plt.xticks(range(len(receptors)), receptors, rotation=90, fontsize=fontsize-2)
-    plt.yticks(range(len(ligands)), ligands, fontsize=fontsize-2)
+    ax.set_xlabel("Target genes (TG)", fontsize=fontsize)
+    ax.set_ylabel("Ligand–Receptor (LR)", fontsize=fontsize)
+
+    plt.xticks(rotation=90, fontsize=fontsize-2)
+    plt.yticks(rotation=0, fontsize=fontsize-2)
 
     plt.tight_layout()
+
     fig_name = f"{mode}_lr_heatmap__{stage}.png" if stage else f"{mode}_lr_heatmap.png"
     out_path = os.path.join(out_dir, fig_name)
-    plt.savefig(out_path)
+    plt.savefig(out_path, dpi=dpi)
     plt.close()
 
     return out_path

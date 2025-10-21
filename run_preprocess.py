@@ -8,6 +8,11 @@ import logging
 import squidpy as sq
 from scipy import sparse as sp
 
+import os
+import numpy as np
+import pandas as pd
+import scanpy as sc
+
 # Local utils (as you had)
 from datasets.utils import gene_intersection, read_list_txt, verify_cell_types_exist, setup_logging, _write_one_list, _ensure_dir, _sort_gene_by_values
 from datasets.preprocessing import *
@@ -412,7 +417,7 @@ def spatial_enrichment_senders(
 
     return sorted(union_senders)
 
-def save_acquired_gene_sets(out_dir, project_name, *, ligands, receptors, tfs, tgs, lrs, logger=None):
+def save_acquired_gene_sets(out_dir, project_name, *, ligands, receptors, tfs, tgs, lrs, senders, receivers, logger=None):
     """
     Save acquired gene sets to:
       INPUT_DIR/PROJECT_NAME/{PROJECT_NAME}_<kind>_acquired.txt
@@ -424,7 +429,9 @@ def save_acquired_gene_sets(out_dir, project_name, *, ligands, receptors, tfs, t
         "receptors": _combine_name(out_dir, project_name, '_receptors.txt'),
         "tfs":      _combine_name(out_dir, project_name, '_tfs.txt'),
         "tgs":      _combine_name(out_dir, project_name, '_tgs.txt'),
-        "lrs": _combine_name(out_dir, project_name, '_lr_pairs.txt')
+        "lrs": _combine_name(out_dir, project_name, '_lr_pairs.txt'),
+        "senders": _combine_name(out_dir, project_name, '_senders.txt'),
+        "receivers": _combine_name(out_dir, project_name, '_receivers.txt')
     }
 
     _write_one_list(paths["ligands"],   ligands)
@@ -432,6 +439,8 @@ def save_acquired_gene_sets(out_dir, project_name, *, ligands, receptors, tfs, t
     _write_one_list(paths["tfs"],       tfs)
     _write_one_list(paths["tgs"],       tgs)
     _write_one_list(paths["lrs"], lrs)
+    _write_one_list(paths["senders"], senders)
+    _write_one_list(paths["receivers"], receivers)
 
     if logger:
         logger.info("Saved ligands to:   %s", paths["ligands"])
@@ -439,6 +448,9 @@ def save_acquired_gene_sets(out_dir, project_name, *, ligands, receptors, tfs, t
         logger.info("Saved TFs to:       %s", paths["tfs"])
         logger.info("Saved TGs to:       %s", paths["tgs"])
         logger.info("Saved LRs to:       %s", paths["lrs"])
+        logger.info("Saved Senders to:       %s", paths["senders"])
+        logger.info("Saved Receivers to:       %s", paths["receivers"])
+
 
     return paths
 
@@ -479,6 +491,11 @@ def main():
 
     # Gene identification
     parser.add_argument("--skip_de", action="store_true", default=False, help='If set, skip the DE step and go directly to path samping.')
+    parser.add_argument("--customized_ligand", action="store_true", default = False, help='If set, use customized ligand list.')
+    parser.add_argument("--customized_receptor", action="store_true", default = False, help='If set, use customized receptor list.')
+    parser.add_argument("--customized_tf", action="store_true", default = False, help='If set, use customized tf list.')
+    parser.add_argument("--customized_tg", action="store_true", default=False, help='If set, use customized tg list')
+
     parser.add_argument("--logfc_threshold", default=0.25, type=float,
                         help="Abs log2 fold change threshold for DE (default: 0.25).")
     parser.add_argument("--p_val_threshold", default=0.05, type=float,
@@ -551,6 +568,7 @@ def main():
     LIGAND_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_ligand.txt')
     RECEPTOR_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_receptor.txt')
     TF_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_tf.txt')
+    TG_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_tg.txt')
     RECEIVER_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_receiver.txt')
 
     # Load AnnData
@@ -579,6 +597,8 @@ def main():
     ligands = gene_intersection(gene_names, LIGAND_FILE)
     receptors = gene_intersection(gene_names, RECEPTOR_FILE)
     tfs = gene_intersection(gene_names, TF_FILE)
+    if args.customized_tg:
+        tgs = gene_intersection(gene_names, TG_FILE)
     logger.info("Loaded gene sets: ligands=%d, receptors=%d, TFs=%d", len(ligands), len(receptors), len(tfs))
 
     # Read receivers & optional senders
@@ -608,6 +628,7 @@ def main():
             n_perms=args.n_perm,
             logger=logger
         ))
+
         logger.info("Inferred sender cell types: %s", senders)
 
     all_cell_types = list(set(senders + receivers))
@@ -616,32 +637,36 @@ def main():
     if GET_DE:
         # DE analysis
         logger.info("Running DE for ligands/receptors/TFs (control=%s) ...", CONTROL_GROUP)
-        _, de_ligands = identify_de_genes_for_cell_types(
-            st_adata, ligands, cell_types=senders, groupby=ANNOTATION_KEY,
-            pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
-            control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
-        )
-        _, de_receptors = identify_de_genes_for_cell_types(
-            st_adata, receptors, cell_types=receivers, groupby=ANNOTATION_KEY,
-            pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
-            control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
-        )
-        _, de_tfs = identify_de_genes_for_cell_types(
-            st_adata, tfs, cell_types=receivers, groupby=ANNOTATION_KEY,
-            pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
-            control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
-        )
+        if not args.customized_ligand:
+            _, ligands = identify_de_genes_for_cell_types(
+                st_adata, ligands, cell_types=senders, groupby=ANNOTATION_KEY,
+                pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
+                control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
+            )
+        if not args.customized_receptor:
+            _, receptors = identify_de_genes_for_cell_types(
+                st_adata, receptors, cell_types=receivers, groupby=ANNOTATION_KEY,
+                pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
+                control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
+            )
+        if not args.customized_tf:
+            _, tfs = identify_de_genes_for_cell_types(
+                st_adata, tfs, cell_types=receivers, groupby=ANNOTATION_KEY,
+                pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
+                control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
+            )
+        if not args.customized_tg:
+            # Widely expressed target genes (across batches)
+            _, tgs = identify_widely_expressed_genes_for_cell_types(
+                st_adata, gene_names, cell_types=receivers, groupby=ANNOTATION_KEY,
+                pct_threshold=args.pct_threshold, expr_cutoff=args.expr_cutoff,
+                batch_key=BATCH_KEY, logger=logger
+            )
         logger.info("DE unions: ligands=%d, receptors=%d, TFs=%d",
-                    len(de_ligands), len(de_receptors), len(de_tfs))
+                    len(ligands), len(receptors), len(tfs))
 
-        # Widely expressed target genes (across batches)
-        _, tgs = identify_widely_expressed_genes_for_cell_types(
-            st_adata, gene_names, cell_types=receivers, groupby=ANNOTATION_KEY,
-            pct_threshold=args.pct_threshold, expr_cutoff=args.expr_cutoff,
-            batch_key=BATCH_KEY, logger=logger
-        )
-        logger.info("Widely expressed target genes: %d", len(tgs))
-        combined = set().union(de_ligands, de_receptors, de_tfs, tgs)  # FIX: use set union, not +
+        # logger.info("Widely expressed target genes: %d", len(tgs))
+        combined = set().union(ligands, receptors, tfs, tgs)  # FIX: use set union, not +
 
         if args.non_constitutive:
             logger.info("Filtering non-constitutive genes...")
@@ -653,25 +678,33 @@ def main():
                 groupby=ANNOTATION_KEY,
                 logger=logger
             )
-            filtered_ligands = filtered_genes.intersection(de_ligands)
-            filtered_receptors = filtered_genes.intersection(de_receptors)
-            filtered_tfs = filtered_genes.intersection(de_tfs)
-            filtered_tgs = filtered_genes.intersection(tgs)
+            if not args.customized_ligand:
+                filtered_ligands = filtered_genes.intersection(ligands)
+                ligands = list(filtered_ligands)
+            if not args.customized_receptor:
+                filtered_receptors = filtered_genes.intersection(receptors)
+                receptors = list(filtered_receptors)
+            if not args.customized_tf:
+                filtered_tfs = filtered_genes.intersection(tfs)
+                tfs = list(filtered_tfs)
+            if not args.customized_tg:
+                filtered_tgs = filtered_genes.intersection(tgs)
+                tgs = list(filtered_tgs)
 
             # Unify the names
-            ligands = list(filtered_ligands)
-            receptors = list(filtered_receptors)
-            tfs = list(filtered_tfs)
-            tgs = list(filtered_tgs)
             logger.info(
                 "After filtering: ligands=%d, receptors=%d, TFs=%d, TGs=%d, lr_pairs=%d",
-                len(filtered_ligands), len(filtered_receptors), len(filtered_tfs), len(filtered_tgs), len(filtered_ligands) * len(filtered_receptors)
+                len(ligands), len(receptors), len(tfs), len(tgs), len(ligands) * len(receptors)
             )
         else:
-            ligands = list(de_ligands)
-            receptors = list(de_receptors)
-            tfs = list(de_tfs)
-            tgs = list(tgs)
+            if not args.customized_ligand:
+                ligands = list(ligands)
+            if not args.customized_receptor:
+                receptors = list(receptors)
+            if not args.customized_tf:
+                tfs = list(tfs)
+            if not args.customized_tg:
+                tgs = list(tgs)
     else:
         # Skip DE entirely, just copy and past the lr information to local.
         tgs = list(set(st_adata.var_names) - set(ligands) - set(receptors) - set(tfs)) # Set TGs to be all genes other than LR and TFs.
@@ -747,7 +780,6 @@ def main():
     adata_dp.uns["iroot"] = iroot_idx
     # sc.tl.dpt(adata_dp)
     sc.settings.figdir = FIG_SAVE  # set directory once
-    sc.pl.umap(adata_dp, color=ANNOTATION_KEY, save="umap_annotation.png")  # Normalize gene_expressions
     sc.pl.umap(adata_dp, color=PT_KEY, save="umap_pseudotime.png")    # Normalize gene_expressions
     normalize_genes(adata_dp)
     normalize_genes(adata_neighbor)
@@ -806,7 +838,9 @@ def main():
         tfs=tfs,
         tgs=tgs,
         lrs=lr_var_names,
-        logger=logger
+        logger=logger,
+        senders=senders,
+        receivers=receivers
     )
 
     logger.info("Pipeline completed successfully.")

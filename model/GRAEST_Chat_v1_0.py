@@ -409,18 +409,6 @@ def masked_mse(y_true, y_pred, sentinel=-99999.0):
     denom = tf.maximum(tf.reduce_sum(tf.cast(mask, y_pred.dtype)), 1.0)
     return tf.reduce_sum(tf.square(diff)) / denom
 
-# def masked_mse(label, pred):
-#   mask = label != -99999
-#   loss_object = tf.keras.losses.MeanSquaredError(
-#     name='mean_squared_error')
-#   loss = loss_object(label, pred)
-#
-#   mask = tf.cast(mask, dtype=loss.dtype)
-#   loss *= mask
-#
-#   loss = tf.reduce_sum(loss)/tf.reduce_sum(mask)
-#   return loss
-
 def l1_reg_loss(y_true, y_pred):
     # Regularization-style L1: ignores y_true on purpose
     del y_true
