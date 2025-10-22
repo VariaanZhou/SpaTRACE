@@ -1,29 +1,30 @@
 # GREATEST_Chat
 ## Introduction
 
-**GREATEST_Chat** (Granger REcurrent AuToEncoder for SpatialTemporal transcriptomics) is a pathway-free tool for **cell–cell communication (CCC) inference**, designed specifically for **developmental spatial transcriptomics** (or spatio-temporal transcriptomics) datasets.  
+**GREATEST_Chat** (Granger REcurrent AuToEncoder for SpatialTemporal transcriptomics) is a pathway-free tool for **cell–cell communication (CCC)** inference, specifically designed for developmental spatial transcriptomics (spatio-temporal transcriptomics) datasets. It captures cellular dynamics across different developmental stages as well as interactions within the surrounding microenvironment, enabling efficient CCC inference in undercharacterized tissues or species.
 
 It enables:  
 - **Cell–cell communication analysis**  
 - **Gene regulatory network reconstruction**  
-- **Ligand–receptor pair prediction**  
+- **Ligand–receptor pair prediction**
 
+![Pipeline Overview](./assets/Method_Overview.png)
 ### How it works
-GREATEST_Chat is a recurrent autoencoder trained on sampled cell trajectories from pseudotime. By learning the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene**, it captures semantic representations of cellular interactions. These embeddings can then be used to:  
-- Reconstruct ligand–receptor interaction networks  
-- Infer gene regulatory networks via score matching between LR/TF and TG embeddings  
+
+**GREATEST_Chat** is a recurrent autoencoder trained on sampled cell trajectories from pseudotime. By modeling the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene** under **L1 regularization**, the model learns embeddings that capture semantic representations of cellular interactions.  
+
+These embeddings can then be used to:  
+- Reconstruct **ligand–receptor → target gene** relationships  
+- Infer **TF → target gene** regulatory links via score matching  
+- Build integrated **cell–cell communication and gene regulatory networks**
 
 ### What this repo provides
 - A **user-friendly interface** to run GREATEST_Chat on your own datasets  
 - **Documentation and examples** from our experiments on:
   - Simulation Datasets (and their generation code)  
   - Mouse midbrain development  
-  - Axolotl brain regeneration  
-
-
-
-## Pipeline Overview
-
+  - Axolotl brain regeneration
+  
 The workflow is organized into a **three-step pipeline**:
 
 1. **Data preparation**: Taken an .h5ad data and given lists of ligands, receptors, TFs as inputs, it automatically extract DE genes, perform pseudotime analysis, and prepare input data for the model training.
@@ -32,25 +33,26 @@ The workflow is organized into a **three-step pipeline**:
 
 
 ---
+## Pipeline Overview
 
-## 📂 Pipeline Overview
-
-The pipeline consists of two main scripts:
+The pipeline is organized into **three main scripts**:
 
 1. **`run_preprocess.py`**  
-   - Takes annotated single-cell `AnnData` objects as input.  
-   - Builds spatial/temporal neighborhoods, metacells, and sampled paths.  
+   - Constructs spatial and temporal neighborhoods, metacells, and sampled trajectories.  
    - Extracts ligand, receptor, TF, and target features along these paths.  
-   - Saves compact `.npz` bundles for training/testing.
+   - Outputs compact `.npz` bundles for model training and testing.  
 
 2. **`run_experiment.py`**  
-   - Consumes the `.npz` bundles.  
-   - Trains the GRAEST_Chat transformer model.  
-   - Saves learned weights, embeddings, and attentions.
+   - Trains the **GREATEST_Chat** transformer model on the preprocessed data.  
+   - Produces learned weights, embeddings, and attention maps.  
+
+3. **`run_inference.py`**  
+   - Performs gene-level inference of regulatory relationships (**LR → TG**, **TF → TG**, and **L → R**).  
+   - Aggregates gene-level and spatial information to predict **cellular-level interactions**.  
 
 ---
 
-## 🛠️ Requirements
+## Requirements
 
 - Python 3.9+
 - Packages:
@@ -65,16 +67,52 @@ The pipeline consists of two main scripts:
 
 ---
 
-## 🚀 Step 1: Preprocessing
+## Step 0: Input Preparation
 
+Before running the pipeline, you must prepare a list of input files under a working directory and follow our naming convention. You need to define a **project name** (`project_name`), abd all input files should be named using this prefix.
+
+### Required Input Files
+The pipeline accepts `.h5ad` files as input. Please prepare the following **two stRNA datasets**:
+
+- **`{project_name}_sc_adata.h5ad`**  
+  Contains all *receiver cells*, their expression profiles, and pseudotime. If available, also include the UMAP and PCA. 
+- **`{project_name}_st_adata.h5ad`**  
+  Contains *all cells* (both sender and receiver) with associated expression profiles and spatial information.  
+
+### Gene Lists
+Provide text files containing your genes of interest:  
+
+- **`{project_name}_ligand.txt`** — list of ligands  
+- **`{project_name}_receptor.txt`** — list of receptors  
+- **`{project_name}_tf.txt`** — list of transcription factors  
+- **(Optional)** **`{project_name}_tg.txt`** — list of target genes (if omitted, the model will automatically infer target genes)  
+
+### Cell Type Lists
+Specify the cell types relevant to your analysis:  
+
+- **`{project_name}_receiver.txt`** — list of receiver cell types  
+- **(Optional)** **`{project_name}_sender.txt`** — list of sender cell types (if omitted, the model will use spatially enriched genes surrounding the receiver cells)  
+
+## Step 1: Preprocessing
+With the input data provided as in Step 0, our model will preprocess the data and sample cell trajectories as the input of model training. Please provide the following parameters:
 ### Run
 ```bash
 python run_preprocess.py \
-  --input my_input.h5ad \
-  --out_dir ./outputs_preprocess \
-  --project MyProj \
+  --data_dir ./inputs \
+  --project_name MyProj \
+  --batch_key batch \
+  --annotation_key annotation \
+  --pt_key dpt_pseudotime \
+  --sp_key spatial \
   --n_neighbors 15 \
-  --len_path 3
+  --path_len 3 \
+  --num_repeats 10 \
+  --k_primary 5 \
+  --radius 50 \
+  --z_threshold 3.0 \
+  --n_perm 1000 \
+  --log_transform \
+  --n_jobs -1
 ```
 ## Outputs
 ```bash
@@ -98,7 +136,7 @@ outputs_preprocess/
     ├── all_paths_test.npy
     └── fig/ (diagnostic plots)
 ```
-## 🚀 Step 2: Training & Experiment
+## Step 2: Training & Experiment
 ### Run
 ```bash
 python run_experiment.py \
