@@ -33,7 +33,7 @@ The workflow is organized into a **three-step pipeline**:
 
 
 ---
-## 📂 Pipeline Overview
+## Pipeline Overview
 
 The pipeline is organized into **three main scripts**:
 
@@ -52,7 +52,7 @@ The pipeline is organized into **three main scripts**:
 
 ---
 
-## 🛠️ Requirements
+## Requirements
 
 - Python 3.9+
 - Packages:
@@ -67,7 +67,7 @@ The pipeline is organized into **three main scripts**:
 
 ---
 
-## 🚀 Step 1: Preprocessing
+## Step 1: Preprocessing
 
 ### Run
 ```bash
@@ -100,7 +100,7 @@ outputs_preprocess/
     ├── all_paths_test.npy
     └── fig/ (diagnostic plots)
 ```
-## 🚀 Step 2: Training & Experiment
+## Step 2: Training & Experiment
 ### Run
 ```bash
 python run_experiment.py \
