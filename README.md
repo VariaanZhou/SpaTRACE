@@ -94,24 +94,22 @@ Specify the cell types relevant to your analysis:
 - **(Optional)** **`{project_name}_sender.txt`** — list of sender cell types (if omitted, the model will use spatially enriched genes surrounding the receiver cells)  
 
 ## Step 1: Preprocessing
-With the input data provided as in Step 0, our model will preprocess the data and sample cell trajectories as the input of model training. Please provide the following parameters:
+With the input data provided as in Step 0, our model will preprocess the data and sample cell trajectories as the input of model training. Please provide the following parameters (Here we use simulation data 1 as an example):
 ### Run
 ```bash
 python run_preprocess.py \
   --data_dir ./inputs \
   --project_name MyProj \
   --batch_key batch \
-  --annotation_key annotation \
+  --annotation_key 'Cell Types' \
   --pt_key dpt_pseudotime \
   --sp_key spatial \
-  --n_neighbors 15 \
+  --n_neighbors 10 \
   --path_len 3 \
   --num_repeats 10 \
   --k_primary 5 \
-  --radius 50 \
-  --z_threshold 3.0 \
-  --n_perm 1000 \
-  --log_transform \
+  --skip_de \
+  --radius 1 \
   --n_jobs -1
 ```
 ## Outputs
