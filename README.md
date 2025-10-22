@@ -245,13 +245,12 @@ This script performs several levels of analysis on GRAEST outputs:
 python run_inference.py \
   --data_dir ./experiments/simulation \
   --input_dir ./experiments/simulation/results \
-  --out_dir ./experiments/simulation/inference \
+  --out_dir ./experiments/simulation/analysis \
   --project_name simulation \
   --batch_key batch \
   --groupby 'Cell Types' \
-  --stages E12.5 E14.5 E16.5 \
-  --filter_threshold 0.01 \
-  --radius 50 \
+  --filter_threshold 0.2 \
+  --radius 1 \
   --topk_per_col 100 \
   --top_n_bar 20 \
   --dpi 300 \
