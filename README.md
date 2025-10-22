@@ -22,7 +22,7 @@ GREATEST_Chat is a recurrent autoencoder trained on sampled cell trajectories fr
 
 
 
-## ![Pipeline Overview](./assets/pipeline_overview.png)
+## ![Pipeline Overview](./assets/Method Overview.png)
 
 The workflow is organized into a **three-step pipeline**:
 
