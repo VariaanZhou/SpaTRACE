@@ -1,4 +1,6 @@
 # GREATEST_Chat
+![Pipeline Overview](./assets/Method_Overview.png)
+
 ## Introduction
 
 **GREATEST_Chat** (Granger REcurrent AuToEncoder for SpatialTemporal transcriptomics) is a pathway-free tool for **cell–cell communication (CCC) inference**, designed specifically for **developmental spatial transcriptomics** (or spatio-temporal transcriptomics) datasets.  
@@ -7,7 +9,7 @@ It enables:
 - **Cell–cell communication analysis**  
 - **Gene regulatory network reconstruction**  
 - **Ligand–receptor pair prediction**  
-![Pipeline Overview](./assets/Method_Overview.png)
+
 ### How it works
 GREATEST_Chat is a recurrent autoencoder trained on sampled cell trajectories from pseudotime. By learning the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene**, it captures semantic representations of cellular interactions. These embeddings can then be used to:  
 - Reconstruct ligand–receptor interaction networks  
