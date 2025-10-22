@@ -11,8 +11,7 @@ It enables:
 ![Pipeline Overview](./assets/Method_Overview.png)
 ### How it works
 
-**GREATEST_Chat** is a recurrent autoencoder trained on sampled cell trajectories from pseudotime.  
-By modeling the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene** under **L1 regularization**, the model learns embeddings that capture semantic representations of cellular interactions.  
+**GREATEST_Chat** is a recurrent autoencoder trained on sampled cell trajectories from pseudotime. By modeling the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene** under **L1 regularization**, the model learns embeddings that capture semantic representations of cellular interactions.  
 
 These embeddings can then be used to:  
 - Reconstruct **ligand–receptor → target gene** relationships  
@@ -38,21 +37,22 @@ The workflow is organized into a **three-step pipeline**:
 
 
 ---
-
 ## 📂 Pipeline Overview
 
-The pipeline consists of two main scripts:
+The pipeline is organized into **three main scripts**:
 
 1. **`run_preprocess.py`**  
-   - Takes annotated single-cell `AnnData` objects as input.  
-   - Builds spatial/temporal neighborhoods, metacells, and sampled paths.  
+   - Constructs spatial and temporal neighborhoods, metacells, and sampled trajectories.  
    - Extracts ligand, receptor, TF, and target features along these paths.  
-   - Saves compact `.npz` bundles for training/testing.
+   - Outputs compact `.npz` bundles for model training and testing.  
 
 2. **`run_experiment.py`**  
-   - Consumes the `.npz` bundles.  
-   - Trains the GRAEST_Chat transformer model.  
-   - Saves learned weights, embeddings, and attentions.
+   - Trains the **GREATEST_Chat** transformer model on the preprocessed data.  
+   - Produces learned weights, embeddings, and attention maps.  
+
+3. **`run_inference.py`**  
+   - Performs gene-level inference of regulatory relationships (**LR → TG**, **TF → TG**, and **L → R**).  
+   - Aggregates gene-level and spatial information to predict **cellular-level interactions**.  
 
 ---
 
