@@ -145,7 +145,7 @@ def main():
 
     # IO + data
     parser.add_argument(
-        "-i", "--input_dir", required=True, type=str,
+        "-d", "--data_dir", required=True, type=str,
         help="Directory containing your project, should be the same directory as run_preprocess.py"
     )
     parser.add_argument(
@@ -172,18 +172,12 @@ def main():
     # Export / inference controls
     parser.add_argument("--infer_batch_size", type=int, default=16,
                         help="Batch size for inference/exports")
-    parser.add_argument("--save_attentions", dest="save_attentions", action="store_true", default=False,
+    parser.add_argument("--save_percell_attentions", dest="save_attentions", action="store_true", default=False,
                         help="Save percell attention matrices (default: True)")
-    parser.add_argument("--no-save_attentions", dest="save_attentions", action="store_false",
-                        help="Disable saving attention matrices")
-    parser.add_argument("--save_visuals", dest="save_visuals", action="store_true", default=True,
+    parser.add_argument("--save_visuals", dest="save_visuals", action="store_true", default=False,
                         help="Save PNG previews of attention matrices (default: True)")
-    parser.add_argument("--no-save_visuals", dest="save_visuals", action="store_false",
-                        help="Disable PNG previews")
     parser.add_argument("--save_full_weights", dest="save_full_weights", action="store_true", default=False,
                         help="Save full dense attention matrices (default: False = top-k sparse)")
-    parser.add_argument("--no-save_full_weights", dest="save_full_weights", action="store_false",
-                        help="Save sparse top-k per row (recommended)")
     parser.add_argument("--topk_per_row", type=int, default=100, help="Top-k per row when saving sparse")
     parser.add_argument("--dtype_on_disk", type=str, choices=["float16", "float32"], default="float16",
                         help="Disk dtype for exported arrays")
