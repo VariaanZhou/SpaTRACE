@@ -98,8 +98,8 @@ With the input data provided as in Step 0, our model will preprocess the data an
 ### Run
 ```bash
 python run_preprocess.py \
-  --data_dir ./inputs \
-  --project_name MyProj \
+  --data_dir ./experiments/simulation \
+  --project_name simulation \
   --batch_key batch \
   --annotation_key 'Cell Types' \
   --pt_key dpt_pseudotime \
@@ -111,7 +111,23 @@ python run_preprocess.py \
   --skip_de \
   --radius 1 \
   --n_jobs -1
-```
+
+## Arguments explained
+
+- `--data_dir` – working directory where you saved the input files.  
+- `--project_name` – project name (also used as the base filename).  
+- `--batch_key` – column in `obs` storing batch info.  
+- `--annotation_key` – column in `obs` with cell type annotations.  
+- `--pt_key` – pseudotime key (e.g., `dpt_pseudotime`).  
+- `--sp_key` – key in `.obsm` for spatial coordinates.  
+- `--n_neighbors` – number of neighbors to aggregate metacells (default: 10).  
+- `--path_len` – sampled path length (default: 3).  
+- `--num_repeats` – number of sampling paths for each metacell (default: 10).  
+- `--k_primary` – closest *k* temporal neighbors considered as potential descendants (default: 5).  
+- `--skip_de` – skip the differential expression step; use this if you want to include all ligands, receptors, TFs, and TGs directly.  
+- `--radius` – neighborhood radius (default: 50; here set to 1).  
+- `--n_jobs` – number of parallel tasks (default: `-1` uses all available CPUs).  
+
 ## Outputs
 ```bash
 outputs_preprocess/
