@@ -67,8 +67,36 @@ The pipeline is organized into **three main scripts**:
 
 ---
 
-## Step 1: Preprocessing
+## Step 0: Input Preparation
 
+Before running the pipeline, you must define a **project name** (`project_name`).  
+All input files should be named using this prefix.
+
+### Required Input Files
+The pipeline accepts `.h5ad` files as input. Please prepare the following **two stRNA datasets**:
+
+- **`{project_name}_sc_adata.h5ad`**  
+  Contains all *receiver cells* and their pseudotime.  
+- **`{project_name}_st_adata.h5ad`**  
+  Contains *all cells* (both sender and receiver) with associated spatial information.  
+
+### Gene Lists
+Provide text files containing your genes of interest:  
+
+- **`{project_name}_ligand.txt`** — list of ligands  
+- **`{project_name}_receptor.txt`** — list of receptors  
+- **`{project_name}_tf.txt`** — list of transcription factors  
+- **(Optional)** **`{project_name}_tg.txt`** — list of target genes (if omitted, the model will automatically infer target genes)  
+
+### Cell Type Lists
+Specify the cell types relevant to your analysis:  
+
+- **`{project_name}_receiver.txt`** — list of receiver cell types  
+- **(Optional)** **`{project_name}_sender.txt`** — list of sender cell types (if omitted, the model will use spatially enriched genes surrounding the receiver cells)  
+
+## Step 1: Preprocessing
+The Preprocessing step takes inputs the following files:
+- 
 ### Run
 ```bash
 python run_preprocess.py \
