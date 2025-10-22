@@ -23,12 +23,8 @@ These embeddings can then be used to:
 - **Documentation and examples** from our experiments on:
   - Simulation Datasets (and their generation code)  
   - Mouse midbrain development  
-  - Axolotl brain regeneration  
-
-
-
-
-
+  - Axolotl brain regeneration
+  
 The workflow is organized into a **three-step pipeline**:
 
 1. **Data preparation**: Taken an .h5ad data and given lists of ligands, receptors, TFs as inputs, it automatically extract DE genes, perform pseudotime analysis, and prepare input data for the model training.
