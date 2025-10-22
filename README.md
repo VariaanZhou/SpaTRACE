@@ -111,9 +111,8 @@ python run_preprocess.py \
   --skip_de \
   --radius 1 \
   --n_jobs -1
-
+```
 ## Arguments explained
-
 - `--data_dir` – working directory where you saved the input files.  
 - `--project_name` – project name (also used as the base filename).  
 - `--batch_key` – column in `obs` storing batch info.  
@@ -129,28 +128,38 @@ python run_preprocess.py \
 - `--n_jobs` – number of parallel tasks (default: `-1` uses all available CPUs).  
 
 ## Outputs
+## Output directory structure
+
 ```bash
 outputs_preprocess/
-└── data_triple/
-    ├── MyProj_tensors_train.npz
-    ├── MyProj_tensors_test.npz
-    ├── recep_array_train.npy
-    ├── ligand_array_train.npy
-    ├── tf_array_train.npy
-    ├── target_array_train.npy
-    ├── label_array_train.npy
-    ├── lr_pair_array_train.npy
-    ├── all_paths_train.npy
-    ├── recep_array_test.npy
-    ├── ligand_array_test.npy
-    ├── tf_array_test.npy
-    ├── target_array_test.npy
-    ├── label_array_test.npy
-    ├── lr_pair_array_test.npy
-    ├── all_paths_test.npy
-    └── fig/ (diagnostic plots)
+├── data_triple/
+│   ├── MyProj_tensors_train.npz         # bundled training tensors
+│   ├── MyProj_tensors_test.npz          # bundled testing tensors
+│   ├── recep_array_train.npy            # receptor expressions (train)
+│   ├── ligand_array_train.npy           # ligand expressions (train)
+│   ├── tf_array_train.npy               # transcription factor expressions (train)
+│   ├── target_array_train.npy           # target gene expressions (train)
+│   ├── label_array_train.npy            # labels (train)
+│   ├── lr_pair_array_train.npy          # ligand–receptor pair info (train)
+│   ├── all_paths_train.npy              # sampled paths (train)
+│   ├── recep_array_test.npy             # receptor expressions (test)
+│   ├── ligand_array_test.npy            # ligand expressions (test)
+│   ├── tf_array_test.npy                # transcription factor expressions (test)
+│   ├── target_array_test.npy            # target gene expressions (test)
+│   ├── label_array_test.npy             # labels (test)
+│   ├── lr_pair_array_test.npy           # ligand–receptor pair info (test)
+│   ├── all_paths_test.npy               # sampled paths (test)
+│   └── fig/                             # diagnostic plots
+├── MyProj_ligands.txt                   # identified ligands
+├── MyProj_receptors.txt                 # identified receptors
+├── MyProj_tfs.txt                       # identified transcription factors
+├── MyProj_tgs.txt                       # identified target genes
+├── MyProj_receivers.txt                 # receiver cell types
+└── MyProj_senders.txt                   # sender cell types
+
 ```
 ## Step 2: Training & Experiment
+After extracting essential genes and sampling the cell trajectories, 
 ### Run
 ```bash
 python run_experiment.py \
