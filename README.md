@@ -220,3 +220,73 @@ outputs_experiment/
         ├── attn_percell_lr_topk_batch_0000.npz
         └── ...
 ```
+
+## Step 3: Inference & Post-Processing
+
+After training, you can run `run_inference.py` to aggregate and interpret the results.  
+This script performs several levels of analysis on GRAEST outputs:
+
+- **Gene-level aggregation**:  
+  Aggregates per-cell embeddings into per-stage TF→TG and LR→TG interaction intensities.  
+  Summarizes global attentions into LR intensities.
+
+- **Cellular-level aggregation**:  
+  Combines stage-specific matrices into cell-type–to–cell-type communication intensities.  
+  Generates heatmaps and CSVs for sender–receiver pairs.
+
+- **Visualization (optional)**:  
+  Saves heatmaps, bar plots, and other figures for global and per-cell interactions.
+
+---
+
+### Run
+
+```bash
+python run_inference.py \
+  --data_dir ./experiments/simulation \
+  --input_dir ./experiments/simulation/results \
+  --out_dir ./experiments/simulation/inference \
+  --project_name simulation \
+  --batch_key batch \
+  --groupby 'Cell Types' \
+  --stages E12.5 E14.5 E16.5 \
+  --filter_threshold 0.01 \
+  --radius 50 \
+  --topk_per_col 100 \
+  --top_n_bar 20 \
+  --dpi 300 \
+  --export_csv
+```
+## Arguments explained
+
+- `--data_dir` – directory containing the original `.h5ad` and preprocessed project folder (same as used in `run_preprocess.py`).  
+- `--input_dir` – directory with `embeddings/` and `attentions/` (output of `run_experiment.py`).  
+- `--out_dir` – directory to store inference results (`gene_interactions/`, `cell_interactions/`, figures, CSVs).  
+- `--project_name` – project prefix (e.g., `MyProj`), required to locate gene lists.  
+- `--batch_key` – column in metadata representing developmental stage or batch.  
+- `--groupby` – `obs` column used for cell-type grouping in cellular inference.  
+- `--stages` – ordered list of stages to analyze (e.g., `E12.5 E14.5 E16.5`).  
+- `--filter_threshold` – minimum intensity filter threshold (default: 0.01).  
+- `--radius` – spatial neighbor radius (in microns) for cellular inference.  
+- `--topk_per_col` – top-K entries per column for filtering during per-cell aggregation.  
+- `--top_n_bar` – top-N entries shown in LR bar plots.  
+- `--no_heatmaps` – disable generation of PNG heatmaps.  
+- `--skip_percell` – skip per-cell aggregation and plots.  
+- `--skip_attentions` – do not recompute per-cell intensities; load from disk instead.  
+- `--export_csv` – save combined cellular communication matrices as CSV.  
+- `--figsize` / `--dpi` – control figure size and resolution.  
+
+inference/
+├── gene_interactions/
+│   ├── global_LR_intensity.csv
+│   ├── percell_LR_stage_E12.5.csv
+│   ├── percell_LR_stage_E14.5.csv
+│   └── ...
+├── cell_interactions/
+│   ├── SenderA__to__ReceiverB__combined_E12.5_E14.5.csv
+│   ├── SenderB__to__ReceiverC__combined_E16.5.csv
+│   └── ...
+└── figures/
+    ├── lr_heatmaps/
+    ├── tf_heatmaps/
+    └── combined_stage_plots/
