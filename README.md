@@ -159,38 +159,63 @@ outputs_preprocess/
 
 ```
 ## Step 2: Training & Experiment
-After extracting essential genes and sampling the cell trajectories, 
+
+After extracting essential genes and sampling the cell trajectories, you can call `run_experiment.py` to train the recurrent autoencoder on the data.  
+The model will extract embeddings, model weights, and global attention scores between drivers and TGs, saving them under the user-provided output directory.  
+If specified, per-cell attentions and visualizations can also be saved.  
+
+Here we use the simulation data as an example.
+
 ### Run
+
 ```bash
 python run_experiment.py \
-  --input_dir ./outputs_preprocess/data_triple \
-  --project MyProj \
-  --out_dir ./outputs_experiment \
+  --data_dir ./experiments/simulation \
+  --project simulation \
+  --out_dir ./experiments/simulation/results \
+  --d_model 64 \
+  --dff 64 \
+  --num_heads 3 \
   --epochs 50 \
   --tlength 3 \
-  --batch_size 16
-```
+  --batch_size 16 \
+  --save_visuals \
+  --save_percell_attentions
+
+## Arguments explained
+
+- `--data_dir` – same working directory used in `run_preprocess.py`.  
+- `--project` – project name (must match the preprocess step).  
+- `--out_dir` – directory for experiment outputs.  
+- `--d_model` – embedding size for the model.  
+- `--dff` – hidden layer size in the feedforward block.  
+- `--num_heads` – number of attention heads.  
+- `--epochs` – number of training epochs.  
+- `--tlength` – trajectory path length.  
+- `--batch_size` – batch size for training.  
+- `--save_visuals` – save driver → TG attention visualizations.  
+- `--save_percell_attentions` – save per-cell attention matrices.  
 
 ## Outputs
 ```bash
 outputs_experiment/
-├── weights/
+├── weights/                        # trained model weights
 │   └── weights.weights.h5
 ├── embeddings/
-│   ├── global_embeddings/
+│   ├── global_embeddings/           # global embeddings across cells
 │   │   ├── embeddings_batch_0000.npz
 │   │   ├── embeddings_batch_0001.npz
 │   │   └── ...
-│   └── percell_embeddings/
+│   └── percell_embeddings/          # per-cell embeddings
 │       ├── embeddings_batch_0000.npz
 │       ├── embeddings_batch_0001.npz
 │       └── ...
 └── attentions/
-    ├── global_attentions/
+    ├── global_attentions/           # top-k global attention scores
     │   ├── attn_global_tf_topk_batch_0000.npz
     │   ├── attn_global_lr_topk_batch_0000.npz
     │   └── ...
-    └── percell_attentions/
+    └── percell_attentions/          # per-cell attention scores
         ├── attn_percell_tf_topk_batch_0000.npz
         ├── attn_percell_lr_topk_batch_0000.npz
         └── ...
