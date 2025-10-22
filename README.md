@@ -69,16 +69,15 @@ The pipeline is organized into **three main scripts**:
 
 ## Step 0: Input Preparation
 
-Before running the pipeline, you must define a **project name** (`project_name`).  
-All input files should be named using this prefix.
+Before running the pipeline, you must prepare a list of input files under a working directory and follow our naming convention. You need to define a **project name** (`project_name`), abd all input files should be named using this prefix.
 
 ### Required Input Files
 The pipeline accepts `.h5ad` files as input. Please prepare the following **two stRNA datasets**:
 
 - **`{project_name}_sc_adata.h5ad`**  
-  Contains all *receiver cells* and their pseudotime.  
+  Contains all *receiver cells*, their expression profiles, and pseudotime. If available, also include the UMAP and PCA. 
 - **`{project_name}_st_adata.h5ad`**  
-  Contains *all cells* (both sender and receiver) with associated spatial information.  
+  Contains *all cells* (both sender and receiver) with associated expression profiles and spatial information.  
 
 ### Gene Lists
 Provide text files containing your genes of interest:  
@@ -95,16 +94,25 @@ Specify the cell types relevant to your analysis:
 - **(Optional)** **`{project_name}_sender.txt`** — list of sender cell types (if omitted, the model will use spatially enriched genes surrounding the receiver cells)  
 
 ## Step 1: Preprocessing
-The Preprocessing step takes inputs the following files:
-- 
+With the input data provided as in Step 0, our model will preprocess the data and sample cell trajectories as the input of model training. Please provide the following parameters:
 ### Run
 ```bash
 python run_preprocess.py \
-  --input my_input.h5ad \
-  --out_dir ./outputs_preprocess \
-  --project MyProj \
+  --data_dir ./inputs \
+  --project_name MyProj \
+  --batch_key batch \
+  --annotation_key annotation \
+  --pt_key dpt_pseudotime \
+  --sp_key spatial \
   --n_neighbors 15 \
-  --len_path 3
+  --path_len 3 \
+  --num_repeats 10 \
+  --k_primary 5 \
+  --radius 50 \
+  --z_threshold 3.0 \
+  --n_perm 1000 \
+  --log_transform \
+  --n_jobs -1
 ```
 ## Outputs
 ```bash
