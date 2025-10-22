@@ -139,7 +139,7 @@ def merge_metacell_with_batch(
 
 
 
-def save_metacell_membership_and_batch(membership, batch_map, out_dir, project):
+def save_metacell_membership_and_batch(membership, batch_map, out_dir, project, batch_key):
     """
     Save membership and batch_map dictionaries to CSV.
 
@@ -163,7 +163,7 @@ def save_metacell_membership_and_batch(membership, batch_map, out_dir, project):
 
     # batch map: one row per metacell
     batch_df = pd.DataFrame([
-        {"metacell": mc, "batch": batch}
+        {"metacell": mc, batch_key: batch}
         for mc, batch in batch_map.items()
     ])
     batch_map_file = os.path.join(out_dir, f"{project}_metacell_batchmap.csv")
@@ -222,7 +222,9 @@ def run_umap(
     n_neighbors=30,
     min_dist=0.1,
     *,
-    drop_genes_for_umap: Optional[List[str]] = None  # NEW
+    drop_genes_for_umap: Optional[List[str]] = None,
+    use_hvg = True,
+    n_top_genes = 5000,
 ):
     """
     Run PCA + UMAP on a temporary view:
@@ -243,8 +245,10 @@ def run_umap(
     if drop_genes_for_umap:
         drop_set = set(drop_genes_for_umap)
         keep_mask &= ~np.isin(var_names, list(drop_set))
-
     Xv = X[:, keep_mask]
+
+    if use_hvg:
+        sc.pp.highly_variable_genes(adata, batch_key='batch', flavor='seurat_v3', n_top_genes=n_top_genes)
 
     # Compute PCA/knn/UMAP on the temporary view
     # Stuff Xv into obsm for sc.pp.neighbors(use_rep='X_tmp')
@@ -368,28 +372,30 @@ def build_neighbor_and_lr(
     lr_var_names = [f"{lig}_to_{rec}" for lig in present_lig for rec in present_rec]
     adata_lr = sc.AnnData(X=X_lr)
     adata_lr.var_names = lr_var_names
+    adata_lr.obs_names = adata_all.obs_names
+
     # Start neighbor output as a full copy to preserve meta
 
 
-    if simulation:
-        # Align both to adata_dp.obs_names (no deep copy of var)
-        adata_neighbor = adata_dp.copy()
-        adata_lr = adata_lr[adata_dp.obs_names, :]
-        adata_lr.obs = adata_dp.obs.copy()
-        adata_lr.uns = adata_dp.uns
-        adata_lr.obsm = adata_dp.obsm
-        adata_lr.obsp = adata_dp.obsp
+    # if simulation:
+    # Align both to adata_dp.obs_names (no deep copy of var)
+    adata_neighbor = adata_dp.copy()
+    adata_lr = adata_lr[adata_dp.obs_names, :]
+    adata_lr.obs = adata_dp.obs.copy()
+    adata_lr.uns = adata_dp.uns
+    adata_lr.obsm = adata_dp.obsm
+    adata_lr.obsp = adata_dp.obsp
 
-    else:
-        adata_neighbor = adata_all.copy()
-        adata_lr.obs = adata_all.obs.copy()
-        adata_lr.uns = adata_all.uns
-        adata_lr.obsm = adata_all.obsm
-        adata_lr.obsp = adata_all.obsp
-
-        # Align both to adata_dp.obs_names (no deep copy of var)
-        adata_neighbor = adata_neighbor[adata_dp.obs_names, :]
-        adata_lr = adata_lr[adata_dp.obs_names, :]
+    # else:
+    #     adata_neighbor = adata_all.copy()
+    #     adata_lr.obs = adata_all.obs.copy()
+    #     adata_lr.uns = adata_all.uns
+    #     adata_lr.obsm = adata_all.obsm
+    #     adata_lr.obsp = adata_all.obsp
+    #
+    #     # Align both to adata_dp.obs_names (no deep copy of var)
+    #     adata_neighbor = adata_neighbor[adata_dp.obs_names, :]
+    #     adata_lr = adata_lr[adata_dp.obs_names, :]
 
     return adata_neighbor, adata_lr, lr_var_names, present_lig, present_rec
 
