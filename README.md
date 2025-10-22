@@ -10,9 +10,14 @@ It enables:
 
 ![Pipeline Overview](./assets/Method_Overview.png)
 ### How it works
-GREATEST_Chat is a recurrent autoencoder trained on sampled cell trajectories from pseudotime. By learning the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene**, it captures semantic representations of cellular interactions. These embeddings can then be used to:  
-- Reconstruct ligand–receptor interaction networks  
-- Infer gene regulatory networks via score matching between LR/TF and TG embeddings  
+
+**GREATEST_Chat** is a recurrent autoencoder trained on sampled cell trajectories from pseudotime.  
+By modeling the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene** under **L1 regularization**, the model learns embeddings that capture semantic representations of cellular interactions.  
+
+These embeddings can then be used to:  
+- Reconstruct **ligand–receptor → target gene** relationships  
+- Infer **TF → target gene** regulatory links via score matching  
+- Build integrated **cell–cell communication and gene regulatory networks**
 
 ### What this repo provides
 - A **user-friendly interface** to run GREATEST_Chat on your own datasets  
