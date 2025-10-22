@@ -276,6 +276,7 @@ python run_inference.py \
 - `--export_csv` – save combined cellular communication matrices as CSV.  
 - `--figsize` / `--dpi` – control figure size and resolution.  
 
+```bash
 inference/
 ├── gene_interactions/
 │   ├── global_LR_intensity.csv
@@ -290,3 +291,4 @@ inference/
     ├── lr_heatmaps/
     ├── tf_heatmaps/
     └── combined_stage_plots/
+```
