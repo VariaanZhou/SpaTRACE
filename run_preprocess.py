@@ -478,10 +478,7 @@ def main():
                         help="obs column name for pseudotime (default: 'dpt_pseudotime').")
     parser.add_argument("--sp_key", default="spatial", type=str,
                         help="obsm key for spatial coordinates (default: 'spatial').")
-
     # Spatial enrichment
-    parser.add_argument("-s", "--sender", action='store_true', default=False,
-                        help="If the sender list is provided; optional, if provided, must provide the sender list under the file '{project_bane}_sender.txt' under the directory.")
     parser.add_argument("--batch_wise", action="store_true", default=False,
                         help="If set, run spatial enrichment per-batch; otherwise use all data.")
     parser.add_argument("-z", "--z_threshold", default=3.0, type=float,
@@ -510,6 +507,9 @@ def main():
                         help="Fraction of cell types allowed to be active before labeled constitutive (default: 0.8).")
     parser.add_argument("--expr_cutoff", default=0.0, type=float,
                         help="Expression cutoff for 'expressed' > cutoff (default: 0.0).")
+
+    parser.add_argument("--use_hvg", action='store_true', default=False, help='Use HVG for umap.(default: False).')
+    parser.add_argument("--n_top_genes", default = 5000, type = int, help="Top HVG genes kept.")
 
     # Path Sampling
     parser.add_argument("-l", "--path_len", default=3, type=int, help="Length of the sampled cell paths (default: 3).")
@@ -570,6 +570,7 @@ def main():
     TF_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_tf.txt')
     TG_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_tg.txt')
     RECEIVER_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_receiver.txt')
+    SENDER_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_sender.txt')
 
     # Load AnnData
     logger.info("Reading h5ad: %s", INPUT_scRNA_H5AD)
@@ -598,23 +599,31 @@ def main():
     receptors = gene_intersection(gene_names, RECEPTOR_FILE)
     tfs = gene_intersection(gene_names, TF_FILE)
     if args.customized_tg:
-        tgs = gene_intersection(gene_names, TG_FILE)
+        try:
+            # Try to access target gene file in the data directory
+            tgs = gene_intersection(gene_names, TG_FILE)
+        except:
+            raise(Exception("Please provide a valid tg file list!"))
     logger.info("Loaded gene sets: ligands=%d, receptors=%d, TFs=%d", len(ligands), len(receptors), len(tfs))
 
     # Read receivers & optional senders
     receivers = read_list_txt(RECEIVER_FILE, str)
+    try:
+        senders = read_list_txt(SENDER_FILE, str)
+    except FileNotFoundError:
+        senders = None
     verify_cell_types_exist(sc_adata, receivers, ANNOTATION_KEY)
     verify_cell_types_exist(st_adata, receivers, ANNOTATION_KEY)
     # verify sc_adata is a subset of st_adata
     logger.info("Receiver cell types: %s", receivers)
 
-    if args.sender:
-        SENDER_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_sender.txt')
-        senders = read_list_txt(SENDER_FILE, str)
+    if senders:
+    # If the senders have been detected in the data directory, then skip the spatial enrichment step.
         logger.info("Sender cell types provided in %s", SENDER_FILE)
         verify_cell_types_exist(st_adata, senders, ANNOTATION_KEY)
         logger.info("Sender cell types: %s", senders)
     else:
+        # Derive the sender cell types by spatial enrichment, save under the PROJECT.
         logger.info("No sender file provided; inferring via spatial enrichment (batch_wise=%s).", args.batch_wise)
         mode = 'per_batch' if args.batch_wise else 'all'
         senders = list(spatial_enrichment_senders(
@@ -631,39 +640,45 @@ def main():
 
         logger.info("Inferred sender cell types: %s", senders)
 
+    # All cell types of interest
     all_cell_types = list(set(senders + receivers))
     logger.debug("All involved cell types (senders ∪ receivers): %s", all_cell_types)
 
     if GET_DE:
-        # DE analysis
+        # DE analysis not skipped, will apply DE analysis to determine ligands, receptors, and tfs
         logger.info("Running DE for ligands/receptors/TFs (control=%s) ...", CONTROL_GROUP)
         if not args.customized_ligand:
+            # Set args.customized_ligand to use all ligands provided in the input file
             _, ligands = identify_de_genes_for_cell_types(
                 st_adata, ligands, cell_types=senders, groupby=ANNOTATION_KEY,
                 pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
                 control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
             )
         if not args.customized_receptor:
+            # Set args.customized_ligand to use all receptors provided in the input file
             _, receptors = identify_de_genes_for_cell_types(
                 st_adata, receptors, cell_types=receivers, groupby=ANNOTATION_KEY,
                 pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
                 control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
             )
         if not args.customized_tf:
+            # Set args.customized_ligand to use all tfs provided in the input file
             _, tfs = identify_de_genes_for_cell_types(
                 st_adata, tfs, cell_types=receivers, groupby=ANNOTATION_KEY,
                 pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
                 control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
             )
         if not args.customized_tg:
+            # For TG, use all widely expressed genes
             # Widely expressed target genes (across batches)
             _, tgs = identify_widely_expressed_genes_for_cell_types(
                 st_adata, gene_names, cell_types=receivers, groupby=ANNOTATION_KEY,
                 pct_threshold=args.pct_threshold, expr_cutoff=args.expr_cutoff,
                 batch_key=BATCH_KEY, logger=logger
             )
-        logger.info("DE unions: ligands=%d, receptors=%d, TFs=%d",
-                    len(ligands), len(receptors), len(tfs))
+
+        logger.info("DE unions: ligands=%d, receptors=%d, TFs=%d, TGs=%d",
+                    len(ligands), len(receptors), len(tfs), len(tgs))
 
         # logger.info("Widely expressed target genes: %d", len(tgs))
         combined = set().union(ligands, receptors, tfs, tgs)  # FIX: use set union, not +
@@ -697,48 +712,52 @@ def main():
                 len(ligands), len(receptors), len(tfs), len(tgs), len(ligands) * len(receptors)
             )
         else:
-            if not args.customized_ligand:
-                ligands = list(ligands)
-            if not args.customized_receptor:
-                receptors = list(receptors)
-            if not args.customized_tf:
-                tfs = list(tfs)
-            if not args.customized_tg:
-                tgs = list(tgs)
+            # Make sure all in list
+            ligands = list(ligands)
+            receptors = list(receptors)
+            tfs = list(tfs)
+            tgs = list(tgs)
     else:
         # Skip DE entirely, just copy and past the lr information to local.
-        tgs = list(set(st_adata.var_names) - set(ligands) - set(receptors) - set(tfs)) # Set TGs to be all genes other than LR and TFs.
         ligands = list(ligands)
         receptors = list(receptors)
         tfs = list(tfs)
-        tgs = list(tgs)
-        combined = set().union(ligands, receptors, tfs, tgs)
 
+        try:
+            tgs = read_list_txt(TG_FILE)
+        except FileNotFoundError:
+            print('Target Gene file not found, use the complement gene set for TG instead.')
+            tgs = list(set(st_adata.var_names) - set(ligands) - set(receptors) - set(tfs))
+
+    # Define the combined set of genes
+    combined = set().union(ligands, receptors, tfs, tgs)
+
+    # Sort genes by names
     ligands = _sort_gene_by_values(ligands)
     receptors = _sort_gene_by_values(receptors)
     tfs = _sort_gene_by_values(tfs)
     tgs = _sort_gene_by_values(tgs)
 
+    # st_adata.var_names.isin(combined)
+
     # Now, we conduct the path sampling procedure
-    adata_all = st_adata[:, st_adata.var_names.isin(combined)].copy()
-    adata_dp = sc_adata[:, sc_adata.var_names.isin(combined)].copy()
+    adata_all = st_adata.copy()
+    adata_dp = sc_adata.copy()
 
-    adata_umap = adata_all.copy()
-
+    adata_umap = adata_dp.copy()
 
     if args.simulation_data:
-        # Ignore ligands (features) and sender cells for UMAP/Leiden/DPT
+        # Ignore ligands (features) and sender cells for UMAP/Leiden/DPT, since these are added post-hoc.
         genes_umap_mask = ~adata_dp.var_names.isin(ligands)
-        cells_umap_mask = ~adata_all.obs[ANNOTATION_KEY].isin(senders)
         # Use adata_dp only for UMAP
         adata_umap = adata_dp[:, genes_umap_mask].copy()
 
 
     # ---- UMAP on the squared-copy (if simulation) or the original view ----
-    adata_umap_for_embed = run_umap(adata_umap)
+    adata_umap_for_embed = run_umap(adata_umap, use_hvg=args.use_hvg, n_top_genes=args.n_top_genes)
 
     # ---- Leiden on the same expression that produced neighbors/UMAP ----
-    sc.tl.leiden(adata_umap_for_embed, key_added="clusters", resolution=10)
+    sc.tl.leiden(adata_umap_for_embed, key_added="clusters", resolution=30)
     logger.info("Leiden (on filtered view) completed.")
 
     # # propagate clusters back (excluded cells -> NA)
@@ -749,12 +768,16 @@ def main():
     #
     # # receiver-only for downstream (path sampling uses receivers)
     # adata_dp = adata_all[adata_all.obs[ANNOTATION_KEY].isin(receivers), :].copy()
-    if args.simulation_data:
-        adata_dp = adata_umap_for_embed.copy()
-    else:
-        adata_all = adata_umap_for_embed.copy()
+    # if args.simulation_data:
+    adata_dp = adata_umap_for_embed.copy()
+    # else:
+    #     adata_all = adata_umap_for_embed.copy()
 
-    # Construct patial neighborhoods
+    # Keep only genes of interest to save space.
+    adata_dp = adata_dp[:, adata_dp.var_names.isin(set.union(set(tfs),set(receptors), set(tgs)))].copy()
+    adata_all = adata_all[:, adata_all.var_names.isin(set.union(set(ligands), set(receptors)))].copy()
+
+    # Construct spatial neighborhoods
     adata_neighbor, adata_lr, lr_var_names, present_lig, present_rec = build_neighbor_and_lr(adata_all,
                                                                                               adata_dp,
                                                                                               ligands,
@@ -764,8 +787,8 @@ def main():
                                                                                               radius = RADIUS,
                                                                                               n_jobs=N_JOBS
                                                                                               )
-    if not args.simulation_data:
-        adata_dp.obs['clusters'] = adata_all.obs.loc[adata_dp.obs_names, 'clusters'] # Transfer the column 'cluster' to adata_all
+    # if not args.simulation_data:
+    #     adata_dp.obs['clusters'] = adata_all.obs.loc[adata_dp.obs_names, 'clusters'] # Transfer the column 'cluster' to adata_all
 
     # Merge metacells, skip for simulation
     adata_dp, merge_idx, membership, batch_map = merge_metacell_with_batch(adata_dp, batch_key=BATCH_KEY, pseudotime_key=PT_KEY, n_neighbors = args.n_neighbors)
@@ -773,11 +796,11 @@ def main():
     adata_lr, _, _, _ = merge_metacell_with_batch(adata_lr, batch_key=BATCH_KEY, pseudotime_key=None, n_neighbors = args.n_neighbors)
 
     # Save the metacell memberships and batch information
-    save_metacell_membership_and_batch(membership, batch_map, OUTPUT_DIR, PROJECT_NAME)
+    save_metacell_membership_and_batch(membership, batch_map, OUTPUT_DIR, PROJECT_NAME, BATCH_KEY)
 
     # Re-compute pseudotime on the metacells with dpt
-    iroot_idx = choose_iroot_safely(adata_dp, merge_idx, clusters_key="clusters", umap_key="X_umap")
-    adata_dp.uns["iroot"] = iroot_idx
+    # iroot_idx = choose_iroot_safely(adata_dp, merge_idx, clusters_key="clusters", umap_key="X_umap")
+    # adata_dp.uns["iroot"] = iroot_idx
     # sc.tl.dpt(adata_dp)
     sc.settings.figdir = FIG_SAVE  # set directory once
     sc.pl.umap(adata_dp, color=PT_KEY, save="umap_pseudotime.png")    # Normalize gene_expressions
