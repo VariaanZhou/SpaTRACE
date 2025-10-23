@@ -57,10 +57,12 @@ The pipeline is organized into **three main scripts**:
 - Python 3.9+
 - Packages:
   - `scanpy`
+  - `squidpy`
   - `numpy`
   - `scipy`
   - `pandas`
   - `matplotlib`
+  - `seaborn`
   - `scikit-learn`
   - `tensorflow` (2.x)
 - Plus the included model code: `model/GRAEST_Chat_v1_0.py`
