@@ -183,7 +183,7 @@ python run_experiment.py \
   --batch_size 16 \
   --save_visuals \
   --save_percell_attentions
-
+```
 ## Arguments explained
 
 - `--data_dir` – same working directory used in `run_preprocess.py`.  
