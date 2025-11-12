@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-from model.GRAEST_Chat_v1_0 import (
+from model.SpaTRACE_v1_0.py import (
     Transformer, CustomSchedule, masked_mse, l1_reg_loss, infer_cpu
 )
 
