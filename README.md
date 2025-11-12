@@ -1,7 +1,7 @@
-# GREATEST_Chat: Granger REcurrent AuToEncoder for SpatioTemporal Transcriptomics Cell-Cell Communication
+# SpaTRACE: Spatial-temporal recurrent auto-encoder for reconstructing signaling and regulatory networks from spatiotemporal transcriptomics
 ## Introduction
 
-**GREATEST_Chat** (Granger REcurrent AuToEncoder for SpatialTemporal transcriptomics) is a pathway-free tool for **cell–cell communication (CCC)** inference, specifically designed for developmental spatial transcriptomics (spatio-temporal transcriptomics) datasets. It captures cellular dynamics across different developmental stages as well as interactions within the surrounding microenvironment, enabling efficient CCC inference in undercharacterized tissues or species.
+**SpaTRACE** (Spatial-temporal recurrent auto-encoder for reconstructing signaling and regulatory networks from spatiotemporal transcriptomics) is a pathway-free tool for **cell–cell communication (CCC)** inference, specifically designed for developmental spatial transcriptomics (spatio-temporal transcriptomics) datasets. It captures cellular dynamics across different developmental stages as well as interactions within the surrounding microenvironment, enabling efficient CCC inference in undercharacterized tissues or species.
 
 It enables:  
 - **Cell–cell communication analysis**  
