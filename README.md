@@ -11,7 +11,7 @@ It enables:
 ![Pipeline Overview](./assets/Method_Overview.png)
 ### How it works
 
-**GREATEST_Chat** is a recurrent autoencoder trained on sampled cell trajectories from pseudotime. By modeling the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene** under **L1 regularization**, the model learns embeddings that capture semantic representations of cellular interactions.  
+**SpaTRACE** is a recurrent autoencoder trained on sampled cell trajectories from pseudotime. By modeling the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene** under **L1 regularization**, the model learns embeddings that capture semantic representations of cellular interactions.  
 
 These embeddings can then be used to:  
 - Reconstruct **ligand–receptor → target gene** relationships  
@@ -19,7 +19,7 @@ These embeddings can then be used to:
 - Build integrated **cell–cell communication and gene regulatory networks**
 
 ### What this repo provides
-- A **user-friendly interface** to run GREATEST_Chat on your own datasets  
+- A **user-friendly interface** to run SpaTRACE on your own datasets  
 - **Documentation and examples** from our experiments on:
   - Simulation Datasets (and their generation code)  
   - Mouse midbrain development  
@@ -28,7 +28,7 @@ These embeddings can then be used to:
 The workflow is organized into a **three-step pipeline**:
 
 1. **Data preparation**: Taken an .h5ad data and given lists of ligands, receptors, TFs as inputs, it automatically extract DE genes, perform pseudotime analysis, and prepare input data for the model training.
-2. **Model training**: Train the transformer model **GREATEST_Chat** on the prepared features.  
+2. **Model training**: Train the transformer model **SpaTRACE** on the prepared features.  
 3. **Downstream analysis**: Perform feature selection and reconstruct ligand–receptor interactions, gene regulatory networks, and cellular interactions.
 
 
@@ -43,7 +43,7 @@ The pipeline is organized into **three main scripts**:
    - Outputs compact `.npz` bundles for model training and testing.  
 
 2. **`run_experiment.py`**  
-   - Trains the **GREATEST_Chat** transformer model on the preprocessed data.  
+   - Trains the **SpaTRACE** transformer model on the preprocessed data.  
    - Produces learned weights, embeddings, and attention maps.  
 
 3. **`run_inference.py`**  
