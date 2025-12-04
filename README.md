@@ -11,7 +11,7 @@ It enables:
 ![Pipeline Overview](./assets/Method_Overview.png)
 ### How it works
 
-**SpaTRACE** is a recurrent autoencoder trained on sampled cell trajectories from pseudotime. By modeling the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene** under **L1 regularization**, the model learns embeddings that capture semantic representations of cellular interactions.  
+**SpaTRACE** is a spatiotemporal transformer model trained on sampled cell trajectories from pseudotime. By modeling the temporal dynamics of each **ligand–receptor pair, transcription factor, and target gene** under **L1 regularization**, the model learns embeddings that capture semantic representations of cellular interactions.  
 
 These embeddings can then be used to:  
 - Reconstruct **ligand–receptor → target gene** relationships  
