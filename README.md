@@ -5,7 +5,7 @@
 
 It enables:  
 - **Cell–cell communication analysis**  
-- **Gene regulatory network reconstruction**  
+- **Signalling and Gene regulatory network reconstruction**  
 - **Ligand–receptor pair prediction**
 
 ![Pipeline Overview](./assets/Method_Overview.png)
