@@ -52,6 +52,7 @@ The pipeline is organized into **three main scripts**:
 
 ---
 # Installations
+
 ## Requirements
 
 - Python 3.9+
@@ -68,6 +69,20 @@ The pipeline is organized into **three main scripts**:
 - Plus the included model code: `model/GRAEST_Chat_v1_0.py`
 
 ---
+
+## Installation
+
+To install the environment with **pip**, first clone this repository to your local machine. Then, create and activate a fresh conda environment (or a new virtual environment) and install the required packages.
+
+### Install with Conda
+
+```bash
+conda create -n graest python=3.9 -y
+conda activate graest
+
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
 ## Step 0: Input Preparation
 
