@@ -187,7 +187,7 @@ def main():
     print("------------- GRAEST_Chat started -------------")
 
     # ------------------------------- Paths & sanity -------------------------------
-    in_dir = Path(args.input_dir)
+    in_dir = Path(args.data_dir)
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
