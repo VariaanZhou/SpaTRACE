@@ -83,7 +83,7 @@ conda activate spatrace
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
-
+# Usage
 ## Step 0: Input Preparation
 
 Before running the pipeline, you must prepare a list of input files under a working directory and follow our naming convention. You need to define a **project name** (`project_name`), abd all input files should be named using this prefix.
