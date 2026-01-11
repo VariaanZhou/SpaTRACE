@@ -51,7 +51,7 @@ The pipeline is organized into **three main scripts**:
    - Aggregates gene-level and spatial information to predict **cellular-level interactions**.  
 
 ---
-
+# Installations
 ## Requirements
 
 - Python 3.9+
