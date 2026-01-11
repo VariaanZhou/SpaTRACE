@@ -77,8 +77,8 @@ To install the environment with **pip**, first clone this repository to your loc
 ### Install with Conda
 
 ```bash
-conda create -n graest python=3.9 -y
-conda activate graest
+conda create -n spatrace python=3.9 -y
+conda activate spatrace
 
 pip install --upgrade pip
 pip install -r requirements.txt
