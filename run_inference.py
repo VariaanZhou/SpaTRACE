@@ -322,7 +322,7 @@ def run_global_lr_intensity(paths: dict, genes: dict, top_n_bar: int, logger: lo
     logger.info("Computing global LR intensities from global attentions...")
     ga_file = paths["global_att_dir"] / "attn_global_lr.npz"
     print(np.load(ga_file))
-    vals = np.load(ga_file)["weight_nt_lr"]
+    vals = np.load(ga_file)["vals"]
     logger.debug(f"Global attention matrix shape: {vals.shape}")
     out_dir = paths["GENE_OUT"]
     out_dir.mkdir(parents=True, exist_ok=True)
