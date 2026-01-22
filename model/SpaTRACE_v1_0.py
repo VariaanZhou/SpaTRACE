@@ -14,7 +14,7 @@ Notes:
   (we reuse `target_exp_y`) to satisfy Keras’ API.
 - All prior TF/Keras-3 plumbing (mask handling, keyword-only args, build stubs)
   is retained.
-
+- Cell embeddings are currently not used. The cell-level attention modules are retained only as placeholders and are not active in the current implementation.
 """
 
 # ------------------------------- Layers -------------------------------
