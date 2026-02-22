@@ -3,6 +3,9 @@ import difflib
 import os
 import logging
 import numpy as np
+import scipy.sparse as sp
+import matplotlib.pyplot as plt
+
 def gene_intersection(gene_names, gene_list_file):
     '''
     This function takes a list of gene names, as well as a gene list .txt file as inputs.
@@ -66,6 +69,77 @@ def verify_cell_types_exist(adata, cell_types, column):
         for m, s in suggestions.items():
             msg_lines.append(f"  - {m}: {s if s else 'no close matches'}")
         raise ValueError("\n".join(msg_lines))
+
+from sklearn.decomposition import PCA
+
+def _to_dense_float32(X):
+    if sp.issparse(X):
+        return X.toarray().astype(np.float32, copy=False)
+    return np.asarray(X, dtype=np.float32)
+
+def save_pca_plots_smoothed(
+    adata,
+    *,
+    annotation_key: str,
+    pseudotime_key: str,
+    n_pcs: int = 50,
+    random_state: int = 0,
+    out_prefix: str = "/mnt/data/smoothed_pca",
+):
+    """
+    Computes PCA from adata.X (assumed already smoothed), stores in adata.obsm['X_pca_smooth'],
+    and saves:
+      - {out_prefix}_by_{annotation_key}.png
+      - {out_prefix}_by_{pseudotime_key}.png
+    """
+    if annotation_key not in adata.obs.columns:
+        raise ValueError(f"annotation_key='{annotation_key}' not found in adata.obs")
+    if pseudotime_key not in adata.obs.columns:
+        raise ValueError(f"pseudotime_key='{pseudotime_key}' not found in adata.obs")
+
+    X = _to_dense_float32(adata.X)
+
+    # PCA on smoothed data
+    pca = PCA(n_components=min(n_pcs, X.shape[1]), random_state=random_state)
+    X_pca = pca.fit_transform(X)
+    adata.obsm["X_pca_smooth"] = X_pca
+
+    pc12 = X_pca[:, :2]
+
+    # ---- Plot 1: categorical annotation ----
+    labels = adata.obs[annotation_key].astype(str).to_numpy()
+    uniq = np.unique(labels)
+
+    fig1 = plt.figure(figsize=(6, 5))
+    ax1 = fig1.add_subplot(111)
+    for lab in uniq:
+        mask = labels == lab
+        ax1.scatter(pc12[mask, 0], pc12[mask, 1], s=8, alpha=0.8, label=lab)
+    ax1.set_xlabel("PC1")
+    ax1.set_ylabel("PC2")
+    ax1.set_title(f"Smoothed PCA colored by {annotation_key}")
+    ax1.legend(markerscale=2, fontsize=8, bbox_to_anchor=(1.05, 1), loc="upper left")
+    fig1.tight_layout()
+    out1 = f"{out_prefix}_by_{annotation_key}.png"
+    fig1.savefig(out1, dpi=300)
+    plt.close(fig1)
+
+    # ---- Plot 2: continuous pseudotime ----
+    pt = adata.obs[pseudotime_key].to_numpy()
+    fig2 = plt.figure(figsize=(6, 5))
+    ax2 = fig2.add_subplot(111)
+    sc = ax2.scatter(pc12[:, 0], pc12[:, 1], s=8, alpha=0.8, c=pt, cmap="viridis")
+    ax2.set_xlabel("PC1")
+    ax2.set_ylabel("PC2")
+    ax2.set_title(f"Smoothed PCA colored by {pseudotime_key}")
+    cbar = fig2.colorbar(sc, ax=ax2)
+    cbar.set_label(pseudotime_key)
+    fig2.tight_layout()
+    out2 = f"{out_prefix}_by_{pseudotime_key}.png"
+    fig2.savefig(out2, dpi=300)
+    plt.close(fig2)
+
+    return out1, out2
 
 def _pt_exists(adata, pt_key: str = "dpt_pseudotime", cell_types=None, groupby: str = "cell_type"):
     """
