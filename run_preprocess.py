@@ -7,14 +7,18 @@ import time
 import logging
 import squidpy as sq
 from scipy import sparse as sp
+import re
+
 
 import os
 import numpy as np
 import pandas as pd
 import scanpy as sc
+from anndata import AnnData
+from scipy import sparse
 
 # Local utils (as you had)
-from datasets.utils import gene_intersection, read_list_txt, verify_cell_types_exist, setup_logging, _write_one_list, _ensure_dir, _sort_gene_by_values
+from datasets.utils import gene_intersection, read_list_txt, verify_cell_types_exist, setup_logging, _write_one_list, _ensure_dir, _sort_gene_by_values, save_pca_plots_smoothed
 from datasets.preprocessing import *
 # ---------------------- Helpers ----------------------
 def _combine_name(dir, name, suffix):
@@ -165,6 +169,57 @@ def identify_de_genes_for_cell_types(
                 time.perf_counter() - t0, len(de_union), total_kept)
     return de_results, de_union
 
+
+def filter_housekeeping_genes(
+    adata: AnnData,
+    remove_ribosomal: bool = True,
+    remove_mitochondrial: bool = True,
+    remove_mito_ribosomal: bool = True,
+):
+    """
+    Remove ribosomal and mitochondrial genes from AnnData.
+
+    Parameters
+    ----------
+    adata : AnnData
+        Input AnnData object.
+    remove_ribosomal : bool
+        Remove Rpl/Rps genes.
+    remove_mitochondrial : bool
+        Remove mt- genes.
+    remove_mito_ribosomal : bool
+        Remove Mrpl/Mrps genes.
+
+    Returns
+    -------
+    adata_filtered : AnnData
+        AnnData with housekeeping genes removed.
+    removed_genes : list
+        List of removed gene names.
+    """
+
+    genes = adata.var_names.astype(str)
+
+    # Compile regex patterns
+    patterns = []
+    if remove_ribosomal:
+        patterns.append(r"^RPL\d*|^RPS\d*|^RPL|^RPS")
+    if remove_mitochondrial:
+        patterns.append(r"^MT-")
+    if remove_mito_ribosomal:
+        patterns.append(r"^MRPL|^MRPS")
+
+    if not patterns:
+        return adata.copy(), []
+
+    combined_pattern = re.compile("|".join(patterns), re.IGNORECASE)
+
+    mask_remove = genes.to_series().str.contains(combined_pattern)
+    removed_genes = genes[mask_remove].tolist()
+
+    adata_filtered = adata[:, ~mask_remove].copy()
+
+    return adata_filtered, removed_genes
 
 # ---------------------- Widely expressed ----------------------
 def identify_widely_expressed_genes_for_cell_types(
@@ -417,6 +472,34 @@ def spatial_enrichment_senders(
 
     return sorted(union_senders)
 
+def hvg_genes_for_celltypes(
+    adata,
+    cell_types,
+    groupby,
+    n_top_genes,
+    flavor="seurat_v3",
+    layer="counts"
+):
+    sub = adata[adata.obs[groupby].isin(cell_types)].copy()
+
+    if layer is None:
+        raise ValueError("For seurat_v3, please provide a counts layer (e.g., layer='counts').")
+    if layer not in sub.layers:
+        raise ValueError(
+            f"Counts layer '{layer}' not found in adata.layers. "
+            f"Available: {list(sub.layers.keys())}"
+        )
+
+    sc.pp.highly_variable_genes(
+        sub,
+        n_top_genes=n_top_genes,
+        flavor=flavor,
+        subset=False,
+        layer=layer,
+    )
+
+    return set(sub.var_names[sub.var["highly_variable"]])
+
 def save_acquired_gene_sets(out_dir, project_name, *, ligands, receptors, tfs, tgs, lrs, senders, receivers, logger=None):
     """
     Save acquired gene sets to:
@@ -454,6 +537,18 @@ def save_acquired_gene_sets(out_dir, project_name, *, ligands, receptors, tfs, t
 
     return paths
 
+def filter_by_mean_expression(adata, threshold):
+    X = adata.X
+        
+    if sparse.issparse(X):
+        gene_means = np.asarray(X.mean(axis=0)).ravel()
+    else:
+        gene_means = X.mean(axis=0)
+    
+    keep = gene_means > threshold
+    return adata[:, keep].copy()
+
+
 # ---------------------- Main ----------------------
 def main():
     parser = argparse.ArgumentParser(prog="GRAEST_Chat_Preprocess")
@@ -464,6 +559,7 @@ def main():
                         help="Directory containing the input h5ad and the ligand/receptor/TF txt files.")
     parser.add_argument("-n", "--project_name", required=True, type=str,
                         help="Project name (also used as the base filename).")
+    parser.add_argument("-f", "--file_name", type=str, help="(Optional) The file name of the stRNA/scRNA data")
     parser.add_argument("-b", "--batch_key", default='batch', type=str,
                         help="obs column name storing batch info (default: 'batch').")
     parser.add_argument("-c", "--control_name", default=None, type=str,
@@ -492,6 +588,24 @@ def main():
     parser.add_argument("--customized_receptor", action="store_true", default = False, help='If set, use customized receptor list.')
     parser.add_argument("--customized_tf", action="store_true", default = False, help='If set, use customized tf list.')
     parser.add_argument("--customized_tg", action="store_true", default=False, help='If set, use customized tg list')
+    parser.add_argument("--keep_hvg", action="store_true", default=False, help="If set, use hvg genes.")
+    parser.add_argument("--n_top_hvg_receiver_recp", default=8000, type=int,
+                    help="Number of HVGs to keep among receiver cells for TG selection (default: 5000).")
+    parser.add_argument("--n_top_hvg_sender_ligand", default=8000, type=int,
+                    help="Number of HVG ligands to keep among sender cells (default: 3000).")
+    parser.add_argument("--n_top_hvg_receiver_tf", default=2000, type=int,
+                    help="Number of HVG TFs to keep among receiver cells (default: 2000).")
+    parser.add_argument("--n_top_hvg_receiver_tg", default=2000, type=int,
+                    help="Number of HVG TFs to keep among receiver cells (default: 2000).")
+    parser.add_argument("--gene_threshold", default = 0.01, type=float,
+                    help="Minimum expression level.")
+    parser.add_argument("--remove_ribosomal", default=True, action="store_true",
+                    help="Remove all ribosomal genes.")
+    parser.add_argument("--remove_mitochondrial", default=True, action="store_true",
+                    help="Remove all mitochondrial genes.")
+    parser.add_argument("--remove_mito_ribosomal", default=True, action="store_true",
+                    help="Remove all mito-ribosomal genes.")
+
 
     parser.add_argument("--logfc_threshold", default=0.25, type=float,
                         help="Abs log2 fold change threshold for DE (default: 0.25).")
@@ -509,19 +623,23 @@ def main():
                         help="Expression cutoff for 'expressed' > cutoff (default: 0.0).")
 
     parser.add_argument("--use_hvg", action='store_true', default=False, help='Use HVG for umap.(default: False).')
-    parser.add_argument("--n_top_genes", default = 5000, type = int, help="Top HVG genes kept.")
+    parser.add_argument("--n_top_genes", default = 2000, type = int, help="Top HVG genes kept.")
 
     # Path Sampling
     parser.add_argument("-l", "--path_len", default=3, type=int, help="Length of the sampled cell paths (default: 3).")
     parser.add_argument("--num_repeats", default = 10, type=int, help="Number of times to repeat the sampling for each cell (default: 10).")
-    parser.add_argument("-k", "--k_primary", default = 5, type=int, help="Number of temporal neighbors (default: 5).")
+    parser.add_argument("-k", "--k_primary", default = 20, type=int, help="Number of temporal neighbors (default: 5).")
     # Parallel Computations
     parser.add_argument("--n_jobs", default=-1, type=int,
                         help="Number of jobs to run in parallel (default: -1, use all available CPUs).")
+    parser.add_argument("--random_mode", default=False, action='store_true', help='Set true to use randomly selected cell paths, null model will be trained.')
 
     # remove these two
     # parser.add_argument("--exclude_ligand", action="store_true", default=False, help="Exclude ligand in X_umap and dpt")
     # parser.add_argument("--exclude_senders", action="store_true", default=False, help="Exclude senders in X_umap and dpt")
+    #parser.add_argument("--hvg_only", action="store_true", default=False,
+    #                help="If set, ignore ligand/receptor/TF/TG logic and use only HVGs as model genes.")
+
 
     # add this one
     parser.add_argument("--log_transform", default=False, action="store_true", help="Whether to apply normalization and log-transformation on the data.")
@@ -534,6 +652,7 @@ def main():
     # I/O directories
     INPUT_DIR = args.data_dir
     PROJECT_NAME = args.project_name
+    FILE_NAME = args.file_name
     # Create a subfolder in the Input directory as the output directory
     OUTPUT_DIR = os.path.join(INPUT_DIR, PROJECT_NAME)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -556,6 +675,8 @@ def main():
     PATH_LEN = args.path_len
     NUM_REPEATS = args.num_repeats
     K_PRIMARY = args.k_primary
+    RANDOM_MODE = args.random_mode
+
 
     if BATCH_KEY is None:
         raise ValueError("Please provide a batch name via --batch_key.")
@@ -563,24 +684,127 @@ def main():
         logger.info("No control group provided; DE will use each cell type vs rest (or per-CT case vs ctrl only if provided).")
 
     # Paths
-    INPUT_scRNA_H5AD = _combine_name(INPUT_DIR, PROJECT_NAME, '_sc_adata.h5ad')
-    INPUT_stRNA_H5AD = _combine_name(INPUT_DIR, PROJECT_NAME, '_st_adata.h5ad')
-    LIGAND_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_ligand.txt')
-    RECEPTOR_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_receptor.txt')
-    TF_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_tf.txt')
-    TG_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_tg.txt')
-    RECEIVER_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_receiver.txt')
-    SENDER_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_sender.txt')
-
+    if args.file_name is None:
+        INPUT_scRNA_H5AD = _combine_name(INPUT_DIR, PROJECT_NAME, '_sc_adata.h5ad')
+        INPUT_stRNA_H5AD = _combine_name(INPUT_DIR, PROJECT_NAME, '_st_adata.h5ad')
+        LIGAND_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_ligand.txt')
+        RECEPTOR_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_receptor.txt')
+        TF_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_tf.txt')
+        TG_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_tg.txt')
+        RECEIVER_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_receiver.txt')
+        SENDER_FILE = _combine_name(INPUT_DIR, PROJECT_NAME, '_sender.txt')
+    else:
+        INPUT_scRNA_H5AD = _combine_name(INPUT_DIR, FILE_NAME, '_sc_adata.h5ad')
+        INPUT_stRNA_H5AD = _combine_name(INPUT_DIR, FILE_NAME, '_st_adata.h5ad')
+        LIGAND_FILE = _combine_name(INPUT_DIR, FILE_NAME, '_ligand.txt')
+        RECEPTOR_FILE = _combine_name(INPUT_DIR, FILE_NAME, '_receptor.txt')
+        TF_FILE = _combine_name(INPUT_DIR, FILE_NAME, '_tf.txt')
+        TG_FILE = _combine_name(INPUT_DIR, FILE_NAME, '_tg.txt')
+        RECEIVER_FILE = _combine_name(INPUT_DIR, FILE_NAME, '_receiver.txt')
+        SENDER_FILE = _combine_name(INPUT_DIR, FILE_NAME, '_sender.txt')
     # Load AnnData
     logger.info("Reading h5ad: %s", INPUT_scRNA_H5AD)
     sc_adata = sc.read_h5ad(INPUT_scRNA_H5AD)
     logger.info("Reading h5ad: %s", INPUT_stRNA_H5AD)
     st_adata = sc.read_h5ad(INPUT_stRNA_H5AD)
+    
+    # ---- keep raw counts for seurat_v3 HVG ----
+    if "counts" not in sc_adata.layers:
+        sc_adata.layers["counts"] = sc_adata.X.copy()
+    if "counts" not in st_adata.layers:
+        st_adata.layers["counts"] = st_adata.X.copy()
 
     if args.log_transform:
         sc.pp.log1p(sc_adata)
         sc.pp.log1p(st_adata)
+        
+    # --- 1) Smooth only the superset ---
+    info = gcn_weighted_knn_smooth(
+        st_adata,
+        knn_rep="X_pca",
+        smooth_layer=None,
+        k=5,
+        sigma=None,
+        include_self=True,
+        symmetrize=True,
+        alpha=0.3,
+        out_layer="X_gcn_smooth",
+        out_obsp="W_knn",
+    )
+    
+    # --- 2) Copy results from st_adata -> sc_adata (subset) ---
+    out_layer = info["out_layer"]     # "X_gcn_smooth"
+    out_obsp  = info["out_obsp"]      # "W_knn"
+    
+    # Build index mapping: sc_adata rows into st_adata rows
+    st_index = {name: i for i, name in enumerate(st_adata.obs_names)}
+    missing = [name for name in sc_adata.obs_names if name not in st_index]
+    if missing:
+        raise ValueError(
+            f"sc_adata is not a subset of st_adata: {len(missing)} obs_names missing. "
+            f"First few: {missing[:10]}"
+        )
+    
+    idx = np.fromiter((st_index[name] for name in sc_adata.obs_names), dtype=np.int64)
+    
+    # Copy smoothed layer (preserve sparse/dense)
+    X_sm = st_adata.layers[out_layer]
+    if sp.issparse(X_sm):
+        sc_adata.layers[out_layer] = X_sm[idx, :].copy()
+    else:
+        sc_adata.layers[out_layer] = np.asarray(X_sm, dtype=np.float32)[idx, :].copy()
+    
+    # --- 3) (Optional) Copy the induced subgraph of W_knn into subset ---
+    if out_obsp in st_adata.obsp.keys():
+        W = st_adata.obsp[out_obsp]
+        if not sp.issparse(W):
+            # If someone stored it dense, convert to sparse for sane slicing
+            W = sp.csr_matrix(W)
+    
+        # Induced subgraph: keep only edges among subset cells, in subset order
+        sc_adata.obsp[out_obsp] = W[idx, :][:, idx].copy()
+    
+    print(
+        f"Done.\n"
+        f"  - sc_adata.layers['{out_layer}'] populated from st_adata\n"
+        f"  - sc_adata.obsp['{out_obsp}'] populated as induced subgraph (if present)\n"
+    )
+    print("Done. Settings:", info)
+    print("Smoothed stored in sc_adata.layers['X_gcn_smooth']; graph in sc_adata.obsp['W_knn']")
+    
+    sc_adata.X = sc_adata.layers['X_gcn_smooth']
+    st_adata.X = st_adata.layers['X_gcn_smooth']
+    
+    out_ann, out_pt = save_pca_plots_smoothed(
+     sc_adata,
+     annotation_key=ANNOTATION_KEY,
+     pseudotime_key=PT_KEY,
+     out_prefix="PCA_smoothed",
+ )
+    
+    # Example threshold
+    #MEAN_THRESHOLD = 0.05
+    
+    #sc_adata = filter_by_mean_expression(sc_adata, MEAN_THRESHOLD)
+    #st_adata = filter_by_mean_expression(st_adata, MEAN_THRESHOLD)
+    #sc.pp.filter_genes(sc_adata, min_cells=50)
+    #sc.pp.filter_genes(st_adata, min_cells=50)
+    #common_genes = sc_adata.var_names.intersection(st_adata.var_names)
+    
+    # Subset both
+    #sc_adata = sc_adata[:, common_genes].copy()
+    #st_adata = st_adata[:, common_genes].copy()
+
+    #print("Shared genes:", len(common_genes))
+    
+    # Filter out the housekeeping genes if requested.
+    sc_adata, _ = filter_housekeeping_genes(sc_adata, args.remove_ribosomal, args.remove_mitochondrial, args.remove_mito_ribosomal)
+    st_adata, removed = filter_housekeeping_genes(st_adata, args.remove_ribosomal, args.remove_mitochondrial, args.remove_mito_ribosomal)
+    if removed:
+        print('Removed Housekeeping Genes:', removed)
+    else:
+        print("No housekeeping genes removed.")
+
     # Processed to ensure spatial enrichment
     if SPATIAL_KEY != "spatial":
         if SPATIAL_KEY not in st_adata.obsm_keys():
@@ -643,91 +867,168 @@ def main():
     # All cell types of interest
     all_cell_types = list(set(senders + receivers))
     logger.debug("All involved cell types (senders ∪ receivers): %s", all_cell_types)
-
-    if GET_DE:
-        # DE analysis not skipped, will apply DE analysis to determine ligands, receptors, and tfs
-        logger.info("Running DE for ligands/receptors/TFs (control=%s) ...", CONTROL_GROUP)
-        if not args.customized_ligand:
-            # Set args.customized_ligand to use all ligands provided in the input file
-            _, ligands = identify_de_genes_for_cell_types(
-                st_adata, ligands, cell_types=senders, groupby=ANNOTATION_KEY,
-                pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
-                control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
-            )
-        if not args.customized_receptor:
-            # Set args.customized_ligand to use all receptors provided in the input file
-            _, receptors = identify_de_genes_for_cell_types(
-                st_adata, receptors, cell_types=receivers, groupby=ANNOTATION_KEY,
-                pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
-                control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
-            )
+    
+    adata_filter = filter_by_mean_expression(sc_adata, args.gene_threshold)
+    
+    # ---- baselines from provided lists (already intersected with var_names) ----
+    ligands0   = set(ligands)
+    receptors0 = set(receptors)
+    tfs0       = set(tfs)
+        
+    if args.keep_hvg:
+        logger.info("Running gene selection (control=%s) ...", CONTROL_GROUP)
+    
+        
+        
+        # Keep the HVG in receivers as TFs
         if not args.customized_tf:
-            # Set args.customized_ligand to use all tfs provided in the input file
-            _, tfs = identify_de_genes_for_cell_types(
-                st_adata, tfs, cell_types=receivers, groupby=ANNOTATION_KEY,
-                pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
-                control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
+            # Keep hvg TFs in the receiver cells.
+            hvg_recv_tf = hvg_genes_for_celltypes(
+                st_adata, receivers, ANNOTATION_KEY,
+                n_top_genes=args.n_top_hvg_receiver_tf, flavor="seurat_v3", layer="counts"
             )
+            tfs = list(tfs0.intersection(hvg_recv_tf))
+        else:
+            tfs = list(tfs0)
+        tgs = set(tfs) & set(adata_filter.var_names)
+
+        
+            
+        # Ligands: HVG ligands among sender cells
+        if not args.customized_ligand:
+            # HVGs computed on RAW counts (seurat_v3) for the requested cell subsets
+            hvg_send_lig = hvg_genes_for_celltypes(
+                    st_adata, senders, ANNOTATION_KEY,
+                    n_top_genes=args.n_top_hvg_sender_ligand, flavor="seurat_v3", layer="counts"
+            )
+            ligands = list(ligands0.intersection(hvg_send_lig))
+        else:
+            # Customize the ligand list
+            ligands = list(ligands0)
+            
+        # Receptors: receptors of receiving cell types (DE among receivers, as before)
+        if not args.customized_receptor:
+            hvg_recv_rec = hvg_genes_for_celltypes(
+                    st_adata, receivers, ANNOTATION_KEY,
+                    n_top_genes=args.n_top_hvg_receiver_recp, flavor="seurat_v3", layer="counts"
+                )
+            receptors = list(receptors0.intersection(hvg_recv_rec))
+        else:
+            receptors = list(receptors0)
+    
+    
+        # TGs: ALL HVGs among receiving cells
         if not args.customized_tg:
-            # For TG, use all widely expressed genes
-            # Widely expressed target genes (across batches)
+            # Keep hvg TGs in the receiver cells.
+            hvg_recv_tg = hvg_genes_for_celltypes(
+                st_adata, receivers, ANNOTATION_KEY,
+                n_top_genes=args.n_top_hvg_receiver_tg, flavor="seurat_v3", layer="counts"
+            )
+            tgs = list(hvg_recv_tg)
+        else:
+            tgs = list(gene_intersection(gene_names, TG_FILE))
+        tgs = set(tgs) & set(adata_filter.var_names)
+        
+    else:
+            # ----- original behavior (DE ligands/receptors/tfs + widely expressed tgs) -----
+        if not args.customized_ligand:
+            _, ligands = identify_de_genes_for_cell_types(
+                    st_adata, list(ligands0), cell_types=senders, groupby=ANNOTATION_KEY,
+                    pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
+                    control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
+                )
+        else:
+            ligands = list(ligands0)
+    
+        if not args.customized_receptor:
+            _, receptors = identify_de_genes_for_cell_types(
+                    st_adata, list(receptors0), cell_types=receivers, groupby=ANNOTATION_KEY,
+                    pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
+                    control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
+                )
+        else:
+            receptors = list(receptors0)
+    
+        if not args.customized_tf:
+            _, tfs = identify_de_genes_for_cell_types(
+                    st_adata, list(tfs0), cell_types=receivers, groupby=ANNOTATION_KEY,
+                    pval_threshold=args.p_val_threshold, logfc_threshold=args.logfc_threshold,
+                    control_group=CONTROL_GROUP, batch_key=BATCH_KEY, logger=logger
+                )
+        else:
+            tfs = list(tfs0)
+    
+        if not args.customized_tg:
             _, tgs = identify_widely_expressed_genes_for_cell_types(
-                st_adata, gene_names, cell_types=receivers, groupby=ANNOTATION_KEY,
-                pct_threshold=args.pct_threshold, expr_cutoff=args.expr_cutoff,
-                batch_key=BATCH_KEY, logger=logger
-            )
-
-        logger.info("DE unions: ligands=%d, receptors=%d, TFs=%d, TGs=%d",
-                    len(ligands), len(receptors), len(tfs), len(tgs))
-
-        # logger.info("Widely expressed target genes: %d", len(tgs))
-        combined = set().union(ligands, receptors, tfs, tgs)  # FIX: use set union, not +
-
-        if args.non_constitutive:
-            logger.info("Filtering non-constitutive genes...")
-            filtered_genes = filter_non_constitutive_genes(
-                st_adata, combined,
-                max_threshold=args.max_threshold,
-                percentage=args.percentage,
-                expr_cutoff=args.expr_cutoff,
-                groupby=ANNOTATION_KEY,
-                logger=logger
-            )
-            if not args.customized_ligand:
-                filtered_ligands = filtered_genes.intersection(ligands)
-                ligands = list(filtered_ligands)
-            if not args.customized_receptor:
-                filtered_receptors = filtered_genes.intersection(receptors)
-                receptors = list(filtered_receptors)
-            if not args.customized_tf:
-                filtered_tfs = filtered_genes.intersection(tfs)
-                tfs = list(filtered_tfs)
-            if not args.customized_tg:
-                filtered_tgs = filtered_genes.intersection(tgs)
-                tgs = list(filtered_tgs)
-
-            # Unify the names
-            logger.info(
-                "After filtering: ligands=%d, receptors=%d, TFs=%d, TGs=%d, lr_pairs=%d",
-                len(ligands), len(receptors), len(tfs), len(tgs), len(ligands) * len(receptors)
+                    st_adata, gene_names, cell_types=receivers, groupby=ANNOTATION_KEY,
+                    pct_threshold=args.pct_threshold, expr_cutoff=args.expr_cutoff,
+                    batch_key=BATCH_KEY, logger=logger
+                )
+            if args.simulation_data:
+                tgs = list(
+                set(tgs)
+                - set(ligands)
+                - set(receptors)
+                - set(tfs)
             )
         else:
-            # Make sure all in list
-            ligands = list(ligands)
-            receptors = list(receptors)
-            tfs = list(tfs)
-            tgs = list(tgs)
-    else:
-        # Skip DE entirely, just copy and past the lr information to local.
+            if args.simulation_data:
+                tgs = list(
+                set(gene_intersection(gene_names, TG_FILE))
+                - set(ligands)
+                - set(receptors)
+                - set(tfs)
+            )
+            else:
+                tgs = list(set(gene_intersection(gene_names, TG_FILE)))
+    
+    logger.info(
+            "Selected gene sets: ligands=%d, receptors=%d, TFs=%d, TGs=%d",
+            len(ligands), len(receptors), len(tfs), len(tgs)
+        )
+    
+    combined = set().union(ligands, receptors, tfs, tgs)
+
+    if args.non_constitutive:
+        logger.info("Filtering non-constitutive genes...")
+        filtered_genes = filter_non_constitutive_genes(
+            st_adata, combined,
+            max_threshold=args.max_threshold,
+            percentage=args.percentage,
+            expr_cutoff=args.expr_cutoff,
+            groupby=ANNOTATION_KEY,
+            logger=logger
+        )
+#        if not args.customized_ligand:
+#            ligands = list(set(ligands).intersection(filtered_genes))
+        if not args.customized_receptor:
+            receptors = list(set(receptors).intersection(filtered_genes))
+        if not args.customized_tf:
+            tfs = list(set(tfs).intersection(filtered_genes))
+        if not args.customized_tg:
+            tgs = list(set(tgs).intersection(filtered_genes))
+
+        logger.info("After filtering: ligands=%d, receptors=%d, TFs=%d, TGs=%d",
+                    len(ligands), len(receptors), len(tfs), len(tgs))
+
+        # Ensure list types
         ligands = list(ligands)
         receptors = list(receptors)
         tfs = list(tfs)
+        tgs = list(tgs)
 
-        try:
-            tgs = read_list_txt(TG_FILE)
-        except FileNotFoundError:
-            print('Target Gene file not found, use the complement gene set for TG instead.')
-            tgs = list(set(st_adata.var_names) - set(ligands) - set(receptors) - set(tfs))
+    #else:
+    #    # Skip DE entirely
+    #    ligands = list(ligands)
+    #    receptors = list(receptors)
+    #    tfs = list(tfs)
+    
+        #try:
+        #    tgs = read_list_txt(TG_FILE)
+        #except FileNotFoundError:
+        #    print("Target Gene file not found, use the complement gene set for TG instead.")
+        #    tgs = list(set(st_adata.var_names) - set(ligands) - set(receptors) - set(tfs))
+
 
     # Define the combined set of genes
     combined = set().union(ligands, receptors, tfs, tgs)
@@ -743,6 +1044,7 @@ def main():
     # Now, we conduct the path sampling procedure
     adata_all = st_adata.copy()
     adata_dp = sc_adata.copy()
+    
 
     adata_umap = adata_dp.copy()
 
@@ -778,30 +1080,31 @@ def main():
     adata_all = adata_all[:, adata_all.var_names.isin(set.union(set(ligands), set(receptors)))].copy()
 
     # Construct spatial neighborhoods
-    adata_neighbor, adata_lr, lr_var_names, present_lig, present_rec = build_neighbor_and_lr(adata_all,
+    adata_neighbor, adata_lr, lr_var_names, kept_pairs, present_lig, present_rec = build_neighbor_and_lr_sender_receiver_strong_in_any_batch(adata_all,
                                                                                               adata_dp,
                                                                                               ligands,
                                                                                               receptors,
                                                                                               simulation=args.simulation_data,
+                                                                                              celltype_key = ANNOTATION_KEY,
                                                                                               coords_key = SPATIAL_KEY,
+                                                                                              batch_key = BATCH_KEY,
                                                                                               radius = RADIUS,
-                                                                                              n_jobs=N_JOBS
+                                                                                              n_jobs=N_JOBS,
+                                                                                              sender_types=senders,                 # list[str]
+                                                                                              receiver_types=receivers,
                                                                                               )
     # if not args.simulation_data:
     #     adata_dp.obs['clusters'] = adata_all.obs.loc[adata_dp.obs_names, 'clusters'] # Transfer the column 'cluster' to adata_all
+    print(f'{len(kept_pairs)} pairs of LR were selected')
+    
+    
+    
+    '''
+    CHANGE: Metacell design removed! Directly save the cell identity and then move to the path sampling.
+    '''
+    
 
-    # Merge metacells, skip for simulation
-    adata_dp, merge_idx, membership, batch_map = merge_metacell_with_batch(adata_dp, batch_key=BATCH_KEY, pseudotime_key=PT_KEY, n_neighbors = args.n_neighbors)
-    adata_neighbor, _, _, _ = merge_metacell_with_batch(adata_neighbor, batch_key=BATCH_KEY, pseudotime_key=None, n_neighbors = args.n_neighbors)
-    adata_lr, _, _, _ = merge_metacell_with_batch(adata_lr, batch_key=BATCH_KEY, pseudotime_key=None, n_neighbors = args.n_neighbors)
 
-    # Save the metacell memberships and batch information
-    save_metacell_membership_and_batch(membership, batch_map, OUTPUT_DIR, PROJECT_NAME, BATCH_KEY)
-
-    # Re-compute pseudotime on the metacells with dpt
-    # iroot_idx = choose_iroot_safely(adata_dp, merge_idx, clusters_key="clusters", umap_key="X_umap")
-    # adata_dp.uns["iroot"] = iroot_idx
-    # sc.tl.dpt(adata_dp)
     sc.settings.figdir = FIG_SAVE  # set directory once
     sc.pl.umap(adata_dp, color=PT_KEY, save="umap_pseudotime.png")    # Normalize gene_expressions
     normalize_genes(adata_dp)
@@ -812,9 +1115,6 @@ def main():
     adata = adata_dp.copy()
     adata_neighbor = adata_neighbor.copy()
 
-    idx_all = np.arange(len(adata))
-    np.random.shuffle(idx_all)
-
     temporal_neighbors, _ = derive_temporal_neighborhood(
         adata, umap_key="X_umap", pseudotime_key=PT_KEY,
         k_primary=K_PRIMARY, k_fallback_scan=10, out_degree=2
@@ -824,8 +1124,8 @@ def main():
         temporal_neighbors,
         len_path=PATH_LEN,
         n_rounds=2,  # train/test
-        repeats_per_round=NUM_REPEATS,
         rng=np.random.default_rng(42),
+        random=RANDOM_MODE
         # draw_fn=draw_path, draw_example_n=10, draw_fn_kwargs={"adata": adata},
     )
 
