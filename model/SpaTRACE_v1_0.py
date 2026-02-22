@@ -14,7 +14,7 @@ Notes:
   (we reuse `target_exp_y`) to satisfy Keras’ API.
 - All prior TF/Keras-3 plumbing (mask handling, keyword-only args, build stubs)
   is retained.
-- Cell embeddings are currently not used. The cell-level attention modules are retained only as placeholders and are not active in the current implementation.
+
 """
 
 # ------------------------------- Layers -------------------------------
@@ -66,8 +66,174 @@ class BaseAttentionGene(tf.keras.layers.Layer):
     def build(self, input_shape):
         super().build(input_shape)
 
-
 class GeneEmbedding(tf.keras.layers.Layer):
+    """
+    Per-cell gene embedding:
+      1) global modulator g = modulator(X) depends on ALL features in the cell
+      2) fuse: Y = g ⊙ E  (scalar-per-gene gate times gene token embedding)
+      3) token-wise expressivity mapper (NO gene-gene interaction): FFN applied per gene token
+    Returns:
+      token embeddings (ID only), fused+mapped embeddings (context-modulated)
+    """
+    def __init__(self, d_model: int, gene_size: int, d_ctx: int = None, d_ff: int = None, **kwargs):
+        super().__init__(**kwargs)
+        self.d_model = int(d_model)
+        self.total_gene_size = int(gene_size)
+        self.d_ctx = int(d_ctx) if d_ctx is not None else int(d_model)
+        self.d_ff = int(d_ff) if d_ff is not None else int(4 * d_model)
+
+        self.leaky_relu = tf.keras.layers.LeakyReLU(alpha=0.1)
+
+        # weights (created in build)
+        self.E_token = None                 # (M_total, d_model)
+
+        # global modulator weights
+        self.W_ctx = None                   # (M_total, d_ctx)
+        self.b_ctx = None                   # (d_ctx,)
+        self.W_gate = None                  # (d_ctx, M_total)
+        self.b_gate = None                  # (M_total,)
+
+        # token-wise FFN weights (no mixing across genes)
+        self.W_ff1 = None                   # (d_model, d_ff)
+        self.b_ff1 = None                   # (d_ff,)
+        self.W_ff2 = None                   # (d_ff, d_model)
+        self.b_ff2 = None                   # (d_model,)
+
+        # optional residual scaling
+        self.ff_res_scale = None            # scalar
+
+    def build(self, input_shape):
+        # Gene token embedding table
+        self.E_token = self.add_weight(
+            name="E_token",
+            shape=(self.total_gene_size, self.d_model),
+            initializer="random_normal",
+            trainable=True,
+        )
+
+        # Global modulator: context from ALL genes/features in the cell
+        self.W_ctx = self.add_weight(
+            name="W_ctx",
+            shape=(self.total_gene_size, self.d_ctx),
+            initializer="random_normal",
+            trainable=True,
+        )
+        self.b_ctx = self.add_weight(
+            name="b_ctx",
+            shape=(self.d_ctx,),
+            initializer="zeros",
+            trainable=True,
+        )
+
+        # Gate per gene from context
+        self.W_gate = self.add_weight(
+            name="W_gate",
+            shape=(self.d_ctx, self.total_gene_size),
+            initializer="random_normal",
+            trainable=True,
+        )
+        self.b_gate = self.add_weight(
+            name="b_gate",
+            shape=(self.total_gene_size,),
+            initializer="zeros",
+            trainable=True,
+        )
+
+        # Token-wise FFN (per gene, no interaction)
+        self.W_ff1 = self.add_weight(
+            name="W_ff1",
+            shape=(self.d_model, self.d_ff),
+            initializer="random_normal",
+            trainable=True,
+        )
+        self.b_ff1 = self.add_weight(
+            name="b_ff1",
+            shape=(self.d_ff,),
+            initializer="zeros",
+            trainable=True,
+        )
+        self.W_ff2 = self.add_weight(
+            name="W_ff2",
+            shape=(self.d_ff, self.d_model),
+            initializer="random_normal",
+            trainable=True,
+        )
+        self.b_ff2 = self.add_weight(
+            name="b_ff2",
+            shape=(self.d_model,),
+            initializer="zeros",
+            trainable=True,
+        )
+
+        self.ff_res_scale = self.add_weight(
+            name="ff_res_scale",
+            shape=(),
+            initializer="ones",
+            trainable=True,
+        )
+
+        super().build(input_shape)
+
+    def call(self, x, *, gene_size: int, training=None):
+        """
+        x: (B, L, M_total_used) where M_total_used <= total_gene_size
+        gene_size: number of leading genes/tokens to return
+
+        Returns:
+          token_only[:, :, :g, :]  -> (B, L, g, d_model)
+          fused_out[:, :, :g, :]   -> (B, L, g, d_model)
+        """
+        x = tf.cast(x, tf.float32)
+        B = tf.shape(x)[0]
+        L = tf.shape(x)[1]
+        M_used = tf.shape(x)[2]
+
+        # ---- (A) Token embeddings for the USED genes: E_used (M_used, d_model)
+        E_used = self.E_token[:M_used, :]  # (M_used, d_model)
+
+        # token_only: broadcast E_used to (B, L, M_used, d_model)
+        token_only = tf.einsum("blm,md->blmd", tf.ones_like(x), E_used)
+        token_only = tf.nn.l2_normalize(token_only, axis=-1)
+
+        # ---- (B) Global modulator g = modulator(X), depends on ALL features in the cell
+        # context c = X @ W_ctx  where W_ctx is (M_total, d_ctx); use only the top M_used rows
+        W_ctx_used = self.W_ctx[:M_used, :]  # (M_used, d_ctx)
+        c = tf.einsum("blm,md->bld", x, W_ctx_used) + self.b_ctx  # (B, L, d_ctx)
+        c = self.leaky_relu(c)
+
+        # gates per gene: g_logits = c @ W_gate -> (B, L, M_used)
+        W_gate_used = self.W_gate[:, :M_used]  # (d_ctx, M_used)
+        g_logits = tf.einsum("bld,dm->blm", c, W_gate_used) + self.b_gate[:M_used]  # (B, L, M_used)
+
+        # choose gate nonlinearity:
+        # - sigmoid: independent gates in [0,1]
+        # - softmax over genes: forces competition across genes (often NOT desired)
+        g = tf.nn.sigmoid(g_logits)  # (B, L, M_used)
+
+        # ---- (C) Fuse: Y = g ⊙ E  => (B, L, M_used, d_model)
+        fused = tf.einsum("blm,md->blmd", g, E_used)
+
+        # ---- (D) Token-wise expressivity mapper (no gene-gene interaction): FFN per token
+        # h = LeakyReLU(fused @ W_ff1 + b_ff1)
+        h = tf.einsum("blmd,df->blmf", fused, self.W_ff1) + self.b_ff1  # (B, L, M_used, d_ff)
+        h = self.leaky_relu(h)
+        out = tf.einsum("blmf,fd->blmd", h, self.W_ff2) + self.b_ff2    # (B, L, M_used, d_model)
+
+        # residual (still token-wise)
+        out = out + self.ff_res_scale * fused
+
+        gsz = int(gene_size)
+        return token_only[:, :, :gsz, :], out[:, :, :gsz, :]
+
+    def get_config(self):
+        return {
+            "d_model": self.d_model,
+            "gene_size": self.total_gene_size,
+            "d_ctx": self.d_ctx,
+            "d_ff": self.d_ff,
+            **super().get_config(),
+        }
+class GeneEmbedding2(tf.keras.layers.Layer):
     """
     Produces per-gene token embeddings with a small value pathway,
     then applies self-attention over the (gene) tokens.
