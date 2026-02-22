@@ -156,3 +156,89 @@ def plot_lr_heatmap(
     plt.close()
 
     return out_path
+
+
+#def mean_att_across_rows(att_matrix: np.ndarray):
+#    return att_matrix.mean(axis=1)
+import numpy as np
+
+def mean_att_across_rows(att_matrix: np.ndarray) -> np.ndarray:
+    att_matrix = np.asarray(att_matrix, dtype=float)
+
+    # Column-wise normalization (each column sums to 1)
+    col_sums = att_matrix.sum(axis=0, keepdims=True)
+    
+    # Avoid division by zero
+    col_sums[col_sums == 0] = 1.0
+    
+    normalized = att_matrix / col_sums
+
+    # Then compute row-wise mean
+    return normalized.mean(axis=1)
+
+#def extract_average_attentions_from_adata(adata, gene_list_txt, cell_types = None, cluster_col = 'annotation'):
+#    # Read in the gene list
+#    genes = read_list_txt(gene_list_txt)
+#    
+#    if cell_types is not None:
+#        adata_sub = adata.X[adata.obs[cluster_col] in cell_types]
+#    else:
+#        adata_sub = adata
+#    return adata.X[genes]
+
+def extract_average_expressions_from_adata(adata, gene_list_txt, cell_types=None, cluster_col="annotation"):
+    # Read in the gene list
+    genes = read_list_txt(gene_list_txt)
+
+    # Subset cells (rows)
+    if cell_types is not None:
+        mask = adata.obs[cluster_col].isin(cell_types).to_numpy()
+        adata_sub = adata[mask, :]
+    else:
+        adata_sub = adata
+
+    # Keep only genes that exist in adata
+    genes_present = [g for g in genes if g in adata_sub.var_names]
+    if len(genes_present) == 0:
+        raise ValueError("None of the genes in gene_list_txt were found in adata.var_names.")
+
+    # Subset genes (columns) and return matrix
+    X = adata_sub[:, genes_present].X
+
+    # Ensure dense numpy array output (optional but often convenient)
+    try:
+        import scipy.sparse as sp
+        if sp.issparse(X):
+            X = X.toarray()
+    except Exception:
+        pass
+
+    return (X.T).mean(axis=1)
+
+def compute_gene_dispersion(adata, gene_list_txt, cell_types=None, cluster_col="annotation"):
+    genes = read_list_txt(gene_list_txt)
+
+    # Subset cells
+    if cell_types is not None:
+        mask = adata.obs[cluster_col].isin(cell_types).to_numpy()
+        adata_sub = adata[mask, :]
+    else:
+        adata_sub = adata
+
+    # Keep only genes present
+    genes_present = [g for g in genes if g in adata_sub.var_names]
+    X = adata_sub[:, genes_present].X
+
+    # Dense conversion if sparse
+    if hasattr(X, "toarray"):
+        X = X.toarray()
+
+    mean = X.mean(axis=0)
+    var = X.var(axis=0)
+
+    # Avoid division by zero
+    mean[mean == 0] = 1e-12
+
+    dispersion = var / mean
+
+    return genes_present, dispersion
