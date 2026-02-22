@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import scanpy as sc
 import numpy as np
 from scipy.sparse import csr_matrix
@@ -7,6 +8,10 @@ from typing import Optional, Dict, List, Tuple, Any
 import os
 from scipy.spatial.distance import pdist, squareform
 from sklearn.neighbors import radius_neighbors_graph
+import scipy.sparse as sp
+import numpy as np
+import scipy.sparse as sp
+from sklearn.neighbors import NearestNeighbors
 
 def merge_metacell_with_batch(
     adata,
@@ -139,6 +144,7 @@ def merge_metacell_with_batch(
 
 
 
+
 def save_metacell_membership_and_batch(membership, batch_map, out_dir, project, batch_key):
     """
     Save membership and batch_map dictionaries to CSV.
@@ -170,6 +176,9 @@ def save_metacell_membership_and_batch(membership, batch_map, out_dir, project, 
     batch_df.to_csv(batch_map_file, index=False)
 
     print(f"Saved: {membership_file} and {batch_map_file}")
+
+#def save_cell_identity():
+    
 
 # Prepare the data for training
 def draw_path(adata, path, cnt, t):
@@ -273,8 +282,317 @@ def extract_array(adata_obj, obs_idx, var_idx):
     if hasattr(subX, "toarray"):
         subX = subX.toarray()
     return np.squeeze(subX)
+    
 
+def build_neighbor_and_lr_sender_receiver_strong_in_any_batch(
+    adata_all,
+    adata_dp,
+    all_lig,
+    all_recept,
+    *,
+    simulation: bool,
+    # --- sender/receiver constraints ---
+    celltype_key: str = "annotation",
+    sender_types=None,                 # list[str]
+    receiver_types=None,               # list[str]
+    # --- batch key ---
+    batch_key: str = "Batch",          # adata_all.obs[batch_key]
+    # --- spatial neighborhood ---
+    coords_key: str = "spatial",
+    radius: float = 50.0,
+    decay: str = "exp(-d)",            # "exp(-d)" or "exp(-d2)"
+    n_jobs: int = -1,
+    dtype=np.float32,
+    # --- strong coexpression filter (evaluated on receiver cells within a batch) ---
+    corr_method: str = "spearman",     # "spearman" or "pearson"
+    min_abs_corr: float = 0.3,        # keep if >= in any batch
+    min_nonzero: int = 10,             # nonzero on receiver cells (x_recv and y_recv) within batch
+    min_receivers_per_batch: int = 10, # require at least this many receiver cells in a batch to score it
+    min_senders_per_batch: int = 10,   # require at least this many sender cells in a batch to score it
+    min_mean_lr: float | None = None,  # optional: mean(log1p(x_recv*y_recv)) threshold within batch
+    # --- feature output behavior ---
+    mask_nonreceivers_to_zero: bool = True,
+):
+    """
+    Batch-aware sender→receiver LR filtering + LR feature construction.
 
+    For each batch b:
+      - Build W_b from coords within batch (radius neighbors + distance decay + row norm).
+      - Ligand: expm1(lig) masked to sender cells in batch, then smoothed by W_b.
+      - Receptor: expm1(rec) on cells in batch.
+      - Score/filter only on receiver cells in batch:
+            corr( x_recv, y_recv ) and optional mean_lr
+
+    Keep an LR pair if it passes thresholds in >=1 batch.
+
+    Then build LR features for ALL cells, but smoothing within each batch:
+        LR_i = log1p( lig_smooth_i * rec_lin_i ), optionally set 0 for non-receivers.
+    """
+    import numpy as np
+    import pandas as pd
+    import scipy.sparse as sp
+    import scanpy as sc
+    from sklearn.neighbors import radius_neighbors_graph
+    from scipy.stats import spearmanr, pearsonr
+
+    # ---- checks ----
+    for k in [coords_key]:
+        if k not in adata_all.obsm_keys():
+            raise ValueError(f"'{k}' not found in adata_all.obsm")
+    for k in [celltype_key, batch_key]:
+        if k not in adata_all.obs.columns:
+            raise ValueError(f"'{k}' not found in adata_all.obs")
+
+    if sender_types is None or receiver_types is None:
+        raise ValueError("Please provide sender_types and receiver_types (lists of cell type labels).")
+
+    sender_types = set(map(str, sender_types))
+    receiver_types = set(map(str, receiver_types))
+
+    # Determine which lig/receptors exist
+    var_set = set(adata_all.var_names)
+    present_lig = [g for g in all_lig if g in var_set]
+    present_rec = [g for g in all_recept if g in var_set]
+    if not present_lig or not present_rec:
+        raise ValueError("No overlap between provided ligands/receptors and adata_all.var_names.")
+
+    # Sender/receiver masks (global)
+    cts = adata_all.obs[celltype_key].astype(str).values
+    is_sender_all = np.isin(cts, list(sender_types))
+    is_receiver_all = np.isin(cts, list(receiver_types))
+
+    batches = adata_all.obs[batch_key].astype(str).values
+    uniq_batches = pd.unique(batches).tolist()
+
+    # correlation helper
+    def _corr(a, b):
+        if corr_method == "spearman":
+            r, _ = spearmanr(a, b)
+        elif corr_method == "pearson":
+            r, _ = pearsonr(a, b)
+        else:
+            raise ValueError("corr_method must be 'spearman' or 'pearson'")
+        return float(r) if np.isfinite(r) else np.nan
+
+    # Build per-batch stats
+    stats_rows = []
+
+    # Keep set: any batch passes
+    kept_pairs_set = set()
+
+    # Precompute gene indices for fast slicing
+    lig_list = list(present_lig)
+    rec_list = list(present_rec)
+
+    # Iterate batches: score/filter within each batch
+    for b in uniq_batches:
+        idx_b = np.where(batches == b)[0]
+        if idx_b.size == 0:
+            continue
+
+        # sender/receiver within batch
+        is_sender_b = is_sender_all[idx_b]
+        is_receiver_b = is_receiver_all[idx_b]
+        n_sender_b = int(is_sender_b.sum())
+        n_receiver_b = int(is_receiver_b.sum())
+
+        # Require both sides in this batch
+        if n_sender_b < min_senders_per_batch or n_receiver_b < min_receivers_per_batch:
+            continue
+
+        recv_pos_local = np.where(is_receiver_b)[0]
+
+        # Build W within batch
+        coords_b = np.asarray(adata_all.obsm[coords_key])[idx_b]
+        D = radius_neighbors_graph(
+            coords_b,
+            radius=radius,
+            mode="distance",
+            include_self=True,
+            n_jobs=n_jobs,
+        ).tocsr()
+
+        if D.nnz > 0:
+            if decay == "exp(-d)":
+                D.data = np.exp(-D.data).astype(dtype, copy=False)
+            elif decay == "exp(-d2)":
+                D.data = np.exp(-(D.data ** 2)).astype(dtype, copy=False)
+            else:
+                raise ValueError("decay must be 'exp(-d)' or 'exp(-d2)'")
+
+        row_sums = np.asarray(D.sum(axis=1)).ravel()
+        row_sums[row_sums == 0] = 1.0
+        W = (sp.diags(1.0 / row_sums) @ D).tocsr()
+
+        # ligand: expm1, sender-mask, smooth
+        X_lig = adata_all[idx_b, lig_list].X
+        if hasattr(X_lig, "toarray"):
+            X_lig = X_lig.toarray()
+        X_lig = np.asarray(X_lig, dtype=dtype, order="C")
+        X_lig_lin = np.expm1(X_lig)
+        X_lig_lin[~is_sender_b, :] = 0.0
+        X_lig_smooth = W.dot(X_lig_lin).astype(dtype, copy=False)  # (nb, L)
+
+        # receptor: expm1
+        X_rec = adata_all[idx_b, rec_list].X
+        if hasattr(X_rec, "toarray"):
+            X_rec = X_rec.toarray()
+        X_rec = np.asarray(X_rec, dtype=dtype, order="C")
+        X_rec_lin = np.expm1(X_rec).astype(dtype, copy=False)      # (nb, R)
+
+        # nonzero counts on receiver cells (within this batch)
+        lig_nz_recv = np.count_nonzero(X_lig_smooth[recv_pos_local, :] > 0, axis=0)
+        rec_nz_recv = np.count_nonzero(X_rec_lin[recv_pos_local, :] > 0, axis=0)
+
+        # Score every eligible pair in this batch
+        for li, lig in enumerate(lig_list):
+            if lig_nz_recv[li] < min_nonzero:
+                continue
+            x_recv = X_lig_smooth[recv_pos_local, li]
+
+            for rj, rec in enumerate(rec_list):
+                if rec_nz_recv[rj] < min_nonzero:
+                    continue
+                y_recv = X_rec_lin[recv_pos_local, rj]
+
+                r = _corr(x_recv, y_recv)
+                if not np.isfinite(r):
+                    continue
+
+                mean_lr = float(np.mean(np.log1p(x_recv * y_recv)))
+                keep = r >= min_abs_corr
+                if min_mean_lr is not None:
+                    keep = keep and (mean_lr >= float(min_mean_lr))
+
+                if keep:
+                    kept_pairs_set.add((lig, rec))
+
+                stats_rows.append({
+                    "batch": b,
+                    "ligand": lig,
+                    "receptor": rec,
+                    "corr": r,
+                    "abs_corr": abs(r),
+                    "mean_lr_recv": mean_lr,
+                    "lig_nz_recv": int(lig_nz_recv[li]),
+                    "rec_nz_recv": int(rec_nz_recv[rj]),
+                    "n_sender_batch": n_sender_b,
+                    "n_receiver_batch": n_receiver_b,
+                    "kept_in_this_batch": bool(keep),
+                })
+
+    if len(kept_pairs_set) == 0:
+        raise ValueError(
+            "No LR pairs passed strong sender→receiver correlation in any batch. "
+            f"Try lowering min_abs_corr (currently {min_abs_corr}) or min_nonzero (currently {min_nonzero}), "
+            "or reduce min_receivers_per_batch."
+        )
+
+    kept_pairs = sorted(list(kept_pairs_set))
+    lr_var_names = [f"{lig}_to_{rec}" for lig, rec in kept_pairs]
+
+    # ---- Build LR features for ALL cells, smoothing within each batch ----
+    # Prepare output feature matrix
+    X_lr_all = np.zeros((adata_all.n_obs, len(kept_pairs)), dtype=dtype)
+
+    # Maps for indexing
+    lig_needed = sorted({lig for lig, _ in kept_pairs})
+    rec_needed = sorted({rec for _, rec in kept_pairs})
+    lig_pos = {g: i for i, g in enumerate(lig_needed)}
+    rec_pos = {g: i for i, g in enumerate(rec_needed)}
+    pair_to_col = {(lig, rec): k for k, (lig, rec) in enumerate(kept_pairs)}
+
+    for b in uniq_batches:
+        idx_b = np.where(batches == b)[0]
+        if idx_b.size == 0:
+            continue
+
+        coords_b = np.asarray(adata_all.obsm[coords_key])[idx_b]
+        D = radius_neighbors_graph(
+            coords_b,
+            radius=radius,
+            mode="distance",
+            include_self=True,
+            n_jobs=n_jobs,
+        ).tocsr()
+
+        if D.nnz > 0:
+            if decay == "exp(-d)":
+                D.data = np.exp(-D.data).astype(dtype, copy=False)
+            else:
+                D.data = np.exp(-(D.data ** 2)).astype(dtype, copy=False)
+
+        row_sums = np.asarray(D.sum(axis=1)).ravel()
+        row_sums[row_sums == 0] = 1.0
+        W = (sp.diags(1.0 / row_sums) @ D).tocsr()
+
+        is_sender_b = is_sender_all[idx_b]
+        is_receiver_b = is_receiver_all[idx_b]
+
+        # lig smooth (sender-masked)
+        X_lig = adata_all[idx_b, lig_needed].X
+        if hasattr(X_lig, "toarray"):
+            X_lig = X_lig.toarray()
+        X_lig = np.asarray(X_lig, dtype=dtype, order="C")
+        X_lig_lin = np.expm1(X_lig)
+        X_lig_lin[~is_sender_b, :] = 0.0
+        X_lig_smooth = W.dot(X_lig_lin).astype(dtype, copy=False)  # (nb, Lneed)
+
+        # rec lin
+        X_rec = adata_all[idx_b, rec_needed].X
+        if hasattr(X_rec, "toarray"):
+            X_rec = X_rec.toarray()
+        X_rec = np.asarray(X_rec, dtype=dtype, order="C")
+        X_rec_lin = np.expm1(X_rec).astype(dtype, copy=False)      # (nb, Rneed)
+
+        # fill features for kept pairs
+        for lig, rec in kept_pairs:
+            col = pair_to_col[(lig, rec)]
+            li = lig_pos[lig]
+            rj = rec_pos[rec]
+            feat = np.log1p(X_lig_smooth[:, li] * X_rec_lin[:, rj]).astype(dtype, copy=False)
+            if mask_nonreceivers_to_zero:
+                feat = feat.copy()
+                feat[~is_receiver_b] = 0.0
+            X_lr_all[idx_b, col] = feat
+
+    # Wrap into AnnData & align to adata_dp
+    import scanpy as sc
+    adata_lr_all = sc.AnnData(X=X_lr_all)
+    adata_lr_all.var_names = lr_var_names
+    adata_lr_all.obs_names = adata_all.obs_names
+
+    adata_lr = adata_lr_all[adata_dp.obs_names, :].copy()
+    adata_lr.obs = adata_dp.obs.copy()
+    adata_lr.uns = adata_dp.uns
+    adata_lr.obsm = adata_dp.obsm
+    adata_lr.obsp = adata_dp.obsp
+
+    # attach per-batch table
+    import pandas as pd
+    per_batch_df = pd.DataFrame(stats_rows)
+    if not per_batch_df.empty:
+        # summary: best batch per pair
+        summary = (
+            per_batch_df.groupby(["ligand", "receptor"], as_index=False)
+            .agg(
+                n_batches_tested=("batch", "nunique"),
+                n_batches_kept=("kept_in_this_batch", "sum"),
+                best_abs_corr=("abs_corr", "max"),
+                best_mean_lr_recv=("mean_lr_recv", "max"),
+            )
+            .sort_values(["n_batches_kept", "best_abs_corr"], ascending=[False, False])
+            .reset_index(drop=True)
+        )
+    else:
+        summary = pd.DataFrame()
+
+    adata_lr.uns["lr_pair_strength_per_batch"] = per_batch_df
+    adata_lr.uns["lr_pair_strength_summary"] = summary
+
+    adata_neighbor = adata_dp.copy()
+    return adata_neighbor, adata_lr, lr_var_names, kept_pairs, present_lig, present_rec
+    
 def build_neighbor_and_lr(
     adata_all,
     adata_dp,
@@ -312,7 +630,7 @@ def build_neighbor_and_lr(
     n_jobs : int
         Parallelism for sklearn neighbor graph (-1 = all cores).
     dtype : numpy dtype
-        Cast arrays to this dtype to save memory (default float32).
+        Cast arrays to this dtype to save memory (default float32).#
 
     Returns
     -------
@@ -348,7 +666,7 @@ def build_neighbor_and_lr(
         include_self=True,  # add explicitly below
         n_jobs=n_jobs,
     ).tocsr()
-    # A.setdiag(1)
+    A.setdiag(1)
 
     # Make a neighbor-smoothed version of expm1(X)
     X_all = adata_all[:, present_lig].X # Only the ligand expression values are of interest
@@ -361,10 +679,53 @@ def build_neighbor_and_lr(
 
     X_lig = X_smooth.astype(dtype, copy=False)          # (n, L)
     X_rec = adata_all[:, present_rec].X
+    #from sklearn.neighbors import radius_neighbors_graph
+    #import numpy as np
+    if coords_key not in adata_all.obsm_keys():
+        raise ValueError(f"'{coords_key}' not found in adata_all.obsm")
+
+    # Determine which lig/receptors exist
+    var_index = {g: i for i, g in enumerate(adata_all.var_names)}
+    present_lig = [g for g in all_lig if g in var_index]
+    present_rec = [g for g in all_recept if g in var_index]
+
+    if not present_lig or not present_rec:
+        raise ValueError("No overlap between provided ligands/receptors and adata_all.var_names.")
+
+    coords = adata_all.obsm[coords_key]
+
+# Radius neighbor graph with distances (not binary)
+    D = radius_neighbors_graph(
+        coords,
+        radius=radius,
+        mode="distance",        # <-- distances instead of connectivity
+        include_self=True,
+        n_jobs=n_jobs,
+    ).tocsr()
+
+    # Apply Gaussian decay: exp(-d^2)
+    D.data = np.exp(-(D.data ** 2))
+
+    # (Optional) row-normalize so weights sum to 1 per cell
+    row_sums = np.asarray(D.sum(axis=1)).ravel()
+    row_sums[row_sums == 0] = 1.0
+    W = sp.diags(1.0 / row_sums) @ D
+
+    # Make a neighbor-smoothed version of expm1(X)
+    X_all = adata_all[:, present_lig].X   # ligand expression only
+    if hasattr(X_all, "toarray"):
+        X_all = X_all.toarray()
+    X_all = X_all.astype(dtype, copy=False)
+
+    X_lin = np.expm1(X_all)               # undo log1p if present
+    X_smooth = W.dot(X_lin)               # distance-decayed smoothing
+
+    X_lig = X_smooth.astype(dtype, copy=False)   # (n, L)
+    X_rec = adata_all[:, present_rec].X
+
     if hasattr(X_rec, "toarray"):
         X_rec = X_rec.toarray()
     X_rec = X_rec.astype(dtype, copy=False)                         # (n, R)
-
     lr_prod = X_lig[:, :, None] * np.expm1(X_rec)[:, None, :]       # (n, L, R)
     X_lr = np.log1p(lr_prod).reshape(adata_all.n_obs, -1)           # (n, L*R)
 
@@ -399,7 +760,116 @@ def build_neighbor_and_lr(
 
     return adata_neighbor, adata_lr, lr_var_names, present_lig, present_rec
 
+# weighted KNN + GCN smoothing
+def gcn_weighted_knn_smooth(
+    adata,
+    *,
+    # Graph construction space (used only to find neighbors)
+    knn_rep: str = "X_pca",        # uses adata.obsm[knn_rep] if exists; else falls back to X
+    # What to smooth
+    smooth_layer: str | None = None,  # None => adata.X, else adata.layers[smooth_layer]
+    # kNN + weights
+    k: int = 15,
+    sigma: float | None = None,    # if None: median distance heuristic
+    include_self: bool = True,     # adds self-loop
+    symmetrize: bool = True,       # make A undirected; if False, keep directed kNN
+    # Smoothing strength (residual mixing)
+    alpha: float = 0.5,            # 0=no smoothing, 1=full PX
+    # Outputs
+    out_layer: str = "X_gcn_smooth",
+    out_obsp: str = "W_knn",
+    seed: int = 0,
+):
+    """
+    One-layer weighted-neighbor "GCN smoothing" (no training):
+        X_smooth = (1-alpha) * X + alpha * P * X
+    where P is row-stochastic normalization of a weighted kNN adjacency.
+    Stores:
+      - adata.layers[out_layer] = smoothed matrix (same shape as X)
+      - adata.obsp[out_obsp]   = sparse weighted adjacency used (after optional sym/self)
+    """
+    rng = np.random.default_rng(seed)
 
+    # ---- (1) Choose representation for kNN search
+    if hasattr(adata, "obsm") and knn_rep in adata.obsm_keys():
+        Z = np.asarray(adata.obsm[knn_rep])
+    else:
+        # fallback: use X (dense view if needed)
+        X0 = adata.X if smooth_layer is None else adata.layers[smooth_layer]
+        Z = X0.toarray() if sp.issparse(X0) else np.asarray(X0)
+
+    n = Z.shape[0]
+    if k >= n:
+        raise ValueError(f"k={k} must be < number of cells n={n}.")
+
+    # ---- (2) kNN graph (exclude self in knn query; add self-loop later if requested)
+    nn = NearestNeighbors(n_neighbors=k + 1, metric="euclidean", algorithm="auto")
+    nn.fit(Z)
+    dists, idx = nn.kneighbors(Z, return_distance=True)
+
+    # idx[:,0] is self, dist=0.0; we drop it for edges
+    dists = dists[:, 1:]  # (n, k)
+    idx = idx[:, 1:]      # (n, k)
+
+    # ---- (3) Choose sigma for Gaussian weights
+    # weights: w_ij = exp(-(d_ij^2)/(2*sigma^2))
+    if sigma is None:
+        # median of nonzero distances (robust heuristic)
+        med = np.median(dists[dists > 0])
+        sigma = float(med) if np.isfinite(med) and med > 0 else 1.0
+
+    # ---- (4) Build sparse weighted adjacency A (directed kNN by default)
+    rows = np.repeat(np.arange(n), k)
+    cols = idx.reshape(-1)
+    vals = np.exp(-(dists.reshape(-1) ** 2) / (2.0 * sigma * sigma)).astype(np.float32)
+
+    A = sp.csr_matrix((vals, (rows, cols)), shape=(n, n), dtype=np.float32)
+
+    # Optional symmetrization (common for smoothing)
+    if symmetrize:
+        # "max" symmetrization tends to keep strong edges
+        A = A.maximum(A.T)
+
+    # Optional self-loop
+    if include_self:
+        A = A + sp.eye(n, dtype=np.float32, format="csr")
+
+    # ---- (5) Row-stochastic normalization P = D^{-1} A
+    deg = np.asarray(A.sum(axis=1)).reshape(-1)  # (n,)
+    deg[deg == 0] = 1.0
+    Dinv = sp.diags(1.0 / deg.astype(np.float32))
+    P = Dinv @ A  # still sparse
+
+    # ---- (6) Choose matrix X to smooth
+    X = adata.X if smooth_layer is None else adata.layers[smooth_layer]
+    X_is_sparse = sp.issparse(X)
+
+    # Convert to float32 (dense or sparse)
+    if X_is_sparse:
+        Xf = X.astype(np.float32)
+        PX = P @ Xf  # sparse @ sparse -> sparse
+        # residual mix: (1-alpha)X + alpha(PX)
+        X_smooth = (1.0 - alpha) * Xf + alpha * PX
+    else:
+        Xf = np.asarray(X, dtype=np.float32)
+        PX = P @ Xf  # sparse @ dense -> dense
+        X_smooth = (1.0 - alpha) * Xf + alpha * PX
+
+    # ---- (7) Store outputs
+    adata.layers[out_layer] = X_smooth
+    adata.obsp[out_obsp] = A  # store adjacency actually used (not P) for inspection
+
+    info = {
+        "knn_rep_used": knn_rep if knn_rep in getattr(adata, "obsm", {}) else "X/layer",
+        "k": int(k),
+        "sigma": float(sigma),
+        "alpha": float(alpha),
+        "include_self": bool(include_self),
+        "symmetrize": bool(symmetrize),
+        "out_layer": out_layer,
+        "out_obsp": out_obsp,
+    }
+    return info
 
 def derive_temporal_neighborhood(
     adata,
@@ -464,19 +934,122 @@ def derive_temporal_neighborhood(
     return temporal_neighbors, D
 
 
+from typing import Dict, List, Optional
+import numpy as np
+
+
 def sample_paths(
     temporal_neighbors: Dict[int, List[int]],
     *,
     len_path: int = 3,
     n_rounds: int = 2,            # match the script's two outer loops (train/test)
-    repeats_per_round: int = 10,  # match the script's inner "for repeat in range(10)"
+    repeats_train_round: int = 8,  # match the script's inner "for repeat in range(10)"
+    repeats_test_round: int = 2,
+    random: bool = False,         # NEW: if True, sample nodes uniformly at random
     rng: Optional[np.random.Generator] = None,
-    draw_fn=None,                 # optional: draw_fn(adata, path, cnt, t)
+    draw_fn=None,                 # optional: draw_fn(path=..., cnt=..., t=..., **kwargs)
     draw_example_n: int = 0,
     draw_fn_kwargs: Optional[dict] = None,
 ) -> List[List[List[int]]]:
     """
-    Reimplementation of the script’s path sampling:
+    Path sampling:
+
+      • If random=False (default):
+          For each round t in [0..n_rounds-1]:
+              For each node i, attempt a forward random walk of length `len_path`
+              using `temporal_neighbors`. Repeat `repeats_per_round` times.
+              Keep only complete paths (len == len_path + 1).
+
+      • If random=True:
+          Ignore `temporal_neighbors` ordering. Build each path by sampling
+          distinct nodes uniformly at random from the node set (no repeats within
+          a path). Paths are still of length len_path + 1, one per starting node
+          per repeat (same outer-loop structure), unless the graph has too few nodes.
+
+      • Optionally draw the first `draw_example_n` paths of each round using draw_fn.
+
+    Returns
+    -------
+    paths_per_round : list of rounds, where each round is a list of paths.
+        paths_per_round[t] -> List[List[int]] with each inner list a node index path.
+    """
+    if rng is None:
+        rng = np.random.default_rng(0)
+
+    nodes = list(temporal_neighbors.keys())
+    n_nodes = len(nodes)
+    draw_kwargs = draw_fn_kwargs or {}
+
+    paths_per_round: List[List[List[int]]] = []
+
+    for t in range(n_rounds):
+        if t == 0:
+            repeats_per_round = repeats_train_round
+        else:
+            repeats_per_round = repeats_test_round
+        round_paths: List[List[int]] = []
+        draw_count = 0
+
+        for _ in range(repeats_per_round):
+            for i in nodes:
+                if not random:
+                    # Original behavior: temporal neighbor walk
+                    path = [i]
+                    cur = i
+                    for _step in range(len_path):
+                        nxts = temporal_neighbors.get(cur, [])
+                        if not nxts:
+                            break
+                        nxt = int(rng.choice(nxts))
+                        path.append(nxt)
+                        cur = nxt
+
+                    if len(path) == len_path + 1:
+                        round_paths.append(path)
+                        if draw_fn is not None and draw_count < draw_example_n:
+                            draw_fn(path=path, cnt=draw_count, t=t, **draw_kwargs)
+                            draw_count += 1
+
+                else:
+                    # New behavior: random nodes (not along pseudotime/UMAP)
+                    # Keep the same outer-loop shape: one sampled path per (repeat, start node).
+                    # Ensure no node repeats within a path.
+                    need = len_path + 1
+                    if n_nodes < need:
+                        # Not enough distinct nodes to form a path without repeats.
+                        # Skip (mirrors "keep only complete paths" idea).
+                        continue
+
+                    # Sample remaining nodes excluding i, then prepend i.
+                    pool = np.array(nodes, dtype=int)
+                    # Build a pool without i
+                    pool_wo_i = pool[pool != i]
+                    chosen_rest = rng.choice(pool_wo_i, size=need - 1, replace=False).tolist()
+                    path = [int(i)] + [int(x) for x in chosen_rest]
+
+                    round_paths.append(path)
+                    if draw_fn is not None and draw_count < draw_example_n:
+                        draw_fn(path=path, cnt=draw_count, t=t, **draw_kwargs)
+                        draw_count += 1
+
+        paths_per_round.append(round_paths)
+
+    return paths_per_round
+
+
+#def sample_paths(
+ #   temporal_neighbors: Dict[int, List[int]],
+  #  *,
+   # len_path: int = 3,
+#    n_rounds: int = 2,            # match the script's two outer loops (train/test)
+ #   repeats_per_round: int = 10,  # match the script's inner "for repeat in range(10)"
+  #  rng: Optional[np.random.Generator] = None,
+   # draw_fn=None,                 # optional: draw_fn(adata, path, cnt, t)
+#    draw_example_n: int = 0,
+ #   draw_fn_kwargs: Optional[dict] = None,
+#) -> List[List[List[int]]]:
+    """
+ #   Reimplementation of the script’s path sampling:
 
       • For each round t in [0..n_rounds-1]:
           For each node i, attempt a forward random walk of length `len_path`
@@ -490,41 +1063,41 @@ def sample_paths(
     paths_per_round : list of rounds, where each round is a list of paths.
         paths_per_round[t] -> List[List[int]] with each inner list a node index path.
     """
-    if rng is None:
-        rng = np.random.default_rng(0)
+#    if rng is None:
+ #       rng = np.random.default_rng(0)
+#
+ #   nodes = list(temporal_neighbors.keys())
+  #  draw_kwargs = draw_fn_kwargs or {}
 
-    nodes = list(temporal_neighbors.keys())
-    draw_kwargs = draw_fn_kwargs or {}
+   # paths_per_round: List[List[List[int]]] = []
 
-    paths_per_round: List[List[List[int]]] = []
+    #for t in range(n_rounds):
+     #   round_paths: List[List[int]] = []
+      #  draw_count = 0
 
-    for t in range(n_rounds):
-        round_paths: List[List[int]] = []
-        draw_count = 0
-
-        for _ in range(repeats_per_round):
-            for i in nodes:
-                path = [i]
-                cur = i
-                for _step in range(len_path):
-                    nxts = temporal_neighbors.get(cur, [])
-                    if not nxts:
-                        break
-                    nxt = int(rng.choice(nxts))
-                    path.append(nxt)
-                    cur = nxt
+       # for _ in range(repeats_per_round):
+        #    for i in nodes:
+          #      path = [i]
+         #       cur = i
+           #     for _step in range(len_path):
+            #        nxts = temporal_neighbors.get(cur, [])
+             #       if not nxts:
+              #          break
+               #     nxt = int(rng.choice(nxts))
+                #    path.append(nxt)
+                 #   cur = nxt
 
                 # keep only complete paths
-                if len(path) == len_path + 1:
-                    round_paths.append(path)
-                    if draw_fn is not None and draw_count < draw_example_n:
-                        # expected signature: draw_fn(adata, path, cnt, t)
-                        draw_fn(path=path, cnt=draw_count, t=t, **draw_kwargs)
-                        draw_count += 1
+#                if len(path) == len_path + 1:
+ #                   round_paths.append(path)
+  #                  if draw_fn is not None and draw_count < draw_example_n:
+   #                     # expected signature: draw_fn(adata, path, cnt, t)
+    #                    draw_fn(path=path, cnt=draw_count, t=t, **draw_kwargs)
+     #                   draw_count += 1
 
-        paths_per_round.append(round_paths)
+      #  paths_per_round.append(round_paths)
 
-    return paths_per_round
+#    return paths_per_round
 
 
 
@@ -742,3 +1315,12 @@ def normalize_genes(adata):
     maxs = X.max(axis=0)
     maxs[maxs == 0] = 1.0
     adata.X = X / maxs
+
+#def normalize_genes(adata):
+#    X = adata.X.toarray() if hasattr(adata.X, "toarray") else adata.X
+#    
+#    means = X.mean(axis=0)
+#    stds = X.std(axis=0)
+#    stds[stds == 0] = 1.0  # avoid division by zero
+    
+#    adata.X = (X - means) / stds
