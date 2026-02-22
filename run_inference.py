@@ -101,6 +101,9 @@ def parse_args() -> argparse.Namespace:
         help="Project prefix used by preprocess (e.g., 'MyProj'). Required to locate gene lists.",
     )
     ap.add_argument(
+        "--file_name", type=str, help="Provide in case the project name is different from the file names."
+    )
+    ap.add_argument(
         "-b",
         "--batch_key",
         type=str,
@@ -211,7 +214,7 @@ def parse_args() -> argparse.Namespace:
 # ----------------------------- Path Builders -----------------------------
 
 def build_project_paths(
-    data_dir: Path, input_dir: Path, out_dir: Path, project_name: str
+    data_dir: Path, input_dir: Path, out_dir: Path, project_name: str, file_name: str
 ) -> dict:
     """
     Returns a dict of resolved paths used throughout the pipeline.
@@ -234,8 +237,8 @@ def build_project_paths(
         "batchmap_csv": meta_dir / f"{project_name}_metacell_batchmap.csv",
         "meta_labels_npy": meta_dir / f"{project_name}_metacell_membership.csv",  # kept if needed
         # Adata
-        "adata_dp": data_dir / f"{project_name}_sc_adata.h5ad",
-        "adata_all": data_dir / f"{project_name}_st_adata.h5ad",
+        "adata_dp": data_dir / f"{file_name}_sc_adata.h5ad",
+        "adata_all": data_dir / f"{file_name}_st_adata.h5ad",
         # Gene sets
         "ligands_txt": meta_dir / f"{project_name}_ligands.txt",
         "receptors_txt": meta_dir / f"{project_name}_receptors.txt",
@@ -274,8 +277,8 @@ def validate_inputs(
 
     # Global attentions are required
     _require_dir(paths["global_att_dir"], "global attentions directory")
-    ga_file = paths["global_att_dir"] / "attn_global_lr.npz"
-    _require_file(ga_file, "global LR attention (attn_global_lr.npz)")
+    ga_file = paths["global_att_dir"] / "gated_global_lr_full.npz"
+    _require_file(ga_file, "global LR attention (gated_global_lr_full.npz)")
     logger.info(f"Found global attentions: {ga_file}")
 
     # Per-cell embeddings only required if we recompute per-cell intensities
@@ -318,25 +321,60 @@ def load_gene_lists(paths: dict, logger: logging.Logger) -> dict:
 
 # ----------------------------- Workflows -----------------------------
 
-def run_global_lr_intensity(paths: dict, genes: dict, top_n_bar: int, logger: logging.Logger) -> None:
+def _softmax_np(x: np.ndarray, axis: int = -1, temperature: float = 1.0) -> np.ndarray:
+    """Numerically stable softmax."""
+    x = x.astype(np.float64, copy=False)  # stability
+    x = x / float(temperature)
+    x = x - np.max(x, axis=axis, keepdims=True)
+    ex = np.exp(x)
+    return ex / np.sum(ex, axis=axis, keepdims=True)
+
+#def run_global_lr_intensity(paths: dict, genes: dict, top_n_bar: int, logger: logging.Logger) -> None:
+ #   logger.info("Computing global LR intensities from global attentions...")
+ #   ga_file = paths["global_att_dir"] / "gated_global_lr_full.npz"
+ #   print(np.load(ga_file))
+ #   vals = np.load(ga_file)["weight"].T
+ #   logger.debug(f"Global attention matrix shape: {vals.shape}")
+ #   out_dir = paths["GENE_OUT"]
+ #   out_dir.mkdir(parents=True, exist_ok=True)
+ #   aggregate_LR_intensity(
+ #       vals,
+ #       genes["ligands"],
+ #       genes["receptors"],
+ #       genes["lr_pairs"],
+ #       out_dir,
+ #       mode="global",
+ #       top_n_bar=top_n_bar,
+ #   )
+ #   logger.info("Global LR intensities computed and saved.")
+def run_global_lr_intensity(paths: dict, genes: dict, top_n_bar: int, topk_per_col, logger: logging.Logger) -> None:
     logger.info("Computing global LR intensities from global attentions...")
-    ga_file = paths["global_att_dir"] / "attn_global_lr.npz"
-    print(np.load(ga_file))
-    vals = np.load(ga_file)["vals"]
-    logger.debug(f"Global attention matrix shape: {vals.shape}")
+
+    ga_file = paths["global_att_dir"] / "gated_global_lr_full.npz"
+    Z = np.load(ga_file)
+
+    # expected to be (TG, LR) or (LR, TG); your old code transposed it to (TG, LR)
+    W = Z["weight"].T  # (TG, LR)
+    logger.debug(f"Global LR matrix shape (TG, LR): {W.shape}")
+
+    # Softmax across LR for each TG -> rows sum to 1, values in (0,1)
+#    W_soft = _softmax_np(W, axis=1)
+
     out_dir = paths["GENE_OUT"]
     out_dir.mkdir(parents=True, exist_ok=True)
+
     aggregate_LR_intensity(
-        vals,
+        W,
         genes["ligands"],
         genes["receptors"],
         genes["lr_pairs"],
         out_dir,
         mode="global",
         top_n_bar=top_n_bar,
+        top_k=topk_per_col
     )
-    logger.info("Global LR intensities computed and saved.")
 
+    logger.info("Global LR intensities (softmaxed) computed and saved.")
 
 def run_percell_aggregation(
     paths: dict,
@@ -452,7 +490,7 @@ def main() -> None:
     if not args.project_name:
         raise ValueError("--project_name is required to locate gene lists and tensors.")
 
-    paths = build_project_paths(DATA_DIR, INPUT_DIR, OUTPUT_DIR, args.project_name)
+    paths = build_project_paths(DATA_DIR, INPUT_DIR, OUTPUT_DIR, args.project_name, args.file_name)
 
     # Ensure output subdirs exist
     paths["GENE_OUT"].mkdir(parents=True, exist_ok=True)
@@ -467,7 +505,7 @@ def main() -> None:
     genes = load_gene_lists(paths, logger)
 
     # Global LR intensity from global attentions
-    run_global_lr_intensity(paths, genes, top_n_bar=args.top_n_bar, logger=logger)
+    run_global_lr_intensity(paths, genes, top_n_bar=args.top_n_bar, topk_per_col = args.topk_per_col, logger=logger)
 
     # Initialize holders so they exist even if we skip per-cell
     stage_sums = None
