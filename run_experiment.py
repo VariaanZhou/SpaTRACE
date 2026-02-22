@@ -10,7 +10,7 @@ import tensorflow as tf
 from model.SpaTRACE_v1_0 import (
     Transformer, CustomSchedule, masked_mse, l1_reg_loss, infer_cpu
 )
-
+#entropy_loss
 # ---- single-save helpers for GLOBAL embeddings/attentions ----
 _GLOBAL_SAVED = {"emb": False, "attn": False}
 
@@ -101,10 +101,119 @@ def _save_global_attentions_once(kind: str,
 
     _GLOBAL_SAVED["attn"] = True
 
+def _save_global_gated_networks_once(out_dir: Path,
+                                     net_tf_global, net_lr_global,
+                                     *, to_np16, save_full, topk_per_row,
+                                     save_visuals, save_npz, save_png, topk_sparse_rows):
+    if _GLOBAL_SAVED["attn"]:
+        return
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+#    W_tf = tf.reduce_mean(net_tf_global, axis=(0,1,2))  # (Gtgt, Gtf)
+#    W_lr = tf.reduce_mean(net_lr_global, axis=(0,1,2))  # (Gtgt, Glr)
+
+    # use abs if you want unsigned “strength”
+#    W_tf = tf.abs(W_tf)
+#    W_lr = tf.abs(W_lr)
+    W_tf = tf.reduce_mean(tf.abs(net_tf_global), axis=(0,1,2))  # (Gtgt, Gtf)
+    W_lr = tf.reduce_mean(tf.abs(net_lr_global), axis=(0,1,2))  # (Gtgt, Glr)
+
+    if not save_full:
+        tf_vals, tf_cols = topk_sparse_rows(W_tf, topk_per_row)  # top-k per TG row
+        lr_vals, lr_cols = topk_sparse_rows(W_lr, topk_per_row)
+
+        save_npz(out_dir / "gated_global_tf_topk.npz",
+                 vals=to_np16(tf_vals),
+                 cols=tf_cols.numpy().astype(np.int32, copy=False))
+        save_npz(out_dir / "gated_global_lr_topk.npz",
+                 vals=to_np16(lr_vals),
+                 cols=lr_cols.numpy().astype(np.int32, copy=False))
+
+        if save_visuals:
+            # optional preview reconstruction (only if dims not huge)
+            Gtgt = int(W_tf.shape[0])
+            C_tf = int(W_tf.shape[1])
+            C_lr = int(W_lr.shape[1])
+            cap = 4096
+            if C_tf <= cap:
+                preview = np.zeros((Gtgt, C_tf), dtype=to_np16(tf.constant(0.)).dtype)
+                rows = np.arange(Gtgt)[:, None]
+                preview[rows, tf_cols.numpy()] = to_np16(tf_vals)
+                save_png(out_dir / "gated_global_tf_preview.png", preview)
+            if C_lr <= cap:
+                preview = np.zeros((Gtgt, C_lr), dtype=to_np16(tf.constant(0.)).dtype)
+                rows = np.arange(Gtgt)[:, None]
+                preview[rows, lr_cols.numpy()] = to_np16(lr_vals)
+                save_png(out_dir / "gated_global_lr_preview.png", preview)
+    else:
+        save_npz(out_dir / "gated_global_tf_full.npz", weight=to_np16(W_tf))
+        save_npz(out_dir / "gated_global_lr_full.npz", weight=to_np16(W_lr))
+        if save_visuals:
+            save_png(out_dir / "gated_global_tf_full.png", to_np16(W_tf))
+            save_png(out_dir / "gated_global_lr_full.png", to_np16(W_lr))
+
+    _GLOBAL_SAVED["attn"] = True
+
 
 def _feat_dim(x):
     return x.shape[2] if x.ndim == 3 else x.shape[1]
 
+def _save_percell_gated_networks(kind: str,
+                                 net_tf_percell, net_lr_percell,
+                                 out_dir: Path,
+                                 batch_idx_base: int,
+                                 *,
+                                 to_np16,
+                                 save_attentions:bool,
+                                 save_full: bool,
+                                 topk_per_row: int,
+                                 save_visuals: bool,
+                                 save_npz,
+                                 save_png,
+                                 topk_sparse_rows):
+    if not save_attentions:
+        return
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # net_*: (B, Lq, Lk, Gtgt, Gpred)
+    B = int(net_tf_percell.shape[0])
+
+    for i in range(B):
+        # collapse Lq,Lk to get one 2D matrix per sample
+        #W_tf = tf.abs(tf.reduce_mean(net_tf[i], axis=(0,1)))  # (Gtgt, Gtf)
+        #W_lr = tf.abs(tf.reduce_mean(net_lr[i], axis=(0,1)))  # (Gtgt, Glr)
+        W_tf = tf.reduce_mean(tf.abs(net_tf_percell), axis=(0,1,2))  # (Gtgt, Gtf)
+        W_lr = tf.reduce_mean(tf.abs(net_lr_percell), axis=(0,1,2))  # (Gtgt, Glr)
+
+        if not save_full:
+            tf_vals, tf_cols = topk_sparse_rows(W_tf, topk_per_row)
+            lr_vals, lr_cols = topk_sparse_rows(W_lr, topk_per_row)
+            save_npz(out_dir / f"gated_{kind}_tf_topk_{batch_idx_base + i:04d}.npz",
+                     vals=to_np16(tf_vals),
+                     cols=tf_cols.numpy().astype(np.int32, copy=False))
+            save_npz(out_dir / f"gated_{kind}_lr_topk_{batch_idx_base + i:04d}.npz",
+                     vals=to_np16(lr_vals),
+                     cols=lr_cols.numpy().astype(np.int32, copy=False))
+
+            if save_visuals:
+                # only save preview if predictor dims not huge
+                cap = 4096
+                if int(W_tf.shape[1]) <= cap:
+                    preview = np.zeros((int(W_tf.shape[0]), int(W_tf.shape[1])), dtype=DTYPE_ON_DISK)
+                    rows = np.arange(int(W_tf.shape[0]))[:, None]
+                    preview[rows, tf_cols.numpy()] = to_np16(tf_vals)
+                    save_png(out_dir / f"gated_{kind}_tf_preview_{batch_idx_base + i:04d}.png", preview)
+                if int(W_lr.shape[1]) <= cap:
+                    preview = np.zeros((int(W_lr.shape[0]), int(W_lr.shape[1])), dtype=DTYPE_ON_DISK)
+                    rows = np.arange(int(W_lr.shape[0]))[:, None]
+                    preview[rows, lr_cols.numpy()] = to_np16(lr_vals)
+                    save_png(out_dir / f"gated_{kind}_lr_preview_{batch_idx_base + i:04d}.png", preview)
+        else:
+            save_npz(out_dir / f"gated_{kind}_tf_full_{batch_idx_base + i:04d}.npz", weight=to_np16(W_tf))
+            save_npz(out_dir / f"gated_{kind}_lr_full_{batch_idx_base + i:04d}.npz", weight=to_np16(W_lr))
+            if save_visuals:
+                save_png(out_dir / f"gated_{kind}_tf_full_{batch_idx_base + i:04d}.png", to_np16(W_tf))
+                save_png(out_dir / f"gated_{kind}_lr_full_{batch_idx_base + i:04d}.png", to_np16(W_lr))
 
 def _auto_detect_project(base: Path) -> str:
     cand = list(base.glob("*_tensors_train.npz"))
@@ -167,16 +276,16 @@ def main():
     parser.add_argument("--dff", type=int, default=256, help="Feed-forward hidden size")
     parser.add_argument("--num_heads", type=int, default=5, help="Number of attention heads")
     parser.add_argument("--dropout_rate", type=float, default=0.0, help="Dropout rate")
-    parser.add_argument("--l1_reg", type=float, default=0.5, help="The regularization parameter of l1 loss")
+    parser.add_argument("--l1_reg", type=float, default=0.005, help="The regularization parameter of l1 loss")
 
     # Export / inference controls
-    parser.add_argument("--infer_batch_size", type=int, default=16,
+    parser.add_argument("--infer_batch_size", type=int, default=4,
                         help="Batch size for inference/exports")
     parser.add_argument("--save_percell_attentions", dest="save_attentions", action="store_true", default=False,
                         help="Save percell attention matrices (default: True)")
     parser.add_argument("--save_visuals", dest="save_visuals", action="store_true", default=False,
                         help="Save PNG previews of attention matrices (default: True)")
-    parser.add_argument("--save_full_weights", dest="save_full_weights", action="store_true", default=False,
+    parser.add_argument("--save_full_weights", dest="save_full_weights", action="store_true", default=True,
                         help="Save full dense attention matrices (default: False = top-k sparse)")
     parser.add_argument("--topk_per_row", type=int, default=100, help="Top-k per row when saving sparse")
     parser.add_argument("--dtype_on_disk", type=str, choices=["float16", "float32"], default="float16",
@@ -274,8 +383,8 @@ def main():
             "output_8": l1_reg_loss,
         },
         loss_weights={
-            "output_1": 1.0, "output_2": 1.0, "output_3": 1.0, "output_4": 1.0,
-            "output_5": args.l1_reg, "output_6": args.l1_reg, "output_7": args.l1_reg, "output_8": args.l1_reg,
+            "output_1": 0.6, "output_2": 0.6, "output_3": 1, "output_4": 1,
+            "output_5": args.l1_reg, "output_6":  args.l1_reg, "output_7": args.l1_reg, "output_8": args.l1_reg,
         },
         metrics={"output_1": tf.keras.metrics.MeanSquaredError()},
     )
@@ -333,7 +442,7 @@ def main():
     def _save_npz(path, **arrays):
         np.savez_compressed(path, **arrays)
 
-    def _save_heatmap_png(path, arr_2d, figsize=(12, 10), dpi=150, cmap="viridis"):
+    def _save_heatmap_png(path, arr_2d, figsize=(12, 10), dpi=150, cmap="coolwarm"):
         """
         Save a heatmap image from a 2D array with configurable size.
 
@@ -428,10 +537,15 @@ def main():
     for b in range(n_batches):
         sl = slice(b * BATCH_SIZE, min((b + 1) * BATCH_SIZE, len(ligrecp_exp_val)))
         try:
-            _ = transformer([ligrecp_exp_val[sl], tf_exp_val[sl], target_exp_val[sl]], training=False)
+            out = transformer([ligrecp_exp_val[sl], tf_exp_val[sl], target_exp_val[sl]], training=False)
         except Exception as e:
             print(f"[INFO] Batch {b}: GPU error ({e}); falling back to CPU.")
-            _ = infer_cpu(transformer, ligrecp_exp_val[sl], tf_exp_val[sl], target_exp_val[sl])
+            out = infer_cpu(transformer, ligrecp_exp_val[sl], tf_exp_val[sl], target_exp_val[sl])
+        # gated network tensors from model outputs
+        net_tf_global = out["output_5"]
+        net_lr_global = out["output_6"]
+        net_tf_percell = out["output_7"]
+        net_lr_percell = out["output_8"]
 
         # per-cell
         x_vq1_percell    = transformer.decoder.x_vq1_percell
@@ -457,16 +571,72 @@ def main():
             x_vq1_global, tf_vk1_global, recp_vk1_global,
             _to_np16
         )
+        # gated global TF->TG and LR->TG (saved once)
+        _save_global_gated_networks_once(
+            global_att_dir,
+            net_tf_global, net_lr_global,
+            to_np16=_to_np16,
+        save_full=SAVE_FULL_WEIGHTS,
+        topk_per_row=TOPK_PER_ROW,
+        save_visuals=SAVE_VISUALS,
+        save_npz=_save_npz,
+        save_png=_save_heatmap_png,
+        topk_sparse_rows=_topk_sparse_rows,
+        )
+
+        # gated per-cell TF->TG and LR->TG (optional)
+        _save_percell_gated_networks(
+            "percell",
+            net_tf_percell, net_lr_percell,
+            percell_att_dir,
+            b * BATCH_SIZE,
+            to_np16=_to_np16,
+            save_attentions=SAVE_ATTENTIONS,   # <-- PASS IT
+            save_full=SAVE_FULL_WEIGHTS,
+            topk_per_row=TOPK_PER_ROW,
+            save_visuals=SAVE_VISUALS,
+            save_npz=_save_npz,
+            save_png=_save_heatmap_png,
+            topk_sparse_rows=_topk_sparse_rows,
+        )
 
         # attentions
-        _summarize_and_save_attentions("global",  x_vq1_global,  tf_vk1_global,  recp_vk1_global,
-                                       global_att_dir,  b * BATCH_SIZE)
-        _summarize_and_save_attentions("percell", x_vq1_percell, tf_vk1_percell, recp_vk1_percell,
-                                       percell_att_dir, b * BATCH_SIZE)
+        #_summarize_and_save_attentions("global",  x_vq1_global,  tf_vk1_global,  recp_vk1_global,
+        #                               global_att_dir,  b * BATCH_SIZE)
+        #_summarize_and_save_attentions("percell", x_vq1_percell, tf_vk1_percell, recp_vk1_percell,
+        #                               percell_att_dir, b * BATCH_SIZE)
 
         del (x_vq1_percell, tf_vk1_percell, recp_vk1_percell,
              x_vq1_global, tf_vk1_global, recp_vk1_global)
         gc.collect()
+        
+        ## DEBUGGING
+        try:
+            tf.debugging.check_numerics(net_tf_global, "net_tf_global has NaN/Inf")
+        except Exception as e:
+            print("[NUMERICS ERROR] net_tf_global:", e)
+        
+        try:
+            tf.debugging.check_numerics(net_lr_global, "net_lr_global has NaN/Inf")
+        except Exception as e:
+            print("[NUMERICS ERROR] net_lr_global:", e)
+        
+        try:
+            tf.debugging.check_numerics(transformer.decoder.x_vq1_global, "x_vq1_global has NaN/Inf")
+        except Exception as e:
+            print("[NUMERICS ERROR] x_vq1_global:", e)
+        
+        try:
+            tf.debugging.check_numerics(transformer.decoder.tf_vk1_global, "tf_vk1_global has NaN/Inf")
+        except Exception as e:
+            print("[NUMERICS ERROR] tf_vk1_global:", e)
+        
+        try:
+            tf.debugging.check_numerics(transformer.decoder.recp_vk_global, "recp_vk_global has NaN/Inf")
+        except Exception as e:
+            print("[NUMERICS ERROR] recp_vk_global:", e)
+
+
         tf.keras.backend.clear_session()
 
     print("[DONE] Weights, embeddings, and (global + percell) attentions exported.")
