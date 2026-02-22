@@ -126,8 +126,9 @@ python run_preprocess.py \
   --num_repeats 10 \
   --k_primary 5 \
   --skip_de \
-  --radius 1 \
-  --n_jobs -1
+  --radius 5 \
+  --n_jobs -1 \
+  --simulation_data
 ```
 ## Arguments explained
 - `--data_dir` – working directory where you saved the input files.  
@@ -190,8 +191,8 @@ python run_experiment.py \
   --data_dir ./experiments/simulation \
   --project simulation \
   --out_dir ./experiments/simulation/results \
-  --d_model 64 \
-  --dff 64 \
+  --d_model 128 \
+  --dff 128 \
   --num_heads 3 \
   --epochs 50 \
   --tlength 3 \
