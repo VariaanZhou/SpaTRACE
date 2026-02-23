@@ -55,7 +55,7 @@ The pipeline is organized into **three main scripts**:
 
 ## Requirements
 
-- Python 3.9+
+- Python 3.10+
 - Packages:
   - `scanpy`
   - `squidpy`
