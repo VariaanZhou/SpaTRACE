@@ -268,7 +268,7 @@ python run_inference.py \
   --batch_key batch \
   --groupby 'Cell Types' \
   --filter_threshold 0.2 \
-  --radius 1 \
+  --radius 5 \
   --topk_per_col 100 \
   --top_n_bar 20 \
   --dpi 300 \
