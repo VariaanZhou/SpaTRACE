@@ -1102,8 +1102,6 @@ def main():
     '''
     CHANGE: Metacell design removed! Directly save the cell identity and then move to the path sampling.
     '''
-    
-
 
     sc.settings.figdir = FIG_SAVE  # set directory once
     sc.pl.umap(adata_dp, color=PT_KEY, save="umap_pseudotime.png")    # Normalize gene_expressions
@@ -1114,6 +1112,10 @@ def main():
     # slice down both adata and the neighbor‐averaged copy
     adata = adata_dp.copy()
     adata_neighbor = adata_neighbor.copy()
+    
+    # Save the adata for later sampling
+    adata.write(f"{OUTPUT_DIR}/{PROJECT_NAME}_adata_processed.h5ad")
+    adata_neighbor.write(f"{OUTPUT_DIR}/{PROJECT_NAME}_adata_neighbor_processed.h5ad")
 
     temporal_neighbors, _ = derive_temporal_neighborhood(
         adata, umap_key="X_umap", pseudotime_key=PT_KEY,
