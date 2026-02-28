@@ -260,53 +260,113 @@ This script performs several levels of analysis on GRAEST outputs:
 ### Run
 
 ```bash
-python run_inference.py \
-  --data_dir ./experiments/simulation \
-  --input_dir ./experiments/simulation/results \
-  --out_dir ./experiments/simulation/analysis \
-  --project_name simulation \
-  --batch_key batch \
-  --groupby 'Cell Types' \
-  --filter_threshold 0.2 \
-  --radius 5 \
-  --topk_per_col 100 \
-  --top_n_bar 20 \
-  --dpi 300 \
-  --export_csv
+python run_inference_percell.py \
+  -d experiments/mouse_midbrain_progenitor_cell_development \
+  -i experiments/mouse_midbrain_progenitor_cell_development/results_250_hvg_5 \
+  -o experiments/mouse_midbrain_progenitor_cell_development/analysis_250_hvg_5 \
+  -n Dorsal_mouse_midbrain_250_hvg_5 \
+  --extract_percell_attn  \ # For GRN and LR inference, this is not required.
+  --sc_adata_path experiments/mouse_midbrain_progenitor_cell_development/Dorsal_mouse_midbrain_250_hvg_5/Dorsal_mouse_midbrain_250_hvg_5_adata_processed.h5ad \
+  --model_path experiments/mouse_midbrain_progenitor_cell_development/results_250_hvg_5/weights/weights.weights.h5
 ```
 ## Arguments explained
-
-- `--data_dir` – directory containing the original `.h5ad` and preprocessed project folder (same as used in `run_preprocess.py`).  
-- `--input_dir` – directory with `embeddings/` and `attentions/` (output of `run_experiment.py`).  
-- `--out_dir` – directory to store inference results (`gene_interactions/`, `cell_interactions/`, figures, CSVs).  
-- `--project_name` – project prefix (e.g., `MyProj`), required to locate gene lists.  
-- `--batch_key` – column in metadata representing developmental stage or batch.  
-- `--groupby` – `obs` column used for cell-type grouping in cellular inference.  
-- `--stages` – ordered list of stages to analyze (e.g., `E12.5 E14.5 E16.5`).  
-- `--filter_threshold` – minimum intensity filter threshold (default: 0.01).  
-- `--radius` – spatial neighbor radius (in microns) for cellular inference.  
-- `--topk_per_col` – top-K entries per column for filtering during per-cell aggregation.  
-- `--top_n_bar` – top-N entries shown in LR bar plots.  
-- `--no_heatmaps` – disable generation of PNG heatmaps.  
-- `--skip_percell` – skip per-cell aggregation and plots.  
-- `--skip_attentions` – do not recompute per-cell intensities; load from disk instead.  
-- `--export_csv` – save combined cellular communication matrices as CSV.  
-- `--figsize` / `--dpi` – control figure size and resolution.  
+# Required:
+#   --data_dir       Root data directory that contains the preprocessed project folder.
+#                    Expected:
+#                      data_dir/<project_name>/<project_name>_ligands.txt
+#                      data_dir/<project_name>/<project_name>_receptors.txt
+#                      data_dir/<project_name>/<project_name>_lr_pairs.txt
+#                    Also used for attention extraction to recover model dims from:
+#                      data_dir/<project_name>/data_triple/<project_name>_tensors_train.npz
+#
+#   --input_dir      Experiment output directory from run_experiment.py.
+#                    Expected:
+#                      input_dir/attentions/global_attentions/gated_global_lr_full.npz
+#                      input_dir/<percell_att_relpath>/meta_gene_orders.npz
+#                      input_dir/<percell_att_relpath>/percell_*.npz
+#
+#   --out_dir        Output directory for this script.
+#                    Writes:
+#                      out_dir/gene_interactions/*
+#                      (optional) out_dir/plots/*
+#
+#   --project_name   Project prefix used by preprocess (e.g., MyProj).
+#
+# Logging:
+#   --log_level      Python logging level (e.g., INFO, DEBUG or 20). Default: INFO
+#
+# -----------------------------
+# Global LR inference controls
+# -----------------------------
+#   --global_topk_per_col   Keep only top-k LR entries per TG column before aggregation (global).
+#                           Default: None
+#
+#   --global_top_n_bar      Passed through to aggregate_LR_intensity for compatibility.
+#                           This script itself does NOT save figures. Default: 20
+#
+# -----------------------------
+# Per-cell LR inference controls
+# -----------------------------
+#   --skip_percell               Skip per-cell LR inference entirely.
+#
+#   --percell_top_k              Within each TG column, keep only top-k LR entries before rowwise nonzero mean.
+#                                Default: None
+#
+#   --percell_n_permutations     Permutations for TG-column permutation test. Default: 1000
+#
+#   --percell_gene_top_k         Keep gene_top_k TG columns with smallest p-values. Default: None
+#
+#   --percell_gene_alpha         If gene_top_k is None, keep TG columns with p <= gene_alpha.
+#                                Default: 0.05/20
+#
+#   --percell_random_state       RNG seed for permutation test. Default: 0
+#
+#   --percell_save_mean_lrtg     Also save filtered mean LR×TG matrix as NPZ. Default: False
+#
+# -----------------------------
+# Per-cell attention path / extraction
+# -----------------------------
+#   --percell_att_relpath        Relative path under input_dir to per-cell attention directory.
+#                                Default: attentions/percell_attentions
+#
+#   --extract_percell_attn       If set, run per_cell_att_compute(...) to create:
+#                                  meta_gene_orders.npz
+#                                  percell_*.npz
+#
+#   --percell_att_out_relpath    Where to write extracted per-cell attentions under input_dir (relative path).
+#                                Default: attentions/percell_attentions
+#
+#   --sc_adata_path              Required if --extract_percell_attn. Path to single-cell .h5ad for extraction.
+#
+#   --model_path                 Required if --extract_percell_attn. Path to trained model weights.
+#
+# -----------------------------
+# Optional plotting
+# -----------------------------
+#   --plot_adata_path     Spatial .h5ad used ONLY for plotting (must contain obsm['spatial'])
+#   --plot_lr_pair        Plot LR spatial heatmap for '<ligand>_to_<receptor>' using percell_lrscore_percell(.npz)
+#   --plot_tf             Plot TF spatial heatmap using percell_*.npz
+#   --plot_stage          Optional suffix for resolving percell_lrscore_percell__{stage}.npz
+#   --plot_point_size     Point size for scatter. Default: 1.0
+#   --plot_cmap           Matplotlib colormap. Default: Reds
 
 ## Outputs
-```bash
-inference/
-├── gene_interactions/
-│   ├── global_LR_intensity.csv
-│   ├── percell_LR_stage_E12.5.csv
-│   ├── percell_LR_stage_E14.5.csv
-│   └── ...
-├── cell_interactions/
-│   ├── SenderA__to__ReceiverB__combined_E12.5_E14.5.csv
-│   ├── SenderB__to__ReceiverC__combined_E16.5.csv
-│   └── ...
-└── figures/
-    ├── lr_heatmaps/
-    ├── tf_heatmaps/
-    └── combined_stage_plots/
+# -----------------------------
+# Outputs (directory layout)
+# -----------------------------
+# Always:
+#   out_dir/gene_interactions/
+#     - Global LR inference outputs written by aggregate_LR_intensity(...)
+#       (exact filenames depend on your aggregate_LR_intensity implementation)
+#
+# If per-cell inference runs (default):
+#   out_dir/gene_interactions/
+#     - percell_lrscore_percell.npz
+#     - (optional) percell_lrscore_percell__<stage>.npz   # if you use --plot_stage naming
+#     - (optional) mean LR×TG filtered matrix as NPZ      # if --percell_save_mean_lrtg
+#
+# If plotting flags are provided:
+#   out_dir/plots/
+#     - attnmap_lr__<ligand>_to_<receptor>.png
+#     - attnmap_tf__<TF>.png
 ```
