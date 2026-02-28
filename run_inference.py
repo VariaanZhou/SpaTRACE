@@ -1,13 +1,26 @@
 #!/usr/bin/env python3
 """
-Post-process GRAEST outputs for a given project/input root.
+Gene-level post-processing for a given project/input root (NO METACELLS, NO FIGURES).
 
-- Aggregates per-cell embeddings into per-stage TF→TG / LR→TG intensities.
-- Aggregates global attentions into LR intensities.
-- (Optionally) saves heatmaps and bar plots.
+- Global LR inference from saved global gated LR matrix.
+- Per-cell LR inference from saved per-cell LR→TG matrices (run-once artifact).
+  Saves only .npy/.npz (no plots).
 
-Inputs are discovered under --input_dir using known relative subpaths.
-Outputs are written under --out_dir/{gene_interactions,cell_interactions,...}.
+This script assumes:
+  input_dir/
+    attentions/global_attentions/gated_global_lr_full.npz
+    attentions/percell_attentions/   (or your per-cell att dir)
+      meta_gene_orders.npz
+      percell_*.npz
+
+and:
+  data_dir/project_name/
+    {project}_ligands.txt
+    {project}_receptors.txt
+    {project}_lr_pairs.txt
+    {project}_tgs.txt   (optional, not strictly required if meta_gene_orders is used)
+
+Per-cell analysis functions live in: analysis.gene_interaction_inference.py
 """
 
 from __future__ import annotations
@@ -15,45 +28,27 @@ from __future__ import annotations
 import argparse
 import logging
 from pathlib import Path
-import glob
-import scanpy as sc
 import numpy as np
 
-from analysis.gene_interaction_inference import (
-    aggregate_percell_intensity_from_embeddings,
+import scanpy as sc
+import tensorflow as tf
+
+from analysis.gene_interaction_inference_copy import (
     aggregate_LR_intensity,
-    load_percell_intensity_dict,
+    percell_lr_inference,
+    per_cell_att_compute,   # <-- THIS must exist in your module
 )
+from analysis.utils import read_list_txt
+from analysis.cell_interaction_analysis import plot_lr_attention_map, plot_tf_attention_map
 
-from analysis.cellular_interaction_inference import (
-    combined_matrix_for_pair_across_stages,
-    plot_combined_matrix,
-    write_combined_csv,
-)
-
-from analysis.utils import (
-    plot_lr_tg_heatmaps,
-    # plot_lr_heatmap,  # keep import if you re-enable single heatmap plots
-    read_list_txt,
-)
 
 # ----------------------------- Constants -----------------------------
 
 REL_GLOBAL_ATT_DIR = Path("attentions") / "global_attentions"
-REL_PERCELL_EMB_DIR = Path("embeddings") / "percell_embeddings"
-REL_PERCELL_ATT_DIR = Path("attentions") / "percell_attentions"  # kept for completeness
+# Update this constant to match where you store the "run-once" percell attention outputs.
+# The original script used "attentions/percell_attentions".
+REL_PERCELL_ATT_DIR = Path("attentions") / "percell_attentions"
 
-REL_PATHS_FILE = Path("data_triple") / "all_paths_test.npy"
-REL_LABELS_CANDIDATES = [
-    Path("data_triple") / "meta_labels_by_batch.npy",
-    Path("data_triple") / "meta_labels.npy",
-]
-REL_LABEL2BATCH_CSV = Path("data_triple") / "label_to_batch.csv"
-REL_MEMBERS_LONG_CSV = Path("data_triple") / "metacell_memberships_by_batch.csv"
-
-EMB_BATCH_PATTERN = "embeddings_batch_*.npz"
-BIO_TOPK_PATTERN = "attn_percell_lr_topk_batch_*.npz"
-BIO_FULL_PATTERN = "attn_percell_lr_full_batch_*.npz"
 
 # ----------------------------- CLI Utils -----------------------------
 
@@ -69,81 +64,33 @@ def _log_level(val: str) -> int:
 
 def parse_args() -> argparse.Namespace:
     ap = argparse.ArgumentParser(
-        prog="graest-post",
-        description="Aggregate attentions/embeddings from GRAEST outputs using a specified input root.",
+        prog="spatrace-gene-infer",
+        description="Gene-level inference from GRAEST outputs (no metacells, no figures).",
     )
     ap.add_argument(
         "-d",
         "--data_dir",
         required=True,
-        help=(
-            "Data directory containing the original .h5ad and the preprocessed project folder "
-            "(same as input to run_preprocess.py)."
-        ),
+        help="Data directory that contains the preprocess project folder (same as input to run_preprocess.py).",
     )
     ap.add_argument(
         "-i",
         "--input_dir",
         required=True,
-        help=(
-            "Input directory that contains embeddings/ and attentions/ "
-            "(output from run_experiments.py)."
-        ),
+        help="Input directory containing attentions/ (output from run_experiment).",
     )
     ap.add_argument(
-        "-o", "--out_dir", required=True, help="Output directory to store analysis results."
+        "-o",
+        "--out_dir",
+        required=True,
+        help="Output directory to store gene interaction results.",
     )
     ap.add_argument(
         "-n",
         "--project_name",
+        required=True,
         type=str,
-        default=None,
-        help="Project prefix used by preprocess (e.g., 'MyProj'). Required to locate gene lists.",
-    )
-    ap.add_argument(
-        "--file_name", type=str, help="Provide in case the project name is different from the file names."
-    )
-    ap.add_argument(
-        "-b",
-        "--batch_key",
-        type=str,
-        default="batch",
-        help="Column name for stage/batch in the batch map CSV.",
-    )
-    ap.add_argument(
-        "--groupby",
-        type=str,
-        default="annotation",
-        help="obs column for cell types in the spatial .h5ad (used in cellular inference).",
-    )
-    ap.add_argument(
-        "--stages",
-        nargs="+",
-        default=None,
-        help=(
-            "Stage names/order for cellular inference (e.g., E12.5 E14.5 E16.5). "
-            "If omitted, stages are inferred from per-cell outputs."
-        ),
-    )
-    ap.add_argument(
-        "-f",
-        "--filter_threshold",
-        type=float,
-        default=0.01,
-        help="Filter threshold (> keeps).",
-    )
-    ap.add_argument(
-        "-t",
-        "--radius",
-        type=float,
-        default=50.0,
-        help="Spatial neighbor radius (microns) for cellular LR intensity.",
-    )
-    ap.add_argument(
-        "--topk_per_col", type=int, default=100, help="Top-K per column for filtering."
-    )
-    ap.add_argument(
-        "--top_n_bar", type=int, default=20, help="Top-N for LR bar plots."
+        help="Project prefix used by preprocess (e.g. 'MyProj').",
     )
     ap.add_argument(
         "--log_level",
@@ -151,108 +98,137 @@ def parse_args() -> argparse.Namespace:
         default=logging.INFO,
         help="Numeric or named Python logging level (e.g., 20 or INFO).",
     )
+
+    # Global inference controls
     ap.add_argument(
-        "--no_heatmaps", action="store_true", default=False, help="Disable heatmap PNG generation."
+        "--global_topk_per_col",
+        type=int,
+        default=None,
+        help="Optional: keep only top-k entries per TG column before aggregation (global).",
     )
     ap.add_argument(
-        "--full_weights",
-        action="store_true",
-        default=False,
-        help="(Reserved) Save/use full attention matrices for gene-level interactions.",
+        "--global_top_n_bar",
+        type=int,
+        default=20,
+        help="Kept only for API compatibility with aggregate_LR_intensity; no figures are saved here.",
     )
+
+    # Per-cell inference controls (matches your no-figure percell_lr_inference)
     ap.add_argument(
         "--skip_percell",
         action="store_true",
         default=False,
-        help="Skip per-cell aggregation & plots.",
+        help="Skip per-cell LR inference.",
     )
     ap.add_argument(
-        "--skip_attentions",
+        "--percell_top_k",
+        type=int,
+        default=None,
+        help="Within each retained TG column, keep only its top-k LR entries before rowwise nonzero mean.",
+    )
+    ap.add_argument(
+        "--percell_n_permutations",
+        type=int,
+        default=1000,
+        help="Number of permutations for TG-column permutation test.",
+    )
+    ap.add_argument(
+        "--percell_gene_top_k",
+        type=int,
+        default=None,
+        help="Keep the gene_top_k TG columns with smallest p-values (permutation test).",
+    )
+    ap.add_argument(
+        "--percell_gene_alpha",
+        type=float,
+        default=0.05 / 20,
+        help="If gene_top_k is None, keep TG columns with p <= gene_alpha.",
+    )
+    ap.add_argument(
+        "--percell_random_state",
+        type=int,
+        default=0,
+        help="RNG seed for permutation test.",
+    )
+    ap.add_argument(
+        "--percell_save_mean_lrtg",
         action="store_true",
         default=False,
-        help="If set, do NOT recompute per-cell intensities; load from disk instead.",
+        help="Also save the filtered mean LR×TG matrix as NPZ for later reuse (still no figures).",
+    )
+
+    # Path override if your percell dir name differs
+    ap.add_argument(
+        "--percell_att_relpath",
+        type=str,
+        default=str(REL_PERCELL_ATT_DIR),
+        help="Relative path under input_dir to the per-cell attention directory.",
     )
     ap.add_argument(
-        "--pct_threshold",
-        type=float,
-        default=0.1,
-        help=(
-            "Percent-of-cells threshold for a gene to be considered expressed (used in cellular inference)."
-        ),
-    )
-    ap.add_argument(
-        "--expr_cutoff",
-        type=float,
-        default=0.0,
-        help="Expression cutoff used for % expressed. Default is 0.0",
-    )
-    ap.add_argument(
-        "--receptor_block",
-        type=int,
-        default=128,
-        help="The receptor chunk size used during cellular CCC inference to avoid OOM.",
-    )
-    ap.add_argument(
-        "--figsize",
-        nargs=2,
-        type=float,
-        default=(8.0, 6.0),
-        help="Figure size for cellular heatmaps, e.g., --figsize 8 6",
-    )
-    ap.add_argument(
-        "--dpi", type=int, default=300, help="DPI for cellular heatmaps."
-    )
-    ap.add_argument(
-        "--export_csv",
+        "--extract_percell_attn",
         action="store_true",
-        default=True,
-        help="Also export the combined cellular matrices as CSV.",
+        default=False,
+        help="If set, run per-cell attention extraction (per_cell_att_compute) before per-cell inference.",
     )
+    ap.add_argument(
+        "--percell_att_out_relpath",
+        type=str,
+        default=str(REL_PERCELL_ATT_DIR),
+        help="Where to write extracted per-cell attentions under input_dir (relative path).",
+    )
+    ap.add_argument(
+        "--sc_adata_path",
+        type=str,
+        default=None,
+        help="Path to the single-cell .h5ad needed for per-cell attention extraction.",
+    )
+    ap.add_argument(
+        "--model_path",
+        type=str,
+        default=None,
+        help="Path to the trained model checkpoint (format depends on your loader). Required if --extract_percell_attn.",
+    )
+
+
+    # ----------------------------- Optional plotting -----------------------------
+    ap.add_argument(
+        "--plot_adata_path",
+        type=str,
+        default=None,
+        help="Path to a spatial .h5ad used only for plotting (must contain obsm['spatial']).",
+    )
+    ap.add_argument(
+        "--plot_lr_pair",
+        type=str,
+        default=None,
+        help="If set, plot an LR spatial heatmap for this '<ligand>_to_<receptor>' pair using percell_lrscore_percell.npz.",
+    )
+    ap.add_argument(
+        "--plot_tf",
+        type=str,
+        default=None,
+        help="If set, plot a TF spatial heatmap for this TF using raw per-cell W_tf matrices (requires percell_*.npz present).",
+    )
+    ap.add_argument(
+        "--plot_stage",
+        type=str,
+        default=None,
+        help="Optional stage suffix used when resolving '{mode}_lrscore_percell__{stage}.npz'.",
+    )
+    ap.add_argument(
+        "--plot_point_size",
+        type=float,
+        default=1.0,
+        help="Point size for scatter in attention maps.",
+    )
+    ap.add_argument(
+        "--plot_cmap",
+        type=str,
+        default="Reds",
+        help="Matplotlib colormap for attention maps.",
+    )
+
     return ap.parse_args()
-
-
-# ----------------------------- Path Builders -----------------------------
-
-def build_project_paths(
-    data_dir: Path, input_dir: Path, out_dir: Path, project_name: str, file_name: str
-) -> dict:
-    """
-    Returns a dict of resolved paths used throughout the pipeline.
-    """
-    meta_dir = data_dir / project_name
-
-    paths = {
-        # I/O roots
-        "DATA_DIR": data_dir,
-        "INPUT_DIR": input_dir,
-        "OUTPUT_DIR": out_dir,
-        "GENE_OUT": out_dir / "gene_interactions",
-        "CELL_OUT": out_dir / "cell_interactions",
-        # Input (relative to INPUT_DIR)
-        "global_att_dir": input_dir / REL_GLOBAL_ATT_DIR,
-        "percell_emb_dir": input_dir / REL_PERCELL_EMB_DIR,
-        "percell_att_dir": input_dir / REL_PERCELL_ATT_DIR,
-        # Meta & tensors (relative to DATA_DIR/project_name)
-        "test_npz_path": meta_dir / "data_triple" / f"{project_name}_tensors_test.npz",
-        "batchmap_csv": meta_dir / f"{project_name}_metacell_batchmap.csv",
-        "meta_labels_npy": meta_dir / f"{project_name}_metacell_membership.csv",  # kept if needed
-        # Adata
-        "adata_dp": data_dir / f"{file_name}_sc_adata.h5ad",
-        "adata_all": data_dir / f"{file_name}_st_adata.h5ad",
-        # Gene sets
-        "ligands_txt": meta_dir / f"{project_name}_ligands.txt",
-        "receptors_txt": meta_dir / f"{project_name}_receptors.txt",
-        "lr_pairs_txt": meta_dir / f"{project_name}_lr_pairs.txt",
-        "tfs_txt": meta_dir / f"{project_name}_tfs.txt",
-        "tgs_txt": meta_dir / f"{project_name}_tgs.txt",
-        "senders": meta_dir / f"{project_name}_senders.txt",
-        "receivers": meta_dir / f"{project_name}_receivers.txt",
-        # Misc (under INPUT_DIR; not all are used here)
-        "paths_file": input_dir / REL_PATHS_FILE,
-        "label2batch_csv": input_dir / REL_LABEL2BATCH_CSV,
-        "members_long_csv": input_dir / REL_MEMBERS_LONG_CSV,
-    }
-    return paths
 
 
 # ----------------------------- Validation -----------------------------
@@ -267,211 +243,274 @@ def _require_dir(p: Path, desc: str) -> None:
         raise FileNotFoundError(f"Missing {desc}: {p}")
 
 
-def validate_inputs(
-    paths: dict, logger: logging.Logger, skip_percell: bool, skip_attentions: bool
-) -> None:
-    logger.debug("Validating input directories and key files...")
-
-    _require_dir(paths["INPUT_DIR"], "input_dir")
-    _require_dir(paths["DATA_DIR"], "data_dir")
-
-    # Global attentions are required
-    _require_dir(paths["global_att_dir"], "global attentions directory")
-    ga_file = paths["global_att_dir"] / "gated_global_lr_full.npz"
-    _require_file(ga_file, "global LR attention (gated_global_lr_full.npz)")
-    logger.info(f"Found global attentions: {ga_file}")
-
-    # Per-cell embeddings only required if we recompute per-cell intensities
-    if not skip_percell and not skip_attentions:
-        _require_dir(paths["percell_emb_dir"], "per-cell embeddings directory")
-        pattern = str(paths["percell_emb_dir"] / EMB_BATCH_PATTERN)
-        if not glob.glob(pattern):
-            raise FileNotFoundError(f"No per-cell embedding NPZs match {pattern}")
-        logger.info(f"Found per-cell embeddings under: {paths['percell_emb_dir']}")
-
-    # Meta / tensors for per-cell aggregation
-    if not skip_percell:
-        _require_file(paths["test_npz_path"], "test tensors (contains 'paths')")
-        _require_file(paths["batchmap_csv"], "metacell→batch map CSV")
-        logger.info(f"Found test tensor: {paths['test_npz_path']}")
-        logger.info(f"Found batch map CSV: {paths['batchmap_csv']}")
-
-    # Gene lists (always needed)
-    for k in ("ligands_txt", "receptors_txt", "lr_pairs_txt", "tfs_txt", "tgs_txt"):
-        _require_file(paths[k], f"gene list: {k}")
-        logger.info(f"Found {k}: {paths[k]}")
-
-
 # ----------------------------- Loaders -----------------------------
 
-def load_gene_lists(paths: dict, logger: logging.Logger) -> dict:
-    logger.info("Loading gene lists...")
+def load_gene_lists(project_dir: Path, project_name: str, logger: logging.Logger) -> dict:
+    """
+    Load ligand/receptor/LR pair lists from preprocess outputs.
+    """
+    ligands_txt = project_dir / f"{project_name}_ligands.txt"
+    receptors_txt = project_dir / f"{project_name}_receptors.txt"
+    lr_pairs_txt = project_dir / f"{project_name}_lr_pairs.txt"
+
+    _require_file(ligands_txt, "ligands list")
+    _require_file(receptors_txt, "receptors list")
+    _require_file(lr_pairs_txt, "lr pairs list")
+
     genes = {
-        "ligands": read_list_txt(paths["ligands_txt"]),
-        "receptors": read_list_txt(paths["receptors_txt"]),
-        "lr_pairs": read_list_txt(paths["lr_pairs_txt"]),
-        "tfs": read_list_txt(paths["tfs_txt"]),
-        "tgs": read_list_txt(paths["tgs_txt"]),
+        "ligands": read_list_txt(ligands_txt),
+        "receptors": read_list_txt(receptors_txt),
+        "lr_pairs": read_list_txt(lr_pairs_txt),
     }
-    for name, lst in genes.items():
-        logger.debug(f"Loaded {name}: {len(lst)} entries")
-    logger.info("Gene lists loaded.")
+    logger.info(
+        "Loaded gene lists: ligands=%d receptors=%d lr_pairs=%d",
+        len(genes["ligands"]), len(genes["receptors"]), len(genes["lr_pairs"])
+    )
     return genes
 
 
 # ----------------------------- Workflows -----------------------------
 
-def _softmax_np(x: np.ndarray, axis: int = -1, temperature: float = 1.0) -> np.ndarray:
-    """Numerically stable softmax."""
-    x = x.astype(np.float64, copy=False)  # stability
-    x = x / float(temperature)
-    x = x - np.max(x, axis=axis, keepdims=True)
-    ex = np.exp(x)
-    return ex / np.sum(ex, axis=axis, keepdims=True)
+def run_global_lr_intensity(
+    global_att_dir: Path,
+    out_gene_dir: Path,
+    genes: dict,
+    *,
+    top_n_bar: int,
+    topk_per_col: int | None,
+    logger: logging.Logger,
+) -> None:
+    """
+    Global LR inference from gated_global_lr_full.npz.
 
-#def run_global_lr_intensity(paths: dict, genes: dict, top_n_bar: int, logger: logging.Logger) -> None:
- #   logger.info("Computing global LR intensities from global attentions...")
- #   ga_file = paths["global_att_dir"] / "gated_global_lr_full.npz"
- #   print(np.load(ga_file))
- #   vals = np.load(ga_file)["weight"].T
- #   logger.debug(f"Global attention matrix shape: {vals.shape}")
- #   out_dir = paths["GENE_OUT"]
- #   out_dir.mkdir(parents=True, exist_ok=True)
- #   aggregate_LR_intensity(
- #       vals,
- #       genes["ligands"],
- #       genes["receptors"],
- #       genes["lr_pairs"],
- #       out_dir,
- #       mode="global",
- #       top_n_bar=top_n_bar,
- #   )
- #   logger.info("Global LR intensities computed and saved.")
-def run_global_lr_intensity(paths: dict, genes: dict, top_n_bar: int, topk_per_col, logger: logging.Logger) -> None:
-    logger.info("Computing global LR intensities from global attentions...")
+    Note:
+      - This function writes whatever aggregate_LR_intensity writes.
+      - If your updated aggregate_LR_intensity no longer saves figures, great.
+        This script itself does not create any figures.
+    """
+    ga_file = global_att_dir / "gated_global_lr_full.npz"
+    _require_file(ga_file, "global LR attention (gated_global_lr_full.npz)")
 
-    ga_file = paths["global_att_dir"] / "gated_global_lr_full.npz"
-    Z = np.load(ga_file)
+    Z = np.load(ga_file, allow_pickle=True)
+    if "weight" not in Z:
+        raise KeyError(f"'weight' not found in {ga_file}. Keys: {list(Z.keys())}")
 
-    # expected to be (TG, LR) or (LR, TG); your old code transposed it to (TG, LR)
-    W = Z["weight"].T  # (TG, LR)
-    logger.debug(f"Global LR matrix shape (TG, LR): {W.shape}")
+    # Your previous logic used transpose to get (TG, LR)
+    W = Z["weight"].T
+    logger.info("Global gated LR matrix loaded: shape(TG,LR)=%s", tuple(W.shape))
 
-    # Softmax across LR for each TG -> rows sum to 1, values in (0,1)
-#    W_soft = _softmax_np(W, axis=1)
-
-    out_dir = paths["GENE_OUT"]
-    out_dir.mkdir(parents=True, exist_ok=True)
+    out_gene_dir.mkdir(parents=True, exist_ok=True)
 
     aggregate_LR_intensity(
         W,
         genes["ligands"],
         genes["receptors"],
         genes["lr_pairs"],
-        out_dir,
+        str(out_gene_dir),
         mode="global",
+        stage=None,
         top_n_bar=top_n_bar,
-        top_k=topk_per_col
+        top_k=topk_per_col,
     )
 
-    logger.info("Global LR intensities (softmaxed) computed and saved.")
+    logger.info("Global LR inference complete (saved to %s).", out_gene_dir)
 
-def run_percell_aggregation(
-    paths: dict,
-    batch_key: str,
-    topk_per_col: int,
-    threshold: float,
-    recompute: bool,
+def ensure_percell_attentions(
+    *,
+    percell_att_dir: Path,
+    extract_requested: bool,
+    sc_adata_path: str | None,
+    model_path: str | None,
     logger: logging.Logger,
-) -> dict:
+    data_dir: Path,
+    project_name: str,
+    # model hparams (MUST match training)
+    d_model: int = 128,
+    dff: int = 128,
+    num_heads: int = 5,
+    dropout_rate: float = 0.0,
+    num_layers: int = 1,
+    # used to build model before load_weights
+    build_seq_len: int = 1,
+) -> None:
     """
-    Returns stage_sums dict with lr_tg_sum, lr_tg_count, tf_tg_sum, tf_tg_count.
+    Ensure meta_gene_orders.npz + percell_*.npz exist.
+
+    If missing and extract_requested=True, run per_cell_att_compute(adata, model, percell_att_dir).
+
+    IMPORTANT:
+    - model_path is weights-only (saved via model.save_weights()).
+    - For subclassed models in Keras 3, you must BUILD the model (call once) before load_weights().
     """
-    out_dir = paths["GENE_OUT"]
-    out_dir.mkdir(parents=True, exist_ok=True)
+    import numpy as np
+    import scanpy as sc
+    import tensorflow as tf
 
-    if recompute:
-        logger.info("Aggregating per-cell embeddings into per-stage intensities...")
-        stage_sums = aggregate_percell_intensity_from_embeddings(
-            percell_emb_dir=str(paths["percell_emb_dir"]),
-            test_npz_path=str(paths["test_npz_path"]),
-            batchmap_csv=str(paths["batchmap_csv"]),
-            label_col="metacell",
-            stage_col=batch_key,
-            top_k=topk_per_col,
-            threshold=threshold,
-            save_dir=str(out_dir),
-        )
-        logger.info(f"Per-cell aggregation complete. Stages: {list(stage_sums.keys())}")
-    else:
-        logger.info("Loading previously computed per-cell intensities from disk...")
-        stage_sums = load_percell_intensity_dict(str(out_dir))
-        logger.info(f"Loaded per-cell intensities. Stages: {list(stage_sums.keys())}")
+    meta = percell_att_dir / "meta_gene_orders.npz"
+    has_percell = any(percell_att_dir.glob("percell_*.npz"))
 
-    return stage_sums
+    if meta.is_file() and has_percell:
+        logger.info("Per-cell attention artifacts already exist: %s", percell_att_dir)
+        return
 
-
-def run_percell_lr_intensity(
-    stage_sums: dict, genes: dict, out_dir: Path, top_n_bar: int, logger: logging.Logger
-) -> dict:
-    logger.info("Computing LR intensities from per-cell LR→TG matrices (sum and count)...")
-    per_cell_intensity = {}
-
-    for stage, blobs in stage_sums.items():
-        lr_tg_sum = blobs["lr_tg_sum"]
-        lr_tg_count = blobs["lr_tg_count"]
-        logger.debug(
-            f"[{stage}] lr_tg_sum shape={lr_tg_sum.shape}, lr_tg_count shape={lr_tg_count.shape}"
+    if not extract_requested:
+        raise FileNotFoundError(
+            f"Missing per-cell artifacts in {percell_att_dir}.\n"
+            f"Expected: {meta} and percell_*.npz\n"
+            "Either point --percell_att_relpath to the correct folder, or rerun with --extract_percell_attn."
         )
 
-        lr_sum = aggregate_LR_intensity(
-            lr_tg_sum,
-            genes["ligands"],
-            genes["receptors"],
-            genes["lr_pairs"],
-            out_dir,
-            stage=stage,
-            mode="percell",
-            top_n_bar=top_n_bar,
+    if sc_adata_path is None or model_path is None:
+        raise ValueError(
+            "--extract_percell_attn was set, but --sc_adata_path and/or --model_path not provided."
         )
-        lr_count = aggregate_LR_intensity(
-            lr_tg_count,
-            genes["ligands"],
-            genes["receptors"],
-            genes["lr_pairs"],
-            out_dir,
-            stage=stage,
-            mode="percell",
-            top_n_bar=top_n_bar,
-        )
-        per_cell_intensity[f"{stage}_lr_count"] = lr_count
-        per_cell_intensity[f"{stage}_lr_sum"] = lr_sum
-    logger.info("Per-cell LR intensities computed and saved for all stages.")
-    return per_cell_intensity
 
+    percell_att_dir.mkdir(parents=True, exist_ok=True)
 
-def maybe_save_heatmaps(stage_sums: dict, out_root: Path, logger: logging.Logger) -> None:
-    logger.info("Saving heatmaps for TF→TG and LR→TG (per-cell)...")
-    for stage, blobs in stage_sums.items():
-        plot_lr_tg_heatmaps(
-            sum_arr=blobs["lr_tg_sum"],
-            count_arr=blobs["lr_tg_count"],
-            stage=stage,
-            out_dir=str(out_root / "figures" / "lr_heatmaps"),
-            title_prefix="Per-cell LR→TG",
-            figsize=(10, 8),
-            fontsize=14,
+    logger.info("Loading sc adata: %s", sc_adata_path)
+    adata = sc.read_h5ad(sc_adata_path)
+
+    # ---------------------------------------------------------
+    # 1) Load training NPZ to recover input dimensions
+    # ---------------------------------------------------------
+    train_npz = Path(data_dir) / project_name / "data_triple" / f"{project_name}_tensors_train.npz"
+    if not train_npz.is_file():
+        raise FileNotFoundError(
+            f"Training NPZ not found: {train_npz}\n"
+            "Needed to recover LR/TF/TG dimensions to rebuild the model."
         )
-        plot_lr_tg_heatmaps(
-            sum_arr=blobs["tf_tg_sum"],
-            count_arr=blobs["tf_tg_count"],
-            stage=stage,
-            out_dir=str(out_root / "figures" / "tf_heatmaps"),
-            title_prefix="Per-cell TF→TG",
-            figsize=(10, 8),
-            fontsize=14,
-        )
-    logger.info("Heatmaps saved successfully.")
+
+    Z = np.load(train_npz, allow_pickle=True)
+    for k in ("lr_pair", "tf", "target"):
+        if k not in Z:
+            raise KeyError(f"train NPZ missing key '{k}'. Found keys: {list(Z.keys())}")
+
+    ligrecp_size = int(Z["lr_pair"].shape[-1])
+    tf_gene_size = int(Z["tf"].shape[-1])
+    target_gene_size = int(Z["target"].shape[-1])
+
+    logger.info(
+        "Recovered model dims from training NPZ: LR=%d, TF=%d, TG=%d",
+        ligrecp_size, tf_gene_size, target_gene_size
+    )
+
+    # ---------------------------------------------------------
+    # 2) Rebuild Transformer architecture (same as training)
+    # ---------------------------------------------------------
+    from model.SpaTRACE_v1_0 import Transformer  # matches your run_experiment.py
+
+    model = Transformer(
+        num_layers=int(num_layers),
+        d_model=int(d_model),
+        num_heads=int(num_heads),
+        dff=int(dff),
+        ligrecp_size=ligrecp_size,
+        tf_gene_size=tf_gene_size,
+        target_gene_size=target_gene_size,
+        dropout_rate=float(dropout_rate),
+    )
+
+    # ---------------------------------------------------------
+    # 3) BUILD the model (required before load_weights in Keras 3)
+    # ---------------------------------------------------------
+    L = int(build_seq_len)
+    if L <= 0:
+        raise ValueError(f"build_seq_len must be >= 1, got {build_seq_len}")
+
+    dummy_lr = tf.zeros((1, L, ligrecp_size), dtype=tf.float32)
+    dummy_tf = tf.zeros((1, L, tf_gene_size), dtype=tf.float32)
+    dummy_tg = tf.zeros((1, L, target_gene_size), dtype=tf.float32)
+
+    logger.info("Building model with dummy inputs: (B=1, L=%d)", L)
+    _ = model([dummy_lr, dummy_tf, dummy_tg], training=False)
+
+    # ---------------------------------------------------------
+    # 4) Load weights
+    # ---------------------------------------------------------
+    logger.info("Loading weights: %s", model_path)
+    model.load_weights(model_path)
+    logger.info("Weights loaded successfully.")
+
+    # ---------------------------------------------------------
+    # 5) Run extractor
+    # ---------------------------------------------------------
+    logger.info("Extracting per-cell attentions into: %s", percell_att_dir)
+    train_npz = Path(data_dir) / project_name / "data_triple" / f"{project_name}_tensors_train.npz"
+
+    per_cell_att_compute(
+        adata,
+        model,
+        str(percell_att_dir),
+        train_npz_path=str(train_npz),
+        project_name=project_name,
+    )
+
+    # Validate
+    if not meta.is_file():
+        raise RuntimeError(f"Extraction finished but {meta} not found.")
+    if not any(percell_att_dir.glob("percell_*.npz")):
+        raise RuntimeError(f"Extraction finished but no percell_*.npz found in {percell_att_dir}.")
+
+    logger.info("Per-cell attention extraction complete.")
+
+def _match_cell_identity(adata_1, adata_2):
+    """
+    Return a view/copy of adata_2 containing only the observations
+    present in adata_1, in exactly the same order as adata_1.obs.
+    
+    Assumes:
+        - adata_1.obs_names is a strict subset of adata_2.obs_names
+    """
+    # Optional safety check (remove if you want it leaner)
+    if not adata_1.obs_names.isin(adata_2.obs_names).all():
+        raise ValueError("adata_1.obs_names must be a subset of adata_2.obs_names")
+    
+    return adata_2[adata_1.obs_names].copy()
+
+def run_percell_lr_inference(
+    percell_att_dir: Path,
+    out_gene_dir: Path,
+    *,
+    top_k: int | None,
+    n_permutations: int,
+    gene_top_k: int | None,
+    gene_alpha: float | None,
+    random_state: int,
+    save_mean_lrtg: bool,
+    logger: logging.Logger,
+) -> None:
+    """
+    Per-cell LR inference using analysis.gene_interaction_inference.percell_lr_inference
+
+    This should save ONLY .npy/.npz, no figures.
+    """
+    _require_dir(percell_att_dir, "per-cell attentions directory")
+
+    # required run-once artifacts
+    _require_file(percell_att_dir / "meta_gene_orders.npz", "meta_gene_orders.npz")
+    # percell files exist?
+    if not any(percell_att_dir.glob("percell_*.npz")):
+        raise FileNotFoundError(f"No percell_*.npz found in {percell_att_dir}")
+
+    out_gene_dir.mkdir(parents=True, exist_ok=True)
+
+    logger.info("Running per-cell LR inference from %s", percell_att_dir)
+
+    # stage is optional; keep None here unless you implement stage-specific splitting later
+    _ = percell_lr_inference(
+        attn_save_dir=str(percell_att_dir),
+        out_dir=str(out_gene_dir),
+        mode="percell",
+        stage=None,
+        top_k=top_k,
+        n_permutations=n_permutations,
+        gene_top_k=gene_top_k,
+        gene_alpha=gene_alpha,
+        random_state=random_state,
+        save_mean_lrtg=save_mean_lrtg,
+    )
+
+    logger.info("Per-cell LR inference complete (saved to %s).", out_gene_dir)
 
 
 # ----------------------------- Main -----------------------------
@@ -479,160 +518,105 @@ def maybe_save_heatmaps(stage_sums: dict, out_root: Path, logger: logging.Logger
 def main() -> None:
     args = parse_args()
     logging.basicConfig(level=args.log_level, format="%(levelname)s: %(message)s")
-    logger = logging.getLogger("graest-post")
+    logger = logging.getLogger("graest-gene-infer")
 
-    # Resolve core paths
     DATA_DIR = Path(args.data_dir).resolve()
     INPUT_DIR = Path(args.input_dir).resolve()
-    OUTPUT_DIR = Path(args.out_dir).resolve()
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    OUT_DIR = Path(args.out_dir).resolve()
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    if not args.project_name:
-        raise ValueError("--project_name is required to locate gene lists and tensors.")
+    project_dir = (DATA_DIR / args.project_name).resolve()
+    _require_dir(project_dir, f"project dir '{args.project_name}'")
 
-    paths = build_project_paths(DATA_DIR, INPUT_DIR, OUTPUT_DIR, args.project_name, args.file_name)
+    global_att_dir = INPUT_DIR / REL_GLOBAL_ATT_DIR
+    percell_att_dir = INPUT_DIR / Path(args.percell_att_relpath)
 
-    # Ensure output subdirs exist
-    paths["GENE_OUT"].mkdir(parents=True, exist_ok=True)
-    paths["CELL_OUT"].mkdir(parents=True, exist_ok=True)
+    _require_dir(INPUT_DIR, "input_dir")
+    _require_dir(global_att_dir, "global attentions directory")
 
-    # Validate presence of the key inputs
-    validate_inputs(
-        paths, logger, skip_percell=args.skip_percell, skip_attentions=args.skip_attentions
+    # Output subdir
+    gene_out = OUT_DIR / "gene_interactions"
+    gene_out.mkdir(parents=True, exist_ok=True)
+
+    # Gene lists from preprocess
+    genes = load_gene_lists(project_dir, args.project_name, logger)
+
+    # 1) Global LR inference
+    run_global_lr_intensity(
+        global_att_dir=global_att_dir,
+        out_gene_dir=gene_out,
+        genes=genes,
+        top_n_bar=args.global_top_n_bar,
+        topk_per_col=args.global_topk_per_col,
+        logger=logger,
     )
 
-    # Load gene, sender, and receptor lists
-    genes = load_gene_lists(paths, logger)
-
-    # Global LR intensity from global attentions
-    run_global_lr_intensity(paths, genes, top_n_bar=args.top_n_bar, topk_per_col = args.topk_per_col, logger=logger)
-
-    # Initialize holders so they exist even if we skip per-cell
-    stage_sums = None
-    per_cell_intensity = {}
-
-    # Per-cell pipeline (optional)
-    if not args.skip_percell:
-        stage_sums = run_percell_aggregation(
-            paths=paths,
-            batch_key=args.batch_key,
-            topk_per_col=args.topk_per_col,
-            threshold=args.filter_threshold,
-            recompute=(not args.skip_attentions),
+    # 2) Per-cell LR inference (run-once artifact)
+    if args.skip_percell:
+        logger.info("Skipping per-cell inference (--skip_percell).")
+    else:
+        ensure_percell_attentions(
+        percell_att_dir=percell_att_dir,
+        extract_requested=args.extract_percell_attn,
+        sc_adata_path=args.sc_adata_path,
+        model_path=args.model_path,
+        logger=logger,
+        data_dir=DATA_DIR,
+        project_name=args.project_name,
+    )
+        run_percell_lr_inference(
+            percell_att_dir=percell_att_dir,
+            out_gene_dir=gene_out,
+            top_k=args.percell_top_k,
+            n_permutations=args.percell_n_permutations,
+            gene_top_k=args.percell_gene_top_k,
+            gene_alpha=args.percell_gene_alpha,
+            random_state=args.percell_random_state,
+            save_mean_lrtg=args.percell_save_mean_lrtg,
             logger=logger,
         )
 
-        per_cell_intensity = run_percell_lr_intensity(
-            stage_sums=stage_sums,
-            genes=genes,
-            out_dir=paths["GENE_OUT"],
-            top_n_bar=args.top_n_bar,
-            logger=logger,
+    # ----------------------------- Optional plots -----------------------------
+    if args.plot_adata_path and (args.plot_lr_pair or args.plot_tf):
+        ad_plot = sc.read_h5ad(args.plot_adata_path)
+        sc_adata = sc.read_h5ad(args.sc_adata_path)
+    
+        plots_dir = OUT_DIR / "plots"
+        plots_dir.mkdir(parents=True, exist_ok=True)
+        
+        ad_plot = _match_cell_identity(sc_adata, ad_plot)
+
+    if args.plot_lr_pair is not None:
+        lr_pair = str(args.plot_lr_pair).strip()
+
+        # percell_lr_inference writes into gene_out (OUT_DIR/gene_interactions) by default
+        lrscore_path = gene_out / (f"percell_lrscore_percell__{args.plot_stage}.npz" if args.plot_stage else "percell_lrscore_percell.npz")
+        out_png = plots_dir / f"attnmap_lr__{lr_pair}.png"
+
+        plot_lr_attention_map(
+            adata=ad_plot,
+            lr_pair=lr_pair,
+            lrscore_npz=lrscore_path,
+            out_path=out_png,
+            cmap=args.plot_cmap,
+            point_size=args.plot_point_size,
+            stage=args.plot_stage,
         )
 
-        if not args.no_heatmaps:
-            maybe_save_heatmaps(stage_sums, OUTPUT_DIR, logger)
-            logger.info("Saving successful!")
-        else:
-            logger.info("Heatmap generation disabled (--no_heatmaps).")
-    else:
-        logger.info("Per-cell analysis skipped (--skip_percell).")
+    if args.plot_tf is not None:
+        tf_name = str(args.plot_tf).strip()
+        out_png = plots_dir / f"attnmap_tf__{tf_name}.png"
 
-    logger.info("Gene Level Inference finished!")
-
-    # Require per-cell intensities to be available for cellular level
-    if stage_sums is None or not per_cell_intensity:
-        logger.warning(
-            "Skipping Cellular Level Inference because per-cell intensities are not available. "
-            "Run without --skip_percell (and optionally without --skip_attentions) first."
+        plot_tf_attention_map(
+            adata=ad_plot,
+            tf_name=tf_name,
+            percell_att_dir=percell_att_dir,
+            out_path=out_png,
+            cmap=args.plot_cmap,
+            point_size=args.plot_point_size,
         )
-        return
 
-    # Resolve stages for cellular inference
-    inferred_stages = sorted(
-        {k.split("_lr_")[0] for k in per_cell_intensity.keys() if k.endswith("_lr_sum")}
-    )
-    if args.stages is None:
-        stages = inferred_stages
-        logger.info(f"Using inferred stages for cellular inference: {stages}")
-    else:
-        stages = list(args.stages)
-        missing = [st for st in stages if f"{st}_lr_sum" not in per_cell_intensity]
-        if missing:
-            raise ValueError(
-                f"Requested stages {missing} not found in per-cell intensities. "
-                f"Available: {inferred_stages}"
-            )
-
-    # Cellular Level Inference
-    logger.info("Starting Cellular Level Inference")
-
-    # Load adata, senders, receivers
-    adata = sc.read_h5ad(paths["adata_all"])
-    senders = read_list_txt(paths["senders"])
-    receivers = read_list_txt(paths["receivers"])
-
-    # Build stage→matrix dict once for all requested stages
-    M_by_stage = {st: per_cell_intensity[f"{st}_lr_sum"] for st in stages}
-
-    for s in senders:
-        for r in receivers:
-            M_comb, lig_union, rec_union = combined_matrix_for_pair_across_stages(
-                adata=adata,
-                M_by_stage=M_by_stage,
-                ligand_order=genes["ligands"],
-                receptor_order=genes["receptors"],
-                stages=tuple(stages),
-                batch_key=args.batch_key,
-                groupby=args.groupby,
-                sender=s,
-                receiver=r,
-                pct_threshold=args.pct_threshold,
-                expr_cutoff=args.expr_cutoff,
-                radius=args.radius,
-                receptor_block=args.receptor_block,
-                row_block=8192,
-                dtype=np.float32,
-            )
-
-            if M_comb.size == 0:
-                # Still write an empty CSV marker if requested
-                if args.export_csv:
-                    base = f"{s.replace(' ','_')}__to__{r.replace(' ','_')}__combined_{'_'.join(stages)}"
-                    write_combined_csv(
-                        M_comb,
-                        lig_union,
-                        rec_union,
-                        tuple(stages),
-                        paths["CELL_OUT"] / (base + ".csv"),
-                    )
-                continue
-
-            # Plot heatmaps
-            _ = plot_combined_matrix(
-                M_combined=M_comb,
-                ligands_all=lig_union,
-                receptors_all=rec_union,
-                stages=tuple(stages),
-                sender=s,
-                receiver=r,
-                out_dir=paths["CELL_OUT"],
-                figsize=tuple(args.figsize),
-                dpi=args.dpi,
-            )
-
-            # CSV
-            if args.export_csv:
-                s_tag = s.replace(" ", "_")
-                r_tag = r.replace(" ", "_")
-                base = f"{s_tag}__to__{r_tag}__combined_{'_'.join(stages)}"
-                write_combined_csv(
-                    M_comb,
-                    lig_union,
-                    rec_union,
-                    tuple(stages),
-                    paths["CELL_OUT"] / (base + ".csv"),
-                )
+    logger.info("Gene-level inference finished successfully.")
 
 
 if __name__ == "__main__":
