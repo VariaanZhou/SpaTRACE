@@ -33,7 +33,7 @@ import numpy as np
 import scanpy as sc
 import tensorflow as tf
 
-from analysis.gene_interaction_inference_copy import (
+from analysis.gene_interaction_inference import (
     aggregate_LR_intensity,
     percell_lr_inference,
     per_cell_att_compute,   # <-- THIS must exist in your module
