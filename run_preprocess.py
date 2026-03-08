@@ -621,6 +621,8 @@ def main():
                         help="Fraction of cell types allowed to be active before labeled constitutive (default: 0.8).")
     parser.add_argument("--expr_cutoff", default=0.0, type=float,
                         help="Expression cutoff for 'expressed' > cutoff (default: 0.0).")
+    parser.add_argument("--lr_min_corr", default=0.3, type=float,
+                        help="Minimum Co-expression cutoff for LR pairs")
 
     parser.add_argument("--use_hvg", action='store_true', default=False, help='Use HVG for umap.(default: False).')
     parser.add_argument("--n_top_genes", default = 2000, type = int, help="Top HVG genes kept.")
@@ -1092,6 +1094,7 @@ def main():
                                                                                               n_jobs=N_JOBS,
                                                                                               sender_types=senders,                 # list[str]
                                                                                               receiver_types=receivers,
+                                                                                              min_abs_corr=args.lr_min_corr
                                                                                               )
     # if not args.simulation_data:
     #     adata_dp.obs['clusters'] = adata_all.obs.loc[adata_dp.obs_names, 'clusters'] # Transfer the column 'cluster' to adata_all
