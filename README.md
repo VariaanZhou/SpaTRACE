@@ -197,8 +197,7 @@ python run_experiment.py \
   --epochs 50 \
   --tlength 3 \
   --batch_size 16 \
-  --save_visuals \
-  --save_percell_attentions
+  --save_visuals
 ```
 ## Arguments explained
 
