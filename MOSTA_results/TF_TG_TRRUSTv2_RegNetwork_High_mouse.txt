@@ -1,0 +1,3809 @@
+$Akt1
+[1] "mmu-miR-21a-5p"
+
+$Ar
+ [1] "H1f0"     "Mttp"     "Ncoa2"    "Nfkb1"    "Nfkbia"   "Ngfr"    
+ [7] "Nos2"     "Nsd1"     "Pcp2"     "Etv4"     "Pltp"     "Pou2f1"  
+[13] "Acox1"    "Pou3f3"   "Pou5f1"   "Med1"     "Psmc5"    "Pthlh"   
+[19] "Rara"     "Rbp2"     "Scd1"     "Slc18a3"  "Slc22a1"  "Scarb1"  
+[25] "Svs6"     "Tgfbr3"   "Tgm1"     "Tgm2"     "Nkx2-1"   "Nr2c1"   
+[31] "Trh"      "Ucp1"     "Ucp3"     "Tat"      "Nox1"     "Apob"    
+[37] "Slc27a1"  "Mecr"     "Pdk4"     "Sh2d3c"   "Dhrs4"    "Pbsn"    
+[43] "Lgals12"  "Angptl4"  "Rqcd1"    "C4a"      "Aurkaip1" "Grip1"   
+[49] "Srd5a2"   "Crisp1"   "Crisp3"   "Aip"      "Aldh1a1"  "Apoa2"   
+[55] "Akr1b7"   "Avp"      "Bcl2"     "C4b"      "Car5a"    "Ctnnb1"  
+[61] "Cebpb"    "Chat"     "Abcc2"    "Col1a2"   "Cryab"    "Cyp24a1" 
+[67] "Cyp27b1"  "Cyp7a1"   "Fabp1"    "Acsl1"    "Fli1"     "Flii"    
+[73] "Gata3"    "Gpx5"     "Hoxa1"    "Hoxa4"    "Hoxa5"    "Hoxb1"   
+[79] "Hsd11b1"  "Hsp90ab1" "Lamb1"    "Lpl"      "Mdk"      "Mmp3"    
+[85] "Cited2"   "Ccr2"     "Cga"      "Fkbp5"    "Foxa1"    "Klkb1"   
+[91] "Nkx3-1"   "Nr0b1"    "Psat1"    "Runx2"    "Scnn1a"   "Sox2"    
+[97] "Tnf"      "rsl"     
+
+$Arnt
+ [1] "Gm5506"       "Pfkfb4"       "Nppa"         "Eno3"         "Epo"         
+ [6] "Figf"         "Flt1"         "Gapdh"        "Hk1"          "Vegfb"       
+[11] "Vegfa"        "Sumo1"        "Tfrc"         "Trf"          "Timp1"       
+[16] "Tek"          "Senp2"        "Hkdc1"        "Hk3"          "Slc2a1"      
+[21] "Pdk1"         "Hk2"          "Serpine1"     "Pgk1"         "Pgf"         
+[26] "Hmox1"        "Ldha"         "Ltbr"         "Pfkfb3"       "Nos2"        
+[31] "Pfkl"         "Nos3"         "Vegfc"        "Pfkfb1"       "Pfkfb2"      
+[36] "LOC100042025" "LOC100048117" "Angpt1"       "Angpt2"       "Angpt4"      
+[41] "Aldoa"        "Bcl2"         "Cdkn1a"       "Cdkn1b"       "Edn1"        
+[46] "Egf"          "Eno1"         "Eno2"         "Atxn3"        "Cyp1a1"      
+[51] "Cyp1a2"       "Cyp1b1"       "E2f2"         "Sim1"         "Th"          
+
+$Arntl
+ [1] "Bhlhe40" "Cry1"    "Cry2"    "Per1"    "Per2"    "Per3"    "Rora"   
+ [8] "Rorc"    "Nr1d1"   "Rorb"    "Bhlhe41" "Ctnnb1"  "Cxcl5"   "Dbp"    
+[15] "Maoa"    "Nfe2l2"  "Tcf3"    "Vwf"     "Wnt10a" 
+
+$Atf1
+ [1] "Tgfb2"   "Eef2"    "Fos"     "Hspa5"   "Nr4a1"   "Nudt1"   "Pcna"   
+ [8] "Pdha2"   "Ptgs2"   "Rb1"     "Sfrp4"   "Slc20a1" "Stat3"   "Tcra"   
+[15] "Tgfbr2"  "Myh10"   "Osgep"   "Yy1"     "Thbs1"   "Tgm1"    "Apex1"  
+[22] "Brca2"   "Ccnd3"   "Cebpb"   "Cebpd"  
+
+$Atf2
+ [1] "Npy"      "Bdnf"     "Bcl2"     "Arc"      "Pparg"    "Pdyn"    
+ [7] "Pcna"     "Mcl1"     "Fosb"     "Fos"      "Crh"      "Ccnd1"   
+[13] "Cebpa"    "Entpd1"   "Fgf21"    "Gabrb3"   "Il23a"    "Ins2"    
+[19] "Per1"     "Rela"     "Rhob"     "Serpinb5" "Sox9"     "Tnf"     
+[25] "Ucp1"    
+
+$Atf3
+ [1] "Gcg"       "Fgf2"      "Pck1"      "Atf3"      "Ccnd1"     "Gck"      
+ [7] "Il12b"     "Il6"       "Pdx1"      "Sort1"     "Tnfrsf10b"
+
+$Atf4
+ [1] "Bdnf"    "Npy"     "Arc"     "Bcl2"    "Crh"     "Ddit3"   "Fos"    
+ [8] "Fosb"    "Mcl1"    "Pcna"    "Pdyn"    "Bglap3"  "Cdkn1a"  "Cdkn1b" 
+[15] "Ddr2"    "Fgf15"   "Fgf2"    "Hspa5"   "Ihh"     "Il6"     "Mcm7"   
+[22] "Mir106b" "Sphk2"   "Trib3"  
+
+$Atf6
+[1] "Atp2a2" "Hspa5"  "Wbp1"  
+
+$Atf6b
+ [1] "Bdnf" "Crh"  "Fos"  "Fosb" "Bcl2" "Pdyn" "Pcna" "Mcl1" "Npy"  "Arc" 
+
+$Bbc3
+[1] "Trp53"
+
+$Bcl3
+ [1] "Nfkb1"     "Tnf"       "Psd"       "Ccnd1"     "Ctsl"      "Cxcl10"   
+ [7] "Fbxo32"    "Ifng"      "Il23a"     "Nfkb2"     "Nos1"      "Runx1"    
+[13] "Tnfaip3"   "Tnfrsf12a" "Trim63"    "Ubc"      
+
+$Bcl6
+ [1] "Slc9a1"  "Batf"    "Bcl6"    "Cdkn1a"  "Cdkn1b"  "Cdkn2b"  "Csf1r"  
+ [8] "Gadd45a" "Gata3"   "Hdac7"   "Ifng"    "Il17a"   "Il9"     "Mir21a" 
+[15] "Myc"     "Prdm1"   "Rorc"    "Socs2"   "Tbx21"  
+
+$Brca1
+ [1] "Rad51"   "Mad2l1"  "Xrcc2"   "Gadd45a" "Pou2f1"  "Akt1"    "Cdkn1a" 
+ [8] "Hmga2"   "Mdm2"    "Sirt1"   "Tpt1"   
+
+$Cebpa
+ [1] "Slc2a4"  "Adipoq"  "Adrb3"   "Afp"     "Alb"     "Amelx"   "Fabp4"  
+ [8] "Rhob"    "Akr1b7"  "Ccnb2"   "Ccnd2"   "Cdkn1a"  "Col2a1"  "Cpt1a"  
+[15] "Csf3r"   "Csrp2"   "Dlx3"    "E2f1"    "E2f3"    "Nr2f6"   "Fgf4"   
+[22] "Fgl2"    "Gba"     "H2afx"   "Il10"    "Il12b"   "Il4"     "Il6"    
+[29] "Krt10"   "Lep"     "Mmp11"   "Myc"     "Neu1"    "Neurl1a" "Nos2"   
+[36] "Orm1"    "Orm2"    "Pdgfra"  "Per2"    "Pparg"   "Ptgs2"   "Saa3"   
+[43] "Ccl3"    "Trf"     "Nr1h3"   "Scgb1a1" "E2f2"    "Krt12"   "Slco1b2"
+[50] "Elane"   "Nupr1"   "Retn"    "Abca3"   "Aldh3a1" "Apod"    "Bcl2"   
+[57] "Cflar"   "Clu"     "Crabp2"  "Lpin1"   "Mstn"    "Nfkb1"   "Pck1"   
+[64] "Prtn3"   "Spi1"    "Zbtb16" 
+
+$Cebpb
+ [1] "Otc"      "Abcb1b"   "Pparg"    "Ptgs1"    "Ptgs2"    "Saa3"    
+ [7] "Apcs"     "Ccl3"     "Nupr1"    "Scgb1a1"  "Trp53-ps" "Sod2"    
+[13] "C3"       "Cdkn1a"   "Col1a1"   "Crp"      "Dmbt1"    "Hgf"     
+[19] "Ighg1"    "Il10"     "Il12b"    "Il6"      "Krt10"    "Met"     
+[25] "Mmp13"    "Nos2"     "Orm1"     "Pck1"     "Crip2"    "Abl1"    
+[31] "Abl2"     "Alb"      "Aldh3a1"  "Atf3"     "Bcl2"     "Bglap"   
+[37] "Btg2"     "Cebpa"    "Clu"      "Cr2"      "Csf1r"    "Csf3"    
+[43] "Csn2"     "Cxcr4"    "Cyr61"    "Fos"      "Foxf1"    "Gsta2"   
+[49] "H2-K1"    "Id2"      "Il1b"     "Il5ra"    "Insr"     "Mafb"    
+[55] "Myc"      "Ppargc1a" "Runx2"    "Serpine1" "Slc10a1"  "Snrpn"   
+[61] "Socs3"    "Trp53"    "Ucp1"    
+
+$Cebpd
+[1] "Il10"    "C3"      "Saa3"    "Ptgs2"   "Pparg"   "Scgb1a1"
+
+$Cebpe
+[1] "Gata1" "Nol3"  "Sfpi1" "Myc"   "Mxd1" 
+
+$Cebpg
+[1] "Il6"   "Csf3"  "Il10"  "Retn"  "Cebpa" "Cebpb"
+
+$Clock
+ [1] "Per1"     "Per3"     "Rorc"     "Bhlhe40"  "Rorb"     "Per2"    
+ [7] "Rora"     "Cry2"     "Cry1"     "Bhlhe41"  "Nr1d1"    "Dbp"     
+[13] "Nr0b2"    "Nampt"    "Scnn1a"   "Serpine1" "Serpine2" "Thbd"    
+[19] "Tpo"      "Vwf"     
+
+$Creb1
+  [1] "Ren1"     "H2-Ea-ps" "Npy"      "Slc5a5"   "Adcy8"    "Aqp2"    
+  [7] "Arc"      "Barx2"    "Bcl2"     "Bdkrb1"   "Bdnf"     "Brca1"   
+ [13] "Brca2"    "Cacna1s"  "Ccnd1"    "Ccnd2"    "Cd3d"     "Cdk1"    
+ [19] "Ift81"    "Cebpb"    "Cebpd"    "Chga"     "Chgb"     "Crebbp"  
+ [25] "Crh"      "Cryaa"    "Ctf1"     "Cyp11a1"  "Dbh"      "Fos"     
+ [31] "Fosb"     "Fst"      "Galr1"    "Gfap"     "Gnrhr"    "Grin2b"  
+ [37] "Nr3c1"    "Hspa5"    "Gzmb"     "H2-Aa"    "H2-Ab1"   "H2-Eb1"  
+ [43] "H2-DMa"   "H2-DMb1"  "H2-DMb2"  "H2-Oa"    "H2-Ob"    "Hfe"     
+ [49] "Hgf"      "Hmox1"    "Nr4a1"    "Hpgd"     "Slc6a4"   "Elavl1"  
+ [55] "Cd74"     "Il2"      "Il6"      "Inha"     "Jun"      "Kcnc1"   
+ [61] "Anxa1"    "Ltf"      "Mcl1"     "Met"      "Mif"      "Mitf"    
+ [67] "Mt3"      "Myod1"    "Nf1"      "Npr1"     "Ntsr2"    "Pck1"    
+ [73] "Pcna"     "Pdha2"    "Pdyn"     "Penk"     "Per1"     "Per2"    
+ [79] "Per3"     "Plat"     "Plau"     "Ppara"    "Ptger2"   "Ptgs2"   
+ [85] "Dusp1"    "Rdh16"    "Scg2"     "Sfrp4"    "Sftpb"    "Slc1a3"  
+ [91] "Slc20a1"  "Stat3"    "Tcra"     "Tgfb2"    "Tgm1"     "Th"      
+ [97] "Thbs1"    "Rarb"     "Tnfrsf8"  "Trf"      "Wisp1"    "Yy1"     
+[103] "Mapk1"    "Gyg"      "Clic4"    "Slc29a1"  "Osgep"    "Nrn1"    
+[109] "Myh10"    "Acsl4"    "Cftr"     "Cldn11"   "Crtc2"    "Entpd1"  
+[115] "Esr1"     "Etv2"     "Etv3"     "Il10"     "Ldha"     "Nfkbiz"  
+[121] "Nmnat2"   "Noct"     "Nrf1"     "Pde3b"    "Ppargc1a" "Ppm1d"   
+[127] "Prkce"    "Nectin2"  "Slc2a3"   "Twist1"  
+
+$Creb3
+ [1] "Npy"     "Fosb"    "Mcl1"    "Pdyn"    "Pcna"    "Mitf"    "Fos"    
+ [8] "Crh"     "Bdnf"    "Bcl2"    "Arc"     "Aqp2"    "Apoa4"   "Herpud1"
+
+$Creb3l1
+ [1] "Mitf"   "Pcna"   "Pdyn"   "Npy"    "Aqp2"   "Arc"    "Bcl2"   "Bdnf"  
+ [9] "Crh"    "Fos"    "Fosb"   "Mcl1"   "Gcm1"   "Mmp3"   "Slc1a4"
+
+$Creb3l2
+ [1] "Pdyn" "Fosb" "Fos"  "Pcna" "Crh"  "Bdnf" "Bcl2" "Arc"  "Aqp2" "Npy" 
+[11] "Mitf" "Mcl1"
+
+$Creb3l3
+ [1] "Mitf"   "Fosb"   "Fos"    "Crh"    "Bdnf"   "Bcl2"   "Npy"    "Aqp2"  
+ [9] "Arc"    "Pdyn"   "Pcna"   "Mcl1"   "Hamp"   "Smurf1"
+
+$Creb3l4
+ [1] "Mcl1"  "Fosb"  "Fos"   "Crh"   "Bdnf"  "Bcl2"  "Pdyn"  "Arc"   "Aqp2" 
+[10] "Npy"   "Pcna"  "Mitf"  "Edem1"
+
+$Creb5
+ [1] "Fosb" "Fos"  "Crh"  "Arc"  "Aqp2" "Npy"  "Bdnf" "Pdyn" "Bcl2" "Pcna"
+[11] "Mcl1"
+
+$Crebbp
+ [1] "Vegfc"        "Vegfa"        "Tfrc"         "Trf"          "Timp1"       
+ [6] "Tek"          "Hkdc1"        "Hk3"          "Slc2a1"       "Serpine1"    
+[11] "Pgk1"         "Pgf"          "Pfkl"         "Bcl2"         "Gm5506"      
+[16] "Pfkfb4"       "Nppa"         "Pdk1"         "Vegfb"        "Pfkfb2"      
+[21] "Pfkfb1"       "Nos3"         "Aldoa"        "Nos2"         "Mitf"        
+[26] "Pfkfb3"       "Ltbr"         "Ldha"         "Angpt4"       "Hmox1"       
+[31] "Hk2"          "LOC100042025" "Hk1"          "Gapdh"        "LOC100048117"
+[36] "Flt1"         "Figf"         "Fasl"         "Angpt1"       "Angpt2"      
+[41] "Epo"          "Eno3"         "Eno2"         "Eno1"         "Egf"         
+[46] "Edn1"         "Cdkn2b"       "Cdkn1b"       "Cdkn1a"       "Alx1"        
+[51] "Birc5"        "Tdgf1"        "Clock"        "Crebbp"       "Crx"         
+[56] "Cryab"        "Cyp11a1"      "Ep300"        "Esr1"         "F7"          
+[61] "Fos"          "Fosb"         "Foxp3"        "Fth1"         "Gh"          
+[66] "Grip1"        "Hgf"          "Ifnb1"        "Il6"          "Krt16"       
+[71] "Med1"         "Hinfp"        "Mt1"          "Myh1"         "Nfkb1"       
+[76] "Nfya"         "Nfyb"         "Npas2"        "Per1"         "Rs1"         
+[81] "Setdb1"       "Socs3"        "Spib"         "Sst"          "Star"        
+[86] "Tnf"          "Trp53"       
+
+$Crem
+[1] "Star" "Ren1"
+
+$Ctnnb1
+ [1] "Ccnd1"   "Ccnd2"   "Ccnd3"   "Atoh1"   "Axin2"   "Bcl2l1"  "Bglap"  
+ [8] "Bglap2"  "Birc5"   "Bmp4"    "Casp3"   "Ccl7"    "Ccne1"   "Cdh1"   
+[15] "Cdx1"    "Cdx2"    "Cdx4"    "Cyp19a1" "Cyp2b10" "E2f1"    "Ephb2"  
+[22] "Fas"     "Fgf8"    "Fgfbp1"  "Vegfd"   "Foxa2"   "Foxj1"   "Gast"   
+[29] "Gja1"    "Glul"    "Grem2"   "Ihh"     "Inha"    "Isl1"    "Lect2"  
+[36] "Lef1"    "Lhb"     "Met"     "Mitf"    "Mmp13"   "Mmp7"    "Myc"    
+[43] "Mycn"    "Myf5"    "Nanog"   "Neurog1" "Nr0b1"   "Otx2"    "Pdgfra" 
+[50] "Pitx2"   "Pml"     "Ppard"   "Ptgs2"   "Rapsn"   "Runx2"   "Slc2a1" 
+[57] "Smc3"    "Tbx3"    "Tcf4"    "Twist1"  "Vegfa"   "Wisp1"   "Wnt1"   
+[64] "Wnt4"   
+
+$Ddit3
+[1] "mmu-miR-708-3p" "mmu-miR-708-5p" "Bbc3"           "Nos3"          
+
+$E2f1
+  [1] "Bfsp1"         "A930017K11Rik" "Vmn1r239-ps"   "Chmp7"        
+  [5] "Vmn1r42"       "Vmn1r53"       "Vmn1r40"       "Adh7"         
+  [9] "Apex1"         "Arl4a"         "Atp2a2"        "Brca1"        
+ [13] "Bsg"           "Ccne1"         "Ccne2"         "Ccng2"        
+ [17] "Cd8b1"         "Cdc45"         "Cdkn2a"        "Socs3"        
+ [21] "Ckb"           "Clock"         "Dhfr"          "Dlx1"         
+ [25] "E2f1"          "Fzd1"          "Gas1"          "Gbx2"         
+ [29] "Hist2h3c1"     "H2afx"         "Hoxa13"        "Hoxa4"        
+ [33] "Trmt2a"        "Igf2"          "Igh-VJ558"     "Kif21b"       
+ [37] "Psmb9"         "Vmn1r229"      "Vmn1r227"      "Mbd1"         
+ [41] "Mbd2"          "Mc2r"          "Myb"           "Mybl2"        
+ [45] "Myl2"          "Mycn"          "Nppc"          "Nsdhl"        
+ [49] "Pcna"          "Pola1"         "Pola2"         "Rabggtb"      
+ [53] "Ranbp1"        "Rel"           "Rela"          "Rpl30"        
+ [57] "Polr2a"        "Rps7"          "Rrm2"          "S100a9"       
+ [61] "Sf3a2"         "Nkx1-2"        "Sst"           "Lrrc25"       
+ [65] "Lactb2"        "Fbxl21"        "Tapbp"         "Tgfbi"        
+ [69] "Timp3"         "tk"            "Tkt"           "Trp53-ps"     
+ [73] "Tsg101"        "Dync1li2"      "Olfr1104"      "Olfr1378"     
+ [77] "Olfr808"       "Cetn2"         "Lsm2"          "Slc39a1"      
+ [81] "Slc25a48"      "Crim1"         "Rab11a"        "Ctsf"         
+ [85] "Cldn9"         "Zfp169"        "Arl14"         "2010106C02Rik"
+ [89] "Rcc1"          "Apaf1"         "Atm"           "Atp6v1e2"     
+ [93] "Bcl2"          "Bid"           "Bin1"          "Bmi1"         
+ [97] "Ccna2"         "Ccnd1"         "Cdkn1a"        "Cdkn2c"       
+[101] "Ddb2"          "Dlx2"          "Dnmt1"         "Egr1"         
+[105] "Fbn2"          "Gins3"         "Hinfp"         "Hmga1"        
+[109] "Mcl1"          "Mcm8"          "Mertk"         "Mxd3"         
+[113] "Myh10"         "Nfe2l2"        "Nfkb1"         "Nos2"         
+[117] "Nox4"          "Npat"          "Nrp1"          "Pdgfra"       
+[121] "Pdk4"          "Pura"          "Rb1"           "Siva1"        
+[125] "Tgfb2"         "Tk1"           "Tlr3"          "Tpt1"         
+[129] "Trp53"         "Trp73"         "Vegfa"        
+
+$E2f2
+ [1] "Vmn1r42"       "2010106C02Rik" "Arl14"         "Zfp169"       
+ [5] "Cldn9"         "Crim1"         "Slc25a48"      "Olfr808"      
+ [9] "Olfr1378"      "Olfr1104"      "Dync1li2"      "Tgfbi"        
+[13] "Fbxl21"        "Lactb2"        "Mc2r"          "Vmn1r227"     
+[17] "Ccne1"         "Vmn1r229"      "Kif21b"        "Rel"          
+[21] "Igh-VJ558"     "Fzd1"          "Ccne2"         "Myl2"         
+[25] "S100a9"        "Rcc1"          "Vmn1r239-ps"   "Chmp7"        
+[29] "Rabggtb"       "Sst"           "Vmn1r40"       "Vmn1r53"      
+[33] "Lrrc25"        "Adh7"          "A930017K11Rik" "Cdkn2a"       
+[37] "Chek1"         "Ece1"          "Fgfr2"         "Mcm5"         
+
+$E2f3
+[1] "Ccne2"  "Ccne1"  "Cdkn2a" "Ddb2"   "Fgf2"   "Igf2"   "Mycn"   "Pmp2"  
+[9] "Tfe3"  
+
+$E2f4
+ [1] "Myc"      "Brca1"    "E2f2"     "Fgf2"     "Map1lc3b" "Mybl2"   
+ [7] "Mycn"     "Plk4"     "Rad51"    "Rb1"      "Stmn1"   
+
+$E2f5
+[1] "Myc"     "Mir449a"
+
+$Egr1
+ [1] "Met"      "Nol3"     "Ache"     "Cacna1e"  "Cbx2"     "Col1a2"  
+ [7] "Ctsl"     "Egr1"     "F3"       "Fas"      "Fasl"     "Fgfr3"   
+[13] "Flt3"     "Gad1"     "Galk1"    "Hmox1"    "Icam1"    "Ifngr2"  
+[19] "Cyr61"    "Lhb"      "Mmp14"    "Myc"      "Olfr54"   "Prkar1b" 
+[25] "Ccl5"     "Spint1"   "Srf"      "Thbs1"    "Tnf"      "Twist1"  
+[31] "Vegfb"    "Tubb4b"   "Bax"      "Birc5"    "Bnip3"    "Cacna1h" 
+[37] "Cat"      "Ccl2"     "Ccnd1"    "Ccnd2"    "Cdk5r1"   "Cdkn1c"  
+[43] "Cdkn2d"   "Chrna7"   "Crebbp"   "Cxcl2"    "Eno1"     "Epo"     
+[49] "Fgf2"     "Gadd45a"  "Gadd45b"  "Ggps1"    "Gnrh1"    "Hsd11b2" 
+[55] "Id3"      "Ifngr1"   "Igf1r"    "Il1b"     "Il2"      "Il4"     
+[61] "Itga7"    "Itgb6"    "Jun"      "Jund"     "Ltb"      "Map1lc3b"
+[67] "Mapk14"   "Mapk8"    "Mmp9"     "Ndrg1"    "Ngb"      "Ngfr"    
+[73] "Nr4a1"    "Ntrk1"    "Pdx1"     "Pnmt"     "Ppp1r1b"  "Pten"    
+[79] "Ptges"    "Ptges2"   "Ptprz1"   "Rcan1"    "Serpine1" "Smad7"   
+[85] "Socs1"    "Stim1"    "Syn2"     "Tgfbr2"   "Th"       "Tk1"     
+[91] "Trp53"    "Trp73"    "Wnt4"     "Il12a"   
+
+$Egr2
+ [1] "Fas"     "Cacna1e" "Ddx20"   "Spint1"  "Hoxa4"   "Hoxa2"   "Fasl"   
+ [8] "Hoxb2"   "Ctsl"    "Cbl"     "Cebpb"   "Hoxb1"   "Id2"     "Id4"    
+[15] "Il2rb"   "Mpz"     "Nab1"    "Nab2"    "Ncmap"   "Zbtb16" 
+
+$Egr3
+[1] "Spint1" "Ctsl"   "Fasl"   "Ifngr1" "Ngfr"  
+
+$Elk1
+ [1] "Sin3a" "Egr1"  "Ccnd3" "Ccnd2" "Ccnd1" "Xiap"  "Birc2" "Birc3" "Fos"  
+[10] "Hmox1" "Il6"   "Mylk"  "Mylk3" "Tbp"  
+
+$Elk3
+[1] "Nos2"     "Pcyt1a"   "Serpine1"
+
+$Elk4
+[1] "Fos"
+
+$Ep300
+  [1] "Cdkn1a"       "LOC100042025" "LOC100048117" "Angpt1"      
+  [5] "Angpt2"       "Angpt4"       "Aldoa"        "Bcl2"        
+  [9] "Cdkn1b"       "Cdkn2b"       "Edn1"         "Egf"         
+ [13] "Eno1"         "Eno2"         "Eno3"         "Epo"         
+ [17] "Fasl"         "Figf"         "Flt1"         "Gapdh"       
+ [21] "Hk1"          "Hk2"          "Hmox1"        "Ldha"        
+ [25] "Ltbr"         "Pfkfb3"       "Mitf"         "Nos2"        
+ [29] "Nos3"         "Pfkfb1"       "Pfkfb2"       "Pfkl"        
+ [33] "Pgf"          "Pgk1"         "Serpine1"     "Slc2a1"      
+ [37] "Hk3"          "Hkdc1"        "Tek"          "Timp1"       
+ [41] "Trf"          "Tfrc"         "Vegfa"        "Vegfb"       
+ [45] "Vegfc"        "Pdk1"         "Nppa"         "Pfkfb4"      
+ [49] "Gm5506"       "Aldh3a1"      "Axin2"        "Bglap"       
+ [53] "Birc5"        "COX2"         "Cav3"         "Ccnb2"       
+ [57] "Ccnd1"        "Chrne"        "Clock"        "Col1a2"      
+ [61] "Col2a1"       "Cpt1b"        "Creb1"        "Cryab"       
+ [65] "Dnmt1"        "F7"           "Fasn"         "Flt4"        
+ [69] "Fn1"          "Fos"          "Gata4"        "Hrh4"        
+ [73] "Il6"          "Irf2"         "Irs1"         "Klf5"        
+ [77] "Mef2c"        "Hinfp"        "Mmp2"         "Mmp9"        
+ [81] "Mt1"          "Myb"          "Myod1"        "Neurod1"     
+ [85] "Npas2"        "Npr1"         "Nr0b2"        "Nr1h4"       
+ [89] "Pou5f1"       "Pparg"        "Ptgs2"        "Rarb"        
+ [93] "Rs1"          "Scd1"         "Smad3"        "Socs3"       
+ [97] "Spp1"         "Stat5a"       "Tapbp"        "Tff2"        
+[101] "Tnfsf10"      "Tnfsf13b"     "Txnip"        "Wnt4"        
+
+$Epas1
+ [1] "Flt1"     "Vegfb"    "Pdgfb"    "Pdgfa"    "Kdr"      "Ikbkg"   
+ [7] "Vegfc"    "Figf"     "Vegfa"    "Tgfb3"    "Tgfb2"    "Tgfb1"   
+[13] "Tgfa"     "Tek"      "Retnla"   "Slc2a1"   "Pgf"      "Abcg2"   
+[19] "Cdh5"     "Cited2"   "Col10a1"  "Efna1"    "Epo"      "Fxn"     
+[25] "Pou5f1"   "Runx2"    "Serpine1" "Vcam1"   
+
+$Erg
+ [1] "Setdb1"  "Cdh5"    "Vwf"     "Vim"     "Col11a2" "Erg"     "Icam2"  
+ [8] "Lyl1"    "Snai1"   "Snai2"  
+
+$Esr1
+ [1] "Hgf"            "mmu-miR-375-3p" "H19"            "Apoe"          
+ [5] "Grip1"          "Atp2b1"         "Mogs"           "Lgals12"       
+ [9] "Nr0b2"          "Tnfsf11"        "Slc8a1"         "Rdh16"         
+[13] "Trpv5"          "Prl"            "Prkca"          "Pgr"           
+[17] "Tnfrsf11b"      "Notch1"         "Nos2"           "Ncoa2"         
+[21] "Met"            "Mdm2"           "Ltf"            "Jag1"          
+[25] "Isl1"           "Abca1"          "Grin2d"         "Ggta1"         
+[29] "Gal"            "Egr1"           "Csk"            "Calb1"         
+[33] "Bmp2"           "Avp"            "Casp12"         "Ccnd1"         
+[37] "Cdkn1a"         "Cyp19a1"        "Esrra"          "F12"           
+[41] "Fasl"           "Fos"            "Igf1"           "Myc"           
+[45] "Nell2"          "Nrf1"           "Pik3r1"         "Pou3f1"        
+[49] "Pparg"          "Ptgs1"          "Slc2a4"         "Slc7a1"        
+[53] "Srebf1"         "Stat3"          "Stat5a"         "Tac2"          
+[57] "Th"             "Vegfa"         
+
+$Esr2
+ [1] "Abca1"  "Akt1"   "Ar"     "Bcl2"   "Bmp2"   "Casp3"  "Casp8"  "Igf1r" 
+ [9] "Mapk1"  "Mapk3"  "Mapk8"  "Nell2"  "Pparg"  "Ptgds"  "Ptgs1"  "Slc2a4"
+[17] "Stat5a" "Vegfa" 
+
+$Ets1
+  [1] "Krt18"     "Kdr"       "Itgb3"     "Itgav"     "Itga3"     "Il3ra"    
+  [7] "Il12b"     "Cd79b"     "Elavl1"    "Hbegf"     "Ggh"       "Gata1"    
+ [13] "Flii"      "Fli1"      "Fgl2"      "Fcgrt"     "Ecm1"      "Pcyt1a"   
+ [19] "Csf2"      "Cdh5"      "Cd5"       "Car5a"     "Nr2f2"     "Sgpp1"    
+ [25] "Nol3"      "Pf4"       "B3galt4"   "Rdh7"      "Atp2a3"    "Elane"    
+ [31] "Ebi3"      "Zfp354c"   "Rnf11"     "Ncdn"      "Mapk3"     "Mapk1"    
+ [37] "Wap"       "Vwf"       "Tnfrsf8"   "Tnfrsf10b" "Timp1"     "Tie1"     
+ [43] "Thy1"      "Tgfbr2"    "Dntt"      "Tcra"      "Tal1"      "Srf"      
+ [49] "Spp1"      "Sh2d1a"    "Ccl3"      "Pthlh"     "Ptgs2"     "Psen1"    
+ [55] "Prtn3"     "Eif2ak2"   "Plau"      "Pkd1"      "Prf1"      "Igbp1"    
+ [61] "Oprd1"     "Myc"       "Mrc1"      "Mmp9"      "Mmp3"      "Mmp2"     
+ [67] "Mmp14"     "Mmp13"     "Mef2a"     "Anpep"     "Krt8"      "Kit"      
+ [73] "Emsy"      "Angpt2"    "Bmp4"      "Ccl2"      "Cd3d"      "Cd4"      
+ [79] "Cdkn2a"    "Csf1r"     "Csf3r"     "Ctgf"      "Ebf1"      "Egr1"     
+ [85] "Erg"       "Fos"       "Foxp3"     "Hmox1"     "Ighm"      "Ikzf1"    
+ [91] "Il10"      "Il5"       "Il7r"      "Itga2b"    "Ltbr"      "Met"      
+ [97] "Mir126a"   "Mmp1a"     "Nos3"      "Npr1"      "Nr2f1"     "Prdm1"    
+[103] "Retnla"    "Runx2"     "Runx3"     "Sell"      "Serpinb5"  "Tbx21"    
+[109] "Thbd"      "Tlr4"      "Vegfa"     "Zeb1"     
+
+$Ets2
+ [1] "Tie1"    "Bcl2l1"  "Cd4"     "Cdkn2a"  "Csf1r"   "Csf3r"   "Dusp6"  
+ [8] "Egr1"    "Erg"     "Etv4"    "Fli1"    "Flt4"    "Hmox1"   "Hmox2"  
+[15] "Ifne"    "Jun"     "Kit"     "Krt8"    "Mdm2"    "Mir126a" "Nab2"   
+[22] "Nos2"    "Pcyt1a"  "Setdb1"  "Sh2d1a"  "Stab1"   "Tlr13"  
+
+$Etv4
+ [1] "Btk"     "Car5a"   "Cbx2"    "Ccnd2"   "Fgfr1"   "Fgfr2"   "Fgfr3"  
+ [8] "Fgfr4"   "Gba"     "Gpx5"    "Hfe"     "Krt8"    "Cdk1"    "Cd5"    
+[15] "Agtr2"   "Bdkrb1"  "Sgpp1"   "Setd1a"  "Slc26a1" "Zhx1"    "Vim"    
+[22] "Timp1"   "T"       "Srf"     "Spp1"    "Sat1"    "Rpl32"   "Psen1"  
+[29] "Plau"    "Pcna"    "Pax8"    "Mmp9"    "Mmp3"    "Mmp2"    "Mmp13"  
+[36] "Man2b1"  "Madcam1" "Ldb1"    "Crisp1"  "Dusp6"   "Erbb2"   "Mmp7"   
+[43] "Mta2"    "Ptgs2"   "Tert"    "Tgfbr2"  "Twist1" 
+
+$Fli1
+ [1] "Cebpa"  "Ccl2"   "Cyr61"  "Erg"    "Ezh2"   "Fli1"   "Inpp5d" "Itga2b"
+ [9] "Lyl1"   "Mmp13"  "Rb1"    "Smad6"  "Tert"   "Upp1"  
+
+$Fos
+ [1] "Vegfc"     "Ccnd1"     "Cdk4"      "Figf"      "Mmp2"      "Mmp9"     
+ [7] "Pgf"       "Th"        "Vegfa"     "Vegfb"     "LOC640611" "Mmp1a"    
+[13] "Mmp1b"     "Acp5"      "Bdnf"      "Bmp2"      "Ccl5"      "Crh"      
+[19] "Csf3"      "Cxcl15"    "Dcstamp"   "Egr1"      "Fam89b"    "Fos"      
+[25] "Gnrh1"     "Gria1"     "Grik2"     "H2-K1"     "Hmgcr"     "Ifne"     
+[31] "Igk"       "Il1rl1"    "Il2"       "Il27"      "Il6"       "Jun"      
+[37] "Krt18"     "Mapk8"     "Mt1"       "Nacc1"     "Nck2"      "Nefl"     
+[43] "Nfatc1"    "Nfe2l2"    "Ngf"       "Nos2"      "Nr3c1"     "Pdpn"     
+[49] "Penk"      "Plau"      "Pomc"      "Ppp1r3b"   "Spi1"      "Slc10a2"  
+[55] "Socs3"     "Src"       "Srr"       "Srxn1"     "Star"      "Stim1"    
+[61] "Tff2"      "Tgfb1"     "Tinagl1"   "Tpsab1"    "Trp53"     "Tslp"     
+[67] "Wee1"     
+
+$Fosb
+[1] "Rela"  "Nfkb1" "Gria2" "Fos"   "Cdk5"  "Cdh1"  "Mmp2" 
+
+$Foxa2
+ [1] "Pdx1"   "Ascl1"  "Birc2"  "Cbx5"   "Ccl11"  "Ccl20"  "Cdc73"  "Cpt1a" 
+ [9] "Cul2"   "Ferd3l" "G6pc"   "G6pc2"  "Gcg"    "Gli2"   "Hadh"   "Hcrt"  
+[17] "Helt"   "Hhex"   "Hmgcs2" "Il13"   "Il33"   "Il4"    "Lcn5"   "Lmx1a" 
+[25] "Lmx1b"  "Map1b"  "Mchr1"  "Msx1"   "Muc2"   "Otx1"   "Otx2"   "Pgf"   
+[33] "Reg3g"  "Sox17"  "Sox2"   "St18"   "Tbx1"   "Tle4"   "Vtn"    "Wnt7b" 
+
+$Foxo1
+ [1] "G6pc"     "Fbp2"     "G6pc2"    "Pck1"     "Pck2"     "Fbp1"    
+ [7] "Adipoq"   "Adipor1"  "Akt1"     "Alpl"     "Angpt2"   "Apoc3"   
+[13] "Bax"      "Bcl2l11"  "Bglap2"   "Casp8"    "Ccl2"     "Ccl20"   
+[19] "Ccnd1"    "Ccnd2"    "Ccng2"    "Ccr2"     "Ccr7"     "Cdkn1a"  
+[25] "Cdkn1b"   "Edn1"     "Egr1"     "Fasl"     "Foxa2"    "Foxp3"   
+[31] "Fshb"     "Gck"      "Igfbp1"   "Ikzf1"    "Il7r"     "Ins2"    
+[37] "Klf2"     "Lhb"      "Lpl"      "Mmp13"    "Myh7"     "Nos3"    
+[43] "Ostn"     "Pdk4"     "Pdx1"     "Pik3r1"   "Pparg"    "Ppargc1a"
+[49] "Runx2"    "Sell"     "Srebf1"   "Trib3"    "Trim63"  
+
+$Foxo3
+ [1] "Pck2"    "Bcl2l11" "Cdkn1b"  "Fasl"    "G6pc"    "G6pc2"   "Pck1"   
+ [8] "Rbl2"    "Ccnd1"   "Ccnd2"   "Ccng2"   "Gadd45a" "Lcn2"    "Nol3"   
+[15] "Sirt1"   "Socs3"  
+
+$Gfi1
+ [1] "mmu-miR-21a-5p"  "mmu-miR-196b-5p" "Bak1"            "Bax"            
+ [5] "Cdkn1a"          "Cdkn2b"          "Elane"           "Gfi1b"          
+ [9] "Id2"             "Il7r"            "Spi1"            "Zbtb16"         
+
+$Gli1
+ [1] "Wnt2"   "Wnt2b"  "Wnt3"   "Wnt3a"  "Wnt4"   "Wnt5a"  "Wnt5b"  "Wnt6"  
+ [9] "Wnt7a"  "Wnt7b"  "Wnt8b"  "Bmp2"   "Bmp4"   "Gli1"   "Gli2"   "Gli3"  
+[17] "Hhip"   "Foxa2"  "Myf5"   "Nkx2-9" "Ptch1"  "Ptch2"  "Shh"    "Wnt8a" 
+[25] "Wnt9a"  "Wnt1"   "Wnt10a" "Wnt10b" "Wnt11"  "Wnt16"  "Wnt9b"  "Cdh1"  
+[33] "Foxm1"  "Has2"   "Nhlh1"  "Pdgfra" "Pvr"    "Runx2"  "Runx3" 
+
+$Gli2
+ [1] "Bmp4"   "Wnt2b"  "Wnt3"   "Wnt3a"  "Wnt4"   "Wnt5a"  "Wnt5b"  "Wnt6"  
+ [9] "Wnt7a"  "Wnt7b"  "Wnt8b"  "Wnt16"  "Wnt9b"  "Wnt11"  "Wnt10b" "Wnt10a"
+[17] "Wnt1"   "Wnt9a"  "Wnt8a"  "Ptch2"  "Ptch1"  "Myf5"   "Foxa2"  "Hhip"  
+[25] "Gli3"   "Gli2"   "Gli1"   "Fgf15"  "Wnt2"   "Bmp2"   "Ascl1"  "Fkbp8" 
+[33] "Foxe1"  "Hes1"   "Ifitm5" "Ndp"    "Pax3"   "Shh"    "Sox8"  
+
+$Gli3
+ [1] "Wnt16"  "Wnt8b"  "Wnt7b"  "Wnt7a"  "Wnt6"   "Wnt5b"  "Wnt5a"  "Wnt4"  
+ [9] "Wnt3a"  "Wnt3"   "Wnt2b"  "Wnt2"   "Wnt9b"  "Wnt11"  "Wnt10b" "Wnt10a"
+[17] "Wnt1"   "Wnt9a"  "Gli1"   "Bmp4"   "Bmp2"   "Wnt8a"  "Shh"    "Ptch2" 
+[25] "Ptch1"  "Myf5"   "Foxa2"  "Hhip"   "Gli3"   "Gli2"   "Fgf8"   "Has2"  
+[33] "Nkx6-1" "Pitrm1" "Pvr"   
+
+$Gnrh1
+[1] "mmu-miR-212-3p" "mmu-miR-132-3p" "Lhb"           
+
+$Hdac1
+ [1] "Fos"    "Akap12" "Ar"     "Bglap"  "Ccl5"   "Cd1d2"  "Cdc25a" "Cdkn1a"
+ [9] "Cdkn1b" "Cebpb"  "Comp"   "Csn2"   "Fas"    "Fshr"   "Il6"    "Il12b" 
+[17] "Jun"    "Nfkbia" "Nfya"   "Nos2"   "Pparg"  "Ppp2ca" "Rbl2"   "Reck"  
+[25] "Rhox5"  "Sp1"    "Spp1"   "Star"   "Epcam" 
+
+$Hif1a
+  [1] "Retnla"         "Gbe1"           "Ddit4"          "Senp2"         
+  [5] "Krt19"          "mmu-miR-322-3p" "mmu-miR-322-5p" "Krt18"         
+  [9] "Krt14"          "Itgb2"          "Hmox1"          "Hk2"           
+ [13] "Hk1"            "Gapdh"          "Fn1"            "Flt1"          
+ [17] "Figf"           "Epx"            "Epo"            "Eno3"          
+ [21] "Eno2"           "Eno1"           "Egf"            "Edn1"          
+ [25] "Dcx"            "Ctsd"           "Cdkn1b"         "Cdkn1a"        
+ [29] "Casp9"          "Bid"            "Bcl2"           "Bax"           
+ [33] "Avp"            "Aldoa"          "Angpt4"         "Angpt2"        
+ [37] "Angpt1"         "Cygb"           "Egln1"          "LOC100048117"  
+ [41] "LOC100042025"   "Ldha"           "Ltbr"           "Pfkfb3"        
+ [45] "Mmp2"           "Nkx3-1"         "Nos2"           "Nos3"          
+ [49] "P4ha1"          "P4hb"           "Pdgfa"          "Pdgfb"         
+ [53] "Pfkfb1"         "Pfkfb2"         "Pfkl"           "Pgf"           
+ [57] "Pgk1"           "Abcb1b"         "Serpine1"       "Plaur"         
+ [61] "Plod1"          "Ppara"          "Ptgfr"          "Cxcl12"        
+ [65] "Slc2a1"         "Bhlhe40"        "Hk3"            "Hkdc1"         
+ [69] "Tek"            "Tff3"           "Tgfa"           "Tgfb1"         
+ [73] "Tgfb2"          "Tgfb3"          "Timp1"          "Trf"           
+ [77] "Tfrc"           "Trp53-ps"       "Sumo1"          "Vegfa"         
+ [81] "Vegfb"          "Vegfc"          "Pdk1"           "Car9"          
+ [85] "Nppa"           "Map2k4"         "Plod2"          "Pfkfb4"        
+ [89] "Ep300"          "Gm5506"         "Fam162a"        "Bace1"         
+ [93] "Bsg"            "Cited2"         "Crebbp"         "Ctgf"          
+ [97] "Dll4"           "G6pc"           "Hey1"           "Hey2"          
+[101] "Mdk"            "Mt1"            "Myocd"          "Ptgs2"         
+[105] "Snai1"          "Tuft1"         
+
+$Hlf
+[1] "Ikbkg"  "Abcb1a" "Epo"   
+
+$Hnf1a
+ [1] "Foxa3"          "Hnf4g"          "Hnf4a"          "mmu-miR-194-5p"
+ [5] "Bcl6"           "Cldn2"          "Crp"            "Cyp1a2"        
+ [9] "Cyp27a1"        "Cyp2a5"         "Cyp2b10"        "Cyp2c29"       
+[13] "Cyp2d9"         "Cyp2e1"         "Cyp39a1"        "Cyp3a11"       
+[17] "Cyp7a1"         "Cyp7b1"         "Cyp8b1"         "Glb1"          
+[21] "Guca2a"         "Il17a"          "Kitl"           "Lct"           
+[25] "Mgam"           "Pax4"           "Pck1"           "Pkhd1"         
+[29] "Prdm1"          "Rorc"           "Slc6a19"        "Slco1b2"       
+[33] "Soat2"         
+
+$Hnf4a
+ [1] "Slc2a2"   "Pklr"     "Acmsd"    "Apoa4"    "Apoc3"    "Cdx2"    
+ [7] "Cebpa"    "Cebpb"    "Cfb"      "Csn2"     "Cyp2a4"   "Cyp2b9"  
+[13] "Cyp3a11"  "Cyp3a41a" "Cyp4a12a" "Cyp4a12b" "Cyp7a1"   "F12"     
+[19] "Foxa1"    "Foxa2"    "G6pc"     "Gck"      "Gstp1"    "Gstp2"   
+[25] "Hmga2"    "Lipc"     "Onecut1"  "Pck1"     "Perp"     "Ppara"   
+[31] "Ppargc1a" "Rare1"    "Rare2"    "Shbg"     "Slc10a1"  "Slc27a5" 
+[37] "Slc6a19" 
+
+$Hoxa1
+ [1] "Pdgfa"  "Ren1"   "Etf1"   "Itga8"  "Zfp192" "Cd47"   "Hoxb1"  "Gcm1"  
+ [9] "Gad1"   "Erf"    "Epha2"  "Hoxb2"  "Gcm2"   "Ctsl"   "L1cam"  "Anxa1" 
+[17] "Myl1"   "Ncam1"  "Nkx2-5" "Pax3"   "Ccng1"  "Ccng2" 
+
+$Hoxa10
+[1] "Ccng1" "Ccng2" "Dkk1"  "Gata1" "Gfi1"  "Hlf"   "Mylk"  "Phgdh" "Tdo2" 
+
+$Hoxa11
+[1] "Ctsl"  "Myod1"
+
+$Hoxa4
+[1] "Hoxa4" "Th"   
+
+$Hoxa5
+[1] "Vim"    "Hoxa5"  "Igfbp1" "Ncam1"  "Ptx3"   "Th"     "Trp53" 
+
+$Hoxa7
+[1] "Ggta1" "Gal"  
+
+$Hoxb1
+[1] "Phox2b" "Hoxb2"  "Epha2"  "Hoxb1" 
+
+$Hoxb2
+[1] "Phox2b" "Hoxb1" 
+
+$Hoxb3
+[1] "Nkx2-1" "Hoxb1" 
+
+$Hoxb4
+[1] "Rarb"  "Cd34"  "Ptprc" "Sox4" 
+
+$Hoxb5
+[1] "Serpinb6a" "Foxd3"    
+
+$Hoxc13
+[1] "Krtap16-1" "Dsg4"      "Foxq1"     "Spi1"     
+
+$Hoxc6
+[1] "Ncam1"
+
+$Hoxc8
+ [1] "Pcna"          "Nqo1"          "Ncam1"         "Smad1"        
+ [5] "Ly6f"          "Ly6c1"         "Krt19"         "Cxcl10"       
+ [9] "Sgpp1"         "A430106F12Rik" "A930005N03Rik" "Fzd2"         
+[13] "Msln"          "Eef1b2"        "Slc16a4"       "Plagl1"       
+[17] "Tubb5"         "Tagln"         "Spp1"          "Serpinf1"     
+[21] "Ccl7"          "Ccl2"          "Pxmp2"         "Pou6f1"       
+[25] "Pmp22"         "Elmo2"         "Cnn1"          "Ass1"         
+[29] "Adam19"        "Ly6a"          "Ankrd1"        "Gas1"         
+[33] "Hes2"          "Srd5a2"        "Il1r2"         "Clec10a"      
+[37] "Llgl1"         "Nkd2"          "Smad6"        
+
+$Hsf1
+[1] "Hspa8"  "Hspa1l" "Hspa1a" "Hspa2"  "Hspa1b"
+
+$Ifng
+[1] "Icam1" "Ido2"  "Ido1" 
+
+$Irf1
+ [1] "Il12a"   "Il12b"   "Ccl5"    "Cdkn1a"  "Cfb"     "Ciita"   "Cxcl10" 
+ [8] "Cxcl11"  "Foxp3"   "Gbp2"    "Hist2h4" "Ifnb1"   "Ifng"    "Il27"   
+[15] "Il4"     "Mapk14"  "Myd88"   "Nos2"    "Pigr"    "Sell"    "Socs1"  
+[22] "Tap1"    "Tap2"    "Tnf"     "Upp1"   
+
+$Irf3
+ [1] "Cd80"    "Cxcl10"  "Ifnb1"   "Cd40"    "Cxcl11"  "Cd86"    "Hist2h4"
+ [8] "Ifna"    "Ifna1"   "Ifna4"   "Il12a"   "Il23a"   "Pura"    "Pvr"    
+[15] "Socs2"   "Usp18"  
+
+$Irf5
+[1] "Tnf"     "Ifi202b" "Prdm1"  
+
+$Irf7
+ [1] "Ifna11"  "Ifna6"   "Gm12597" "Ifna13"  "Ifna1"   "Ifna12"  "Ifna14" 
+ [8] "Ifna2"   "Ifna4"   "Ifna5"   "Ifna7"   "Ifna9"   "Ifnab"   "Ifnb1"  
+[15] "Hist2h4" "Ifna"    "Ifnl3"   "Nr1h4"  
+
+$Irf8
+ [1] "Il12a"   "Il12b"   "Abl1"    "Bcr"     "C1qb"    "Cd8a"    "Ccl5"   
+ [8] "Cdkn2b"  "Cflar"   "Dab2"    "Fancc"   "Gas2"    "Ifng"    "Il1b"   
+[15] "Il27"    "Il12"    "Jak1"    "Nf1"     "Nos2"    "Slc11a1" "Spi1"   
+[22] "Tlr11"   "Tnf"    
+
+$Jun
+  [1] "Myod1"     "Myb"       "Nudt1"     "Mt3"       "Msx1"      "Mmp9"     
+  [7] "Mmp3"      "Krt12"     "Prdx6"     "Apoa1"     "Apoc3"     "App"      
+ [13] "Atp10a"    "Bcl3"      "Bdkrb1"    "Cacna1e"   "Ccnd1"     "Ccnd2"    
+ [19] "Ccnd3"     "Cd5"       "Cdk4"      "Cdk5"      "Cftr"      "Col5a1"   
+ [25] "Col7a1"    "Col1a1"    "Crabp1"    "Csf1"      "Csf2"      "Ncan"     
+ [31] "Ctsl"      "Dbh"       "Ecm1"      "Egr1"      "Egr2"      "F3"       
+ [37] "Fasl"      "Fgfr1"     "Fgl2"      "Figf"      "Fos"       "Gad1"     
+ [43] "Gba"       "Gja5"      "Gnrhr"     "Gria2"     "Nr3c1"     "Gstm1"    
+ [49] "Gzmb"      "H2-L"      "Hbegf"     "Hfe"       "Slc6a4"    "Elavl1"   
+ [55] "Ifnb1"     "Il12b"     "Mmp2"      "Mmp13"     "Met"       "Ly9"      
+ [61] "Ltf"       "Ldb1"      "Klf4"      "Klf1"      "Jund"      "Jun"      
+ [67] "Il9"       "Il7r"      "Il6"       "Il5ra"     "Il5"       "Il4"      
+ [73] "Il2"       "Il13"      "Mmp1b"     "Mmp1a"     "Nacc1"     "LOC640611"
+ [79] "Prdx5"     "Rdh7"      "Prdx3"     "Mapk3"     "Ifi205"    "Vim"      
+ [85] "Vegfc"     "Vegfb"     "Vegfa"     "Ucp2"      "Ttr"       "Trp53-ps" 
+ [91] "Tnfrsf8"   "Tnf"       "Tlr4"      "Timp1"     "Th"        "Tgm1"     
+ [97] "Tff3"      "Tesk1"     "Tapbp"     "Sdc4"      "Sdc1"      "Star"     
+[103] "Spp1"      "Slc20a1"   "Sftpb"     "Sfpi1"     "Cxcl2"     "Relb"     
+[109] "Rela"      "Rdh16"     "Ptgs2"     "Ptgs1"     "Prh1"      "Prkar1b"  
+[115] "Ppara"     "Plau"      "Pgf"       "Pah"       "Tnfrsf11b" "Olfr54"   
+[121] "Nrf1"      "Nos2"      "Klk1b4"    "Nfkb1"     "Nfe2l1"    "Nfatc1"   
+[127] "Nat2"      "Emilin1"   "Slc38a1"   "Rdh1"      "Aanat"     "Acp5"     
+[133] "Crisp1"    "Aldh1a1"   "Aldh3a1"   "Angpt2"    "Aqp5"      "Asah1"    
+[139] "B4galnt1"  "Bmp2"      "C1qtnf3"   "Cat"       "Ccl12"     "Ccl2"     
+[145] "Ccl5"      "Cd14"      "Cdkn2a"    "Cebpd"     "Col10a1"   "Col3a1"   
+[151] "Crh"       "Csf1r"     "Ctse"      "Ctsk"      "Cxcl1"     "Cxcl15"   
+[157] "Cyp11a1"   "Cyp19a1"   "Dcstamp"   "Defb2"     "Dmtf1"     "Eno2"     
+[163] "Esr1"      "Fam89b"    "Fgf7"      "Fosl1"     "Gast"      "Gclc"     
+[169] "Gfap"      "Slc2a1"    "Gnrh1"     "Hmgcr"     "Hmox1"     "Icam1"    
+[175] "Ifng"      "Ifne"      "Igk"       "Il11"      "Il1b"      "Il23a"    
+[181] "Il24"      "Il27"      "Il3"       "Itga5"     "Ivl"       "Jdp2"     
+[187] "Krt18"     "Lor"       "Maf"       "Mapk8"     "Mir18b"    "Mir23a"   
+[193] "Mmp12"     "Mmp19"     "Mmp7"      "Msr1"      "Nck2"      "Nefl"     
+[199] "Nfe2l2"    "Ngf"       "Odc1"      "Pdk1"      "Pea15a"    "Penk"     
+[205] "Phex"      "Plaur"     "Plin2"     "Ppp1r3b"   "Prdm1"     "Ptpn4"    
+[211] "Nectin2"   "Rab18"     "Serpinb5"  "Serpine1"  "Spi1"      "Sirt1"    
+[217] "Slc8a1"    "Smurf1"    "Socs3"     "Src"       "Srxn1"     "Tbp"      
+[223] "Tff2"      "Tgfb1"     "Tnfsf11"   "Tpr"       "Tpsab1"    "Trp53"    
+[229] "Trp73"     "Twist1"    "Wee1"      "Slc39a14" 
+
+$Junb
+ [1] "Il12b"    "Ccnd1"    "Ctsk"     "Foxp3"    "Il31"     "Il4"     
+ [7] "Mmp2"     "Myl9"     "Plau"     "Serpine1"
+
+$Jund
+ [1] "Il5"    "Il4"    "Jun"    "Il6"    "Th"     "Sftpb"  "Plau"   "Ccl5"  
+ [9] "Cyr61"  "Gcm2"   "Il11"   "Mmp2"   "Tcirg1"
+
+$Jup
+[1] "Ppard" "Ccnd1" "Myc"  
+
+$Lef1
+ [1] "Jun"     "Fosl1"   "Ccnd3"   "Ccnd2"   "Ccnd1"   "Myc"     "Mmp7"   
+ [8] "Mitf"    "Birc5"   "Rag2"    "Ppard"   "COX2"    "Ccl7"    "Cdh1"   
+[15] "Cdx4"    "Col11a1" "Col2a1"  "Ctnnb1"  "Dkk1"    "Dll1"    "Dsg4"   
+[22] "Elane"   "Fgf18"   "Foxj1"   "Hes7"    "Il13"    "Il4"     "Il5"    
+[29] "Lrp5"    "Mesp1"   "Mmp13"   "Msx2"    "Ncam1"   "Neurog1" "Ovol1"  
+[36] "Pou1f1"  "Pou5f1"  "Ptgs2"   "Runx2"   "Tcf3"    "Zbtb16" 
+
+$LOC100047997
+ [1] "Pcna" "Crh"  "Pdyn" "Npy"  "Arc"  "Bcl2" "Bdnf" "Fos"  "Fosb" "Mcl1"
+
+$Mafa
+ [1] "Ins2"   "Pdx1"   "Ins1"   "G6pc2"  "Glp1r"  "Nkx6-1" "Nrf1"   "Pcsk1" 
+ [9] "Pcx"    "Slc2a2"
+
+$Mapk1
+ [1] "Il23a"     "Ccnd1"     "Cdk4"      "Il12a"     "Il12b"     "Il18"     
+ [7] "Il1a"      "Il1b"      "Il6"       "Nos2"      "Pdyn"      "Tnf"      
+[13] "LOC640611" "Egr1"     
+
+$Mapk10
+ [1] "Il6"   "Il23a" "Tnf"   "Nos2"  "Smad4" "Jun"   "Il1b"  "Il1a"  "Il18" 
+[10] "Il12b" "Il12a"
+
+$Mapk11
+[1] "Il6"   "Il1b"  "Il1a"  "Il18"  "Il12b" "Il12a" "Il23a" "Tnf"   "Nos2" 
+
+$Mapk12
+[1] "Il18"  "Tnf"   "Il23a" "Il12b" "Il12a" "Nos2"  "Il6"   "Il1b"  "Il1a" 
+
+$Mapk13
+[1] "Tnf"   "Il6"   "Nos2"  "Il1a"  "Il1b"  "Il18"  "Il12b" "Il12a" "Il23a"
+
+$Mapk14
+ [1] "Il23a" "Il12a" "Il12b" "Il18"  "Il1a"  "Il1b"  "Il6"   "Nos2"  "Tnf"  
+[10] "Egr1" 
+
+$Mapk3
+ [1] "Pdyn"      "Il18"      "Ccnd1"     "Cdk4"      "Il12a"     "Il12b"    
+ [7] "Il23a"     "LOC640611" "Tnf"       "Nos2"      "Il6"       "Il1b"     
+[13] "Il1a"     
+
+$Mapk8
+ [1] "Il18"  "Il23a" "Tnf"   "Nos2"  "Smad4" "Jun"   "Il12b" "Il12a" "Il6"  
+[10] "Il1b"  "Il1a" 
+
+$Mapk9
+ [1] "Il18"  "Il1a"  "Nos2"  "Tnf"   "Il23a" "Il1b"  "Il6"   "Jun"   "Smad4"
+[10] "Il12a" "Il12b"
+
+$Max
+ [1] "LOC640611" "Cdk4"      "Ccnd1"     "Cks1b"     "Cdk6"      "Atxn3"    
+ [7] "Bax"       "Cad"       "Ccnb1"     "Cebpd"     "Odc1"      "Trp53"    
+
+$Mitf
+ [1] "Dct"     "Tyrp1"   "Tyr"     "Acp5"    "Best1"   "Cd40"    "Cdkn1a" 
+ [8] "Clcn7"   "Ctsk"    "Dcstamp" "Dkk3"    "Fgf15"   "Fos"     "Gpr143" 
+[15] "Irf4"    "Itga4"   "Met"     "Ngfr"    "Ostm1"   "Pax4"    "Pax6"   
+[22] "Pik3r1"  "Pmel"    "Sdc1"    "Slc2a2"  "Slc45a2" "Tbx2"    "Trpm1"  
+
+$Msx1
+ [1] "Cga"   "Id1"   "Atoh1" "Bmp4"  "Ets1"  "Fgf3"  "Myocd" "Pax3"  "Ptch1"
+[10] "Shh"   "Srf"   "Stra8" "Tagln"
+
+$Myb
+ [1] "Pdcd4"      "Raf1"       "Acta2"      "Bak1"       "Bcl2"      
+ [6] "Runx2"      "Ccnd2"      "Cd4"        "Cd5"        "Cdk1"      
+[11] "Cdkn1b"     "Cdkn2b"     "Col1a1"     "Crebbp"     "Emr1"      
+[16] "Epo"        "Epx"        "Erf"        "Fgf4"       "Gata1"     
+[21] "Gstm1"      "Gstm2"      "Hdc"        "Hhex"       "Igfbp5"    
+[26] "Il3ra"      "Kit"        "Anpep"      "Mpo"        "Myc"       
+[31] "Nras"       "Igbp1"      "Pla2g4a"    "Eif2ak2"    "Ptgs1"     
+[36] "Ptgs2"      "Rag2"       "Rara"       "Rarg"       "Sftpa1"    
+[41] "St6galnac1" "Smarcc1"    "Rarb"       "Tnfrsf10b"  "Uchl1"     
+[46] "Upp1"       "Etf1"       "Dmtf1"      "Mapk3"      "Ppia"      
+[51] "Elane"      "Pbsn"       "Nol3"       "Cdkn1a"     "Csf1r"     
+[56] "Csf3r"      "H2afz"      "Ppm1a"      "Prtn3"      "Rfx2"      
+[61] "Snai2"     
+
+$Mybl1
+[1] "Ccna1" "Rfx2" 
+
+$Mybl2
+ [1] "Fgf4"    "Lox"     "Col1a1"  "Sftpa1"  "Uchl1"   "Pla2g4a" "Adora2b"
+ [8] "Adra2b"  "Ccna1"   "Col5a2"  "Eln"     "Erbb2"   "Igfbp5"  "Lin9"   
+[15] "Mip"     "Pou5f1"  "Prrc2a"  "Rfx2"   
+
+$Myc
+ [1] "Mmp1a"           "Myct1"           "LOC640611"       "Cks1b"          
+ [5] "Rpl3"            "Prdx3"           "Bcat1"           "Ccnd1"          
+ [9] "Ccnd2"           "Cdc25a"          "Cdk4"            "Cdk6"           
+[13] "Cdkn2b"          "Cstb"            "Dffb"            "Eif2s1"         
+[17] "Eif4e"           "Emp1"            "Eno1"            "Erbb2"          
+[21] "Fasl"            "Figf"            "Gapdh"           "Hmga1"          
+[25] "Id2"             "Irf9"            "Mmp2"            "Mmp9"           
+[29] "Ncl"             "Nme1"            "Nme2"            "Npm1"           
+[33] "Nras"            "Odc1"            "Pax3"            "Pdgfb"          
+[37] "Pgf"             "Pola2"           "Ptma"            "Shmt1"          
+[41] "Slc1a3"          "Slc2a1"          "Dntt"            "Tert"           
+[45] "Vegfa"           "Vegfb"           "Vegfc"           "Nbn"            
+[49] "Ccnb1"           "mmu-miR-429-3p"  "mmu-miR-200c-3p" "mmu-miR-200a-3p"
+[53] "mmu-miR-200b-3p" "mmu-miR-141-3p"  "Mmp1b"           "Acp5"           
+[57] "Bax"             "Bcl2"            "Cad"             "Car1"           
+[61] "Cav1"            "Cdca7"           "Cdh1"            "Cdkn1a"         
+[65] "Cdkn2a"          "Cebpd"           "Dkk1"            "Eed"            
+[69] "Ezh2"            "Hdac2"           "Hnrnpa1"         "Hnrnpa2b1"      
+[73] "Mir122"          "Mir18b"          "Mta1"            "Mxi1"           
+[77] "Myc"             "Ndrg1"           "Nfia"            "Nop56"          
+[81] "Nrgn"            "Pdgfrb"          "Rhoa"            "Slc11a1"        
+[85] "Slc1a2"          "Snai1"           "Suz12"           "Tfam"           
+[89] "Timp3"           "Trp53"           "Trrap"           "Wnt4"           
+[93] "Zbtb17"          "Zfp36"          
+
+$Myd88
+ [1] "Il12a"   "Cxcl1"   "Ifna1"   "Ifna11"  "Ifna2"   "Ifna4"   "Ifna5"  
+ [8] "Ifna6"   "Ifna7"   "Ifna9"   "Ifnab"   "Ifnb1"   "Il12b"   "Il1b"   
+[15] "Il6"     "Cxcl2"   "Tnf"     "Ifna13"  "Gm12597" "Ifna12"  "Ifna14" 
+
+$Neurod1
+ [1] "Gck"    "Ins2"   "Ins1"   "Iapp"   "Atoh1"  "G6pc2"  "Insm2"  "Mgat5b"
+ [9] "Nnat"   "Pax6"   "Pdx1"   "Rnd2"   "Sct"    "St18"  
+
+$Neurog3
+[1] "Pax4"    "Neurod1" "Nkx2-2"  "Pax6"    "Atoh8"   "Vsx2"    "Insm1"  
+[8] "Insm2"  
+
+$Nfat5
+[1] "Tnf"    "Akr1b3" "Bax"    "Bcl2"   "Vegfc" 
+
+$Nfatc1
+ [1] "Tnf"     "Aqp2"    "B3gat1"  "Bmp7"    "Cx3cr1"  "Csf2"    "Dcstamp"
+ [8] "Foxp3"   "Il12b"   "Il2"     "Il2ra"   "Il4"     "Itgb3"   "Oscar"  
+[15] "Pag1"   
+
+$Nfatc2
+ [1] "Tnf"     "Acp5"    "Bace1"   "Bcl2a1a" "Cx3cr1"  "Ccna2"   "Ccr9"   
+ [8] "Csf2"    "Egr3"    "Icos"    "Ifng"    "Il10"    "Il12b"   "Il13"   
+[15] "Il2"     "Il21"    "Il2ra"   "Il31"    "Il4"     "Il9"     "Nfatc1" 
+
+$Nfatc3
+[1] "Tnf"    "B3gat1" "Il2"    "Mir23a"
+
+$Nfatc4
+[1] "Tnf"    "B3gat1" "Myoz1"  "Myoz2"  "Ptgs2" 
+
+$Nfia
+[1] "Col1a2" "Mbp"    "Fam89b" "Gabra6" "Gfap"   "Hgf"    "Slc2a4"
+
+$Nfic
+ [1] "Clu"      "Col2a1"   "Col1a1"   "Col1a2"   "Crygc"    "Csf1"    
+ [7] "Cyp1a1"   "Cyp2a5"   "F7"       "Fcgrt"    "Fos"      "Gabra6"  
+[13] "Gfap"     "B4galt1"  "Gpam"     "Hbb-b1"   "Hgf"      "Hmga2"   
+[19] "Htr3a"    "Ifngr2"   "Igfbp5"   "Il5"      "Ldhc"     "Mbp"     
+[25] "Mdh2"     "Mdh1"     "Mt1"      "Mt3"      "Myh11"    "Myog"    
+[31] "Ncam1"    "Nefm"     "Omp"      "Pah"      "Pkd2"     "Pklr"    
+[37] "Prl3d1"   "Plat"     "Pomc"     "Prg2"     "Ccl2"     "Sftpb"   
+[43] "Sftpc"    "Sgca"     "Lcn8"     "Ski"      "Sod2"     "Slc2a4"  
+[49] "Tnc"      "Trp53-ps" "Nr1h3"    "Wap"      "Mapk3"    "Slc2a8"  
+[55] "Skiv2l"   "Ada"      "Afp"      "Alb"      "Apoa1"    "Apoc3"   
+[61] "Akr1b7"   "Runx2"    "Dspp"     "Fam89b"   "Klf4"     "Pdgfa"   
+[67] "Pdgfra"  
+
+$Nfkb1
+  [1] "Apoa1"           "Il23a"           "Nol3"            "Mogs"           
+  [5] "Ebi3"            "Birc7"           "Tnfsf15"         "Zfp354c"        
+  [9] "Sh2d3c"          "Tlr2"            "Ces2c"           "Wt1"            
+ [13] "Vegfc"           "Vegfb"           "Vegfa"           "Vcam1"          
+ [17] "Ugcg"            "Ube2h"           "Trp53-ps"        "Traf6"          
+ [21] "Traf5"           "Traf4"           "Traf3"           "Traf2"          
+ [25] "Traf1"           "Tnfaip3"         "Tnf"             "Tert"           
+ [29] "Tbxa2r"          "Tapbp"           "Tal1"            "Sdc4"           
+ [33] "Cxcl2"           "Ccl5"            "Ccl4"            "Ccl3"           
+ [37] "Relb"            "Rel"             "Rdh16"           "Ptgs2"          
+ [41] "Ptgs1"           "Ptger2"          "Atp12a"          "Eif2ak2"        
+ [45] "Plau"            "Pgf"             "Pax8"            "Oprd1"          
+ [49] "Nos2"            "Nfkbia"          "Nfkb2"           "Gadd45b"        
+ [53] "Myc"             "Myb"             "Nudt1"           "Mmp9"           
+ [57] "Mmp2"            "Cxcl9"           "Madcam1"         "Kdr"            
+ [61] "Il6"             "Il5"             "Il4"             "Il2ra"          
+ [65] "Il2"             "Il1rn"           "Il1b"            "Il1a"           
+ [69] "Il18"            "Il15"            "Il12b"           "Il12a"          
+ [73] "Ifngr2"          "Ifnb1"           "Cxcl10"          "Icam1"          
+ [77] "Hif1a"           "Cfb"             "Cxcl1"           "Gdnf"           
+ [81] "Gad1"            "Figf"            "Fasl"            "Fas"            
+ [85] "Ptprv"           "Csf2"            "Csf1"            "Socs3"          
+ [89] "Chat"            "Cflar"           "Cebpg"           "Cebpb"          
+ [93] "Ccnd3"           "Ccnd1"           "Cacna1e"         "Brca1"          
+ [97] "Cxcr5"           "Blk"             "Bik"             "Bcl2l1"         
+[101] "Bcl2a1d"         "Bcl2a1c"         "Bcl2a1b"         "Bcl2a1a"        
+[105] "Bcl2"            "Apoc3"           "Birc5"           "Xiap"           
+[109] "Birc2"           "Birc3"           "Akt1"            "Ahrr"           
+[113] "Acta2"           "Acp5"            "Irak2"           "mmu-miR-146a-5p"
+[117] "Adipoq"          "Adora1"          "Adora2a"         "Adora2b"        
+[121] "Ager"            "Agt"             "Aldh3a1"         "Alox5"          
+[125] "Amh"             "Ankrd2"          "Apoe"            "Aqp5"           
+[129] "Banp"            "Bin1"            "Bmp2"            "Bmpr2"          
+[133] "Btk"             "COX2"            "Ccl12"           "Ccl2"           
+[137] "Ccl20"           "Ccl22"           "Ccl9"            "Cd38"           
+[141] "Cd40"            "Cd7"             "Cd80"            "Cd86"           
+[145] "Cdk4"            "Cdkn1a"          "Cebpa"           "Cenpj"          
+[149] "Col1a1"          "Ctnnb1"          "Cxadr"           "Cxcl13"         
+[153] "Cxcl15"          "Cyp11a1"         "Dcst1"           "Dcst2"          
+[157] "Dcstamp"         "Defb2"           "Dmp1"            "Drd2"           
+[161] "Dusp1"           "Ebna1bp2"        "Edn1"            "Egfr"           
+[165] "Egr2"            "Elf3"            "Epas1"           "Fbp1"           
+[169] "Kdm2a"           "Fn1"             "Fos"             "Foxp3"          
+[173] "Fth1"            "Gclm"            "Glrx"            "Hamp"           
+[177] "Hes1"            "Hmgcr"           "Hmox1"           "Hsd11b2"        
+[181] "Ifng"            "Igf2bp2"         "Igk"             "Ikbkb"          
+[185] "Il1"             "Il10"            "Irf4"            "Itgam"          
+[189] "Junb"            "Kcnd2"           "Kcnip2"          "Klf5"           
+[193] "Lcn2"            "Lef1"            "Lif"             "Ltc4s"          
+[197] "Mapk14"          "Mbp"             "Mmp14"           "Mmp3"           
+[201] "Msx1"            "Myoz2"           "Nfkb1"           "Nfkbiz"         
+[205] "Ngb"             "Nos3"            "Nqo1"            "Nrf1"           
+[209] "Ntn1"            "Pck1"            "Pdk4"            "Per1"           
+[213] "Per2"            "Phex"            "Pirb"            "Pla2g4a"        
+[217] "Plaur"           "Plin2"           "Pmaip1"          "Ppara"          
+[221] "Ppargc1a"        "Ppm1d"           "Ppp1r13l"        "Ppp1r14a"       
+[225] "Prodh"           "Psme2"           "Pten"            "Ptges"          
+[229] "Ptpn4"           "Ripk2"           "Sele"            "Selp"           
+[233] "Shh"             "Slc1a2"          "Slc2a1"          "Slc2a4"         
+[237] "Sod2"            "Sox9"            "Src"             "Stat1"          
+[241] "Stk39"           "Tcrg-C1"         "Tec"             "Tgfb1"          
+[245] "Thrb"            "Timp3"           "Tlr4"            "Tnfrsf25"       
+[249] "Tnfrsf4"         "Tnfsf13b"        "Trem1"           "Trim63"         
+[253] "Trp53"           "Twist1"          "Upp1"            "Wap"            
+[257] "Yy1"             "Cdh1"           
+
+$Nfkb2
+ [1] "Gm2023"       "Traf5"        "Traf4"        "Traf3"        "Traf2"       
+ [6] "Traf1"        "Cxcl12"       "Ptgs2"        "Ccl21a"       "Nos2"        
+[11] "Birc2"        "Ccnd1"        "Chat"         "Birc3"        "LOC100862177"
+[16] "Gm1987"       "Bcl2l1"       "Bcl2"         "Xiap"         "Ccl19"       
+[21] "Gm13304"      "Gm10591"      "Ccl21b"       "LOC100041593" "Tnfsf13b"    
+[26] "Sh2d3c"       "Birc7"        "Ccl21c"       "Traf6"        "Icam1"       
+[31] "LOC100041504" "Csf2"         "Dmp1"         "Hes1"         "Hif1a"       
+[36] "Il23a"        "Myc"          "Rel"          "Relb"         "Snd1"        
+
+$Nfya
+ [1] "H2-Aa"    "Cd74"     "H2-Ob"    "H2-Oa"    "H2-DMb2"  "H2-DMb1" 
+ [7] "H2-DMa"   "H2-Eb1"   "H2-Ab1"   "H2-Ea-ps" "Adipoq"   "Arntl"   
+[13] "Ccnd2"    "Cdk1"     "Cldn11"   "Dspp"     "E2f1"     "Hspa1b"  
+[19] "Hspa5"    "Hspb1"    "Mapk1"    "Ogg1"     "Srebf1"   "Trp53"   
+
+$Nfyb
+ [1] "H2-Oa"    "H2-DMa"   "H2-Ab1"   "H2-Aa"    "H2-Ea-ps" "H2-Eb1"  
+ [7] "H2-Ob"    "H2-DMb1"  "Cd74"     "H2-DMb2"  "Ccnd2"    "Dspp"    
+[13] "Srebf1"  
+
+$Nfyc
+ [1] "H2-DMb1"  "Cd74"     "H2-Ob"    "H2-Oa"    "H2-DMb2"  "H2-DMa"  
+ [7] "H2-Eb1"   "H2-Ab1"   "H2-Aa"    "H2-Ea-ps" "Ccnd2"    "Dspp"    
+[13] "Srebf1"  
+
+$`Nkx2-2`
+[1] "Ins2"    "Ins1"    "Iapp"    "Gck"     "Arx"     "Neurod1" "Pdgfra" 
+[8] "Pdx1"    "Pet1"   
+
+$Npas2
+ [1] "Cry2"    "Rorb"    "Nr1d1"   "Bhlhe40" "Rorc"    "Rora"    "Per3"   
+ [8] "Per1"    "Per2"    "Cry1"    "Bhlhe41" "Maoa"   
+
+$Nr0b2
+ [1] "Slc10a1"  "Cyp7a1"   "Slco1a4"  "Slco1b2"  "Slco1a6"  "Slco1a5" 
+ [7] "Slco1a1"  "Bglap"    "Bhmt"     "Cdkn1a"   "Cyp8b1"   "Mir127"  
+[13] "Mir433"   "Mtf1"     "Mttp"     "Neurod1"  "Npas2"    "Nr5a2"   
+[19] "Pparg"    "Ppargc1a" "Serpine1" "Slc40a1"  "Slc51b"   "Smad3"   
+[25] "Smad7"   
+
+$Nr1d1
+[1] "Arntl" "Gja1"  "Nfil3" "Nr0b2"
+
+$Nr1h4
+ [1] "Ostb"    "Abcb11"  "Osta"    "Abcb4"   "Abcc2"   "Nr0b2"   "Abcc4"  
+ [8] "Fabp6"   "Hhex"    "Ins2"    "Klf11"   "Krt13"   "Scarb1"  "Slc10a1"
+
+$Nr3c2
+ [1] "Sgk1"    "Fxyd4"   "Atp1a1"  "Atp1b1"  "Atp1b2"  "Atp1b3"  "Fxyd2"  
+ [8] "Kras"    "Scnn1a"  "Scnn1b"  "Scnn1g"  "Atp1a3"  "Atp1a4"  "Atp1b4" 
+[15] "Atp1a2"  "Fkbp5"   "Mllt3"   "Rasl12"  "Tns1"    "Tsc22d3"
+
+$Onecut1
+[1] "Neurog3" "Pdx1"    "Hnf1b"   "Foxa2"   "Foxf1"   "G6pc"    "Mafa"   
+[8] "Onecut3" "Slc2a2" 
+
+$Pax1
+[1] "Slc22a6" "Prkar1b" "Slc22a8" "Mmp21"   "Nkx3-2"  "Pdgfra" 
+
+$Pax2
+ [1] "Wt1"     "Wnt1"    "Crhr1"   "En2"     "Gcg"     "Pax5"    "Rb1"    
+ [8] "Sfrp2"   "Ccnd1"   "Emx2"    "Eya1"    "Gbx2"    "Neurog2" "Pax6"   
+[15] "Pou3f3"  "Ret"     "Robo3"   "Trp53"  
+
+$Pax3
+ [1] "Met"     "Bmp4"    "Mcm5"    "Myod1"   "Dct"     "Dmrt2"   "Fgfr4"  
+ [8] "Hes1"    "Itm2a"   "Lbx2"    "Lef1"    "Mbp"     "Mitf"    "Msx2"   
+[15] "Myf5"    "Neurog2" "Pou3f2"  "Spry1"   "St8sia2" "Tgfb2"   "Tyrp1"  
+[22] "Wnt1"   
+
+$Pax5
+ [1] "Bik"    "Blk"    "Rag2"   "Vpreb1" "Aicda"  "Blnk"   "Cd19"   "Cd72"  
+ [9] "Cd79a"  "Csf1r"  "Ebf1"   "En2"    "Flt3"   "Igh"    "Igk"    "Igll1" 
+[17] "Prdx6" 
+
+$Pax6
+ [1] "Tff3"    "Gck"     "Cryaa"   "Crybb1"  "Crybb2"  "Crygf"   "Iapp"   
+ [8] "Ins1"    "Ins2"    "L1cam"   "Mitf"    "Mmp9"    "Palm"    "Pdx1"   
+[15] "Aldh3a1" "Atoh7"   "Bcl9"    "Bcl9l"   "Cdk6"    "Cdkn1b"  "Cryab"  
+[22] "Dkk3"    "Fgf15"   "G6pc2"   "Gcg"     "Hoxd4"   "Mab21l2" "Maf"    
+[29] "Mafa"    "Met"     "Neurog1" "Neurog2" "Nr2e1"   "Odf2"    "Pax2"   
+[36] "Pcsk1"   "Pcsk2"   "Plagl1"  "Rlbp1"   "Sfrp2"   "Shh"     "Shroom3"
+[43] "Six3"    "Sost"    "Sox2"    "Sp8"     "Tcf4"    "Tgfb2"   "Tlr4"   
+[50] "Trim11"  "Trp53"   "Vsx2"    "Wnt7b"  
+
+$Pax8
+[1] "Ncam1"  "Wbp2"   "Slc5a5" "Nkx2-1" "En2"    "Ret"    "Trp53"  "Wt1"   
+
+$Pdx1
+ [1] "Nr5a2"   "Nkx6-1"  "Ins2"    "Ins1"    "Hnf4a"   "Fam3b"   "Gcg"    
+ [8] "Neurog3" "Pax4"    "Slc2a2"  "St18"    "Tshz1"  
+
+$Ped
+[1] "mmu-miR-125a-5p"
+
+$Pgr
+ [1] "Abcb1b"  "Adam8"   "Bcl2l1"  "Csn2"    "Cyp19a1" "Esr1"    "Fam89b" 
+ [8] "Fshb"    "H19"     "Id4"     "Ihh"     "Klf5"    "Nfkbia"  "Ptger2" 
+[15] "Trp63"  
+
+$Pias2
+[1] "Cdkn2b" "Hoxb1"  "Nr3c1" 
+
+$Pml
+[1] "Ccna1" "Jup"   "Mdm2" 
+
+$Pou2f1
+ [1] "Cdx2"          "Fgf4"          "Enpep"         "Des"          
+ [5] "Csn2"          "Cited1"        "Cd79a"         "Ccnd1"        
+ [9] "C4b"           "Bdkrb1"        "Crisp1"        "Parp2"        
+[13] "mmu-let-7g-5p" "Abl1"          "Hmgb2"         "Lcn8"         
+[17] "Myh10"         "Nif3l1"        "C4a"           "Rdh7"         
+[21] "Snrpa"         "Thrb"          "Snrpb"         "Sfpi1"        
+[25] "Rel"           "Prkar1b"       "Pou2af1"       "Prrx1"        
+[29] "Nos2"          "Myf5"          "Kit"           "Jund"         
+[33] "Il5"           "Il2"           "Cd79b"         "Nr3c1"        
+[37] "Gnrhr"         "Fgl2"          "Fgfr1"         "Aldh3a1"      
+[41] "Atp11c"        "Btk"           "Fam89b"        "Gadd45a"      
+[45] "Gnrh1"         "Ifng"          "Il4"           "Irf3"         
+[49] "Lpl"           "Mad2l1"        "Myh4"         
+
+$Pou2f2
+ [1] "Hmgb2"    "Atp11c"   "Btk"      "Cd36"     "Cd79a"    "Cd79b"   
+ [7] "Crisp3"   "Csf3"     "Cxcr5"    "Ifng"     "Il2"      "Il4"     
+[13] "Il5"      "Il5ra"    "Lpl"      "Nos2"     "Pdcd1lg2" "Retn"    
+
+$Pou3f1
+[1] "Hmgb2" "Abl1"  "Egr2"  "Lor"   "Mbp"   "Mpz"   "Myf5"  "Otx2" 
+
+$Pou3f2
+[1] "Tnc"      "Cited1"   "Serpine2" "Gnrh1"    "Nes"      "Otx2"    
+[7] "Pax3"    
+
+$Pou3f3
+[1] "Serpine2" "Otx2"    
+
+$Pou5f1
+ [1] "Hmgb2"           "mmu-miR-302a-3p" "mmu-miR-302d-3p" "mmu-miR-302b-3p"
+ [5] "mmu-miR-302c-3p" "Cdkn1a"          "Cdx2"            "Eed"            
+ [9] "Fgf4"            "Fgf8"            "Gata6"           "Hst1"           
+[13] "Kif2a"           "Klf2"            "Lefty1"          "Mesp1"          
+[17] "Mir302a"         "Myod1"           "Nanog"           "Nr0b1"          
+[21] "Pax2"            "Pou5f1"          "Rif1"            "Sema6a"         
+[25] "Sox2"            "Stk40"           "Tet2"            "Tpt1"           
+[29] "Utf1"            "Xist"            "Zfp42"           "Zfp819"         
+
+$Ppara
+  [1] "Cyp4a31"     "Cyp4a32"     "Acadm"       "Acaa1a"      "Acox1"      
+  [6] "Aip"         "Apoa1"       "Apoa2"       "Apoc3"       "Cebpb"      
+ [11] "Abcc2"       "Cpt1a"       "Cpt1b"       "Cpt2"        "Cyp4a10"    
+ [16] "Cyp4a12b"    "Cyp4a14"     "Cyp7a1"      "Cyp8b1"      "Dbi"        
+ [21] "Fabp1"       "Acsl1"       "Gata3"       "Hmgcs2"      "Hsd11b1"    
+ [26] "Hsp90ab1"    "Lpl"         "Mmp3"        "Me1"         "Cited2"     
+ [31] "Mttp"        "Nfkb1"       "Nfkbia"      "Pltp"        "Med1"       
+ [36] "Scd1"        "Scd2"        "Scp2"        "Slc22a1"     "Scarb1"     
+ [41] "Acsl6"       "Ucp1"        "Ucp3"        "Nr1h3"       "Cyp4a29-ps" 
+ [46] "Acaa1b"      "Nox1"        "Apob"        "Slc27a1"     "Slc27a4"    
+ [51] "Mecr"        "Pdk4"        "Cyp4a12a"    "Dhrs4"       "Scd3"       
+ [56] "Acsbg2"      "Scd4"        "Acsl5"       "Cyp4a30b-ps" "Acsl4"      
+ [61] "Fads2"       "Angptl4"     "Aurkaip1"    "Apoa5"       "Ehhadh"     
+ [66] "Acsl3"       "Cpt1c"       "Acox3"       "Acox2"       "Acsbg1"     
+ [71] "Abcd4"       "Acot1"       "Akr1c18"     "Aldh3a2"     "Bcl2"       
+ [76] "Cd36"        "Cdkn2a"      "Cebpa"       "Cebpd"       "Cidea"      
+ [81] "Fabp4"       "Fbp2"        "Gsk3b"       "Gys2"        "Lgals4"     
+ [86] "Il6"         "Il6ra"       "Il6st"       "Mmp12"       "Mpo"        
+ [91] "Nr1i2"       "Pex11a"      "Ptgs2"       "Pxmp4"       "Rare1"      
+ [96] "Rare2"       "Retsat"      "Serpine1"    "Serpine2"    "Slc15a1"    
+[101] "Slc25a20"    "Spp1"        "Stat5a"      "Tbx21"       "Trib3"      
+[106] "Ucp2"       
+
+$Ppard
+ [1] "Acox2"    "Acadl"    "Acox1"    "Cpt1a"    "Cpt1b"    "Fabp3"   
+ [7] "Ilk"      "Lpl"      "Pdpk1"    "Ncor2"    "Ubc"      "Ucp1"    
+[13] "Angptl4"  "Cpt1c"    "Acox3"    "Foxo1"    "Gys2"     "Insig1"  
+[19] "Pdk4"     "Pparg"    "Slc25a20" "Sp1"      "Tgfb1"    "Ucp3"    
+
+$Pparg
+  [1] "mmu-miR-378a-3p" "Scd4"            "Acsbg2"          "Scd3"           
+  [5] "Pdk4"            "Slc27a4"         "Slc27a1"         "Tmem159"        
+  [9] "Slc26a1"         "Nr1h3"           "Ucp3"            "Ucp2"           
+ [13] "Ucp1"            "Sumo1"           "Rarb"            "Acsl6"          
+ [17] "Scarb1"          "Slc22a1"         "Sorbs1"          "Scd2"           
+ [21] "Scd1"            "Sat1"            "Ptgs2"           "Ptger2"         
+ [25] "Scand1"          "Ppargc1a"        "Med1"            "Pltp"           
+ [29] "Pex11a"          "Pck1"            "Nos2"            "Nfkb1"          
+ [33] "Ncoa1"           "Mmp3"            "Lpl"             "Fabp5"          
+ [37] "Il4"             "Hgf"             "Gyk"             "Gk2"            
+ [41] "Gata3"           "Fn1"             "Acsl1"           "Fabp2"          
+ [45] "Egr1"            "Dbi"             "Cpt1b"           "Cpt1a"          
+ [49] "Cd36"            "Casp3"           "Bcl2"            "Atp2a2"         
+ [53] "Aqp7"            "Apoe"            "Fabp4"           "Adipoq"         
+ [57] "Acox1"           "Acaa1a"          "Abcg1"           "Olr1"           
+ [61] "Cyp27a1"         "Plin1"           "mmu-miR-182-5p"  "mmu-miR-183-5p" 
+ [65] "mmu-miR-205-5p"  "mmu-miR-96-5p"   "mmu-miR-103-3p"  "mmu-miR-148b-3p"
+ [69] "mmu-miR-378a-5p" "Acsbg1"          "Mmp1b"           "Mmp1a"          
+ [73] "C1qtnf3"         "Cpt1c"           "Senp2"           "Pck2"           
+ [77] "Acsl3"           "Paqr7"           "Bcmo1"           "Angptl4"        
+ [81] "Plin4"           "Acsl4"           "Acsl5"           "Cat"            
+ [85] "Cav1"            "Ccnd1"           "Cidea"           "Cidec"          
+ [89] "Cops5"           "Csf1"            "Csf2"            "Fgf1"           
+ [93] "Gck"             "Gys2"            "Hmox1"           "Ifng"           
+ [97] "Il2"             "Insr"            "Klf5"            "Lipe"           
+[101] "Maf"             "Mstn"            "Muc1"            "Pcx"            
+[105] "Pdx1"            "Plin2"           "Plin5"           "Retn"           
+[109] "Scnn1g"          "Serpine1"        "Slc2a2"          "Sod2"           
+[113] "Trp53"          
+
+$Rapgef3
+[1] "mmu-miR-124-3p"
+
+$Rara
+ [1] "Hoxa4"   "Hoxa1"   "H1f0"    "Flii"    "Fli1"    "Cryab"   "Col1a2" 
+ [8] "Chat"    "Ccna1"   "Ctnnb1"  "Aldh1a1" "Grip1"   "Rqcd1"   "Lgals12"
+[15] "Sh2d3c"  "Ucp1"    "Trh"     "Nr2c1"   "Nkx2-1"  "Tgm2"    "Tgm1"   
+[22] "Tgfbr3"  "Slc18a3" "Scd1"    "Rbp2"    "Rara"    "Pthlh"   "Psmc5"  
+[29] "Pou5f1"  "Etv4"    "Pcp2"    "Nsd1"    "Ngfr"    "Ncoa2"   "Mdk"    
+[36] "Lamb1"   "Jup"     "Hoxa5"   "Hoxb1"   "Cebpe"   "Klf5"    "Abcc2"  
+[43] "Nepn"    "Pitx2"   "Rare1"   "Rare2"   "Stat1"  
+
+$Rarb
+ [1] "Npdc1"   "H1f0"    "Flii"    "Fli1"    "Fas"     "Cryab"   "Col1a2" 
+ [8] "Ctnnb1"  "Ucp1"    "Lgals12" "Rqcd1"   "Grip1"   "Trh"     "Pck1"   
+[15] "Pcp2"    "Pou5f1"  "Rara"    "Scd1"    "Tgfbr3"  "Tgm1"    "Tgm2"   
+[22] "Nkx2-1"  "Rarb"    "Jun"     "Lamb1"   "Mdk"     "Ncoa2"   "Hoxa1"  
+[29] "Pitx2"   "Rdh2"   
+
+$Rarg
+ [1] "Pcp2"    "Ctnnb1"  "Col1a2"  "Cryab"   "Cyp26a1" "Fas"     "Fli1"   
+ [8] "Flii"    "H1f0"    "Hoxb1"   "Hoxb4"   "Hoxd4"   "Lamb1"   "Mdk"    
+[15] "Ncoa2"   "Pou5f1"  "Rara"    "Scd1"    "Tgfbr3"  "Tgm1"    "Tgm2"   
+[22] "Nkx2-1"  "Trh"     "Ucp1"    "Lgals12" "Rqcd1"   "Grip1"   "Cnr1"   
+[29] "Il17a"   "Pitx2"  
+
+$Rbl1
+[1] "Myc"   "Alpl"  "Fgf2"  "Hes1"  "Mybl2" "Mycn" 
+
+$Rbpj
+ [1] "Ptcra"  "Myc"    "Hes5"   "Hes1"   "Fgr"    "Fcer2a" "Cr2"    "Ascl1" 
+ [9] "Birc5"  "Cdh2"   "Cdkn1a" "Fos"    "Hesx1"  "Hoxd1"  "Lfng"   "Nfatc1"
+[17] "Nodal"  "Olig2"  "Plcg2"  "Prdm1"  "Rlim"   "Sox9"   "Tyrobp"
+
+$Rbpjl
+[1] "Myc"    "Cr2"    "Fcer2a" "Fgr"    "Hes1"   "Hes5"   "Ptcra" 
+
+$Rel
+ [1] "Tnf"     "Rdh7"    "Nol3"    "Il12a"   "Il12b"   "Il2"     "Msx1"   
+ [8] "Myc"     "Nos2"    "Bcl2a1d" "Birc3"   "Ccl2"    "Ccl5"    "Cebpd"  
+[15] "E2f3"    "Ezh2"    "Foxp3"   "Ifng"    "Igk"     "Il1b"    "Il21"   
+[22] "Il23a"   "Il4"     "Ngb"     "Pthlh"   "Rc3h1"   "Rorc"    "Sod2"   
+[29] "Tcrg-C1" "Tnfaip3" "Wt1"    
+
+$Rela
+  [1] "Figf"      "Afp"       "Akt1"      "Birc3"     "Birc2"     "Xiap"     
+  [7] "Bcl2"      "Bcl2a1a"   "Bcl2a1b"   "Bcl2a1c"   "Bcl2a1d"   "Bcl2l1"   
+ [13] "Bik"       "Blk"       "Casp8"     "Ccnd1"     "Cebpb"     "Cebpg"    
+ [19] "Chat"      "Socs3"     "F3"        "Fas"       "Fasl"      "Cxcl1"    
+ [25] "Hif1a"     "Cxcl10"    "Ifnb1"     "Il12a"     "Il12b"     "Il18"     
+ [31] "Il1a"      "Il1b"      "Il2"       "Il2ra"     "Ebi3"      "Birc7"    
+ [37] "Ep300"     "Tnfsf15"   "Sh2d3c"    "Wt1"       "Vegfc"     "Vegfb"    
+ [43] "Vegfa"     "Vcam1"     "Traf6"     "Traf5"     "Traf4"     "Traf3"    
+ [49] "Traf2"     "Traf1"     "Tnfrsf10b" "Tnfaip3"   "Tnf"       "Tert"     
+ [55] "Cxcl2"     "Ccl4"      "Ccl2"      "Relb"      "Rel"       "Ptgs2"    
+ [61] "Atp12a"    "Ppara"     "Plau"      "Pgf"       "Pcna"      "Olfr54"   
+ [67] "Nos2"      "Nfkbia"    "Nfkb2"     "Gadd45b"   "Myc"       "Myb"      
+ [73] "Mmp9"      "Cxcl9"     "Smad7"     "Il6"       "Nol3"      "Il23a"    
+ [79] "Agt"       "Apoe"      "Cdkn2a"    "Bmp2"      "Cacna1c"   "Ccl12"    
+ [85] "Ccl20"     "Ccl5"      "Cd38"      "Cd40"      "Cd80"      "Cd86"     
+ [91] "Cdk9"      "Cdkn1b"    "Cdx2"      "Cflar"     "Cldn5"     "Col1a1"   
+ [97] "Csf1"      "Cxadr"     "Cxcl11"    "Cxcl15"    "Cxcr4"     "Cyp11a1"  
+[103] "Dcst1"     "Dcst2"     "Dmp1"      "Dnmt1"     "Duox2"     "Epas1"    
+[109] "Kdm2a"     "Fn1"       "Fos"       "Fth1"      "Gabre"     "Gli1"     
+[115] "Hes1"      "Hgf"       "Hk"        "Hsd11b2"   "Icam1"     "Ifng"     
+[121] "Igf2bp2"   "Igk"       "Il10"      "Il4"       "Il9"       "Irf4"     
+[127] "Itch"      "Klf5"      "Klrb1c"    "Ltc4s"     "Map3k8"    "Met"      
+[133] "Mgmt"      "Mmp3"      "Mmp14"     "Nfkb1"     "Ngb"       "Nrf1"     
+[139] "Pdk4"      "Pecam1"    "Pglyrp1"   "Phex"      "Ppm1d"     "Psme2"    
+[145] "Ptafr"     "Pten"      "Ptpn1"     "Reg3b"     "Ripk2"     "Rorc"     
+[151] "Selp"      "Serpine2"  "Shh"       "Slc1a2"    "Slc2a4"    "Sod2"     
+[157] "Sox9"      "Stim1"     "Stk39"     "Tcrg-C1"   "Tec"       "Tlr2"     
+[163] "Tnfrsf4"   "Tnfsf13b"  "Trim63"    "Trp53"     "Trp63"     "Trp73"    
+[169] "Twist1"    "Upp1"      "Yy1"      
+
+$Relb
+ [1] "Cxcl2"        "LOC100041593" "Cxcl12"       "Tnfsf13b"     "Ccl19"       
+ [6] "Cd40"         "LOC100041504" "Gm2023"       "Ccl21a"       "Relb"        
+[11] "LOC100862177" "Myb"          "Aire"         "Cdkn1a"       "Cxcl1"       
+[16] "Icam1"        "Gm1987"       "Gm13304"      "Gm10591"      "Ccl21c"      
+[21] "Ccl21b"       "Birc2"        "Ccnd1"        "Hes1"         "Myc"         
+[26] "Tcrg-C1"     
+
+$Rfx5
+ [1] "H2-Aa"    "Cd74"     "H2-Ob"    "H2-Oa"    "H2-DMb2"  "H2-DMb1" 
+ [7] "H2-DMa"   "H2-Eb1"   "H2-Ab1"   "H2-Ea-ps"
+
+$Rfxank
+ [1] "H2-Ab1"   "H2-Eb1"   "Cd74"     "H2-Ob"    "H2-Ea-ps" "H2-Aa"   
+ [7] "H2-Oa"    "H2-DMb2"  "H2-DMb1"  "H2-DMa"  
+
+$Rfxap
+ [1] "Cd74"     "H2-Ea-ps" "H2-Aa"    "H2-Oa"    "H2-Ob"    "H2-DMb2" 
+ [7] "H2-DMb1"  "H2-DMa"   "H2-Eb1"   "H2-Ab1"  
+
+$Runx1
+ [1] "Jup"      "Csf1r"    "AI467606" "Art1"     "Cd40"     "Cd79a"   
+ [7] "Cdkn2a"   "Cebpa"    "Fxyd2"    "Ifng"     "Igfbp3"   "Il2"     
+[13] "Il23a"    "Mpl"      "Piezo2"   "Slc22a17" "Smad6"    "Spi1"    
+
+$Runx1t1
+[1] "Jup"   "Csf1r" "Bcl2"  "Runx1" "Tcf12"
+
+$Rxra
+ [1] "Cd36"        "Aqp7"        "Apoc3"       "Apoa2"       "Apoa1"      
+ [6] "Fabp4"       "Adipoq"      "Acox1"       "Acaa1a"      "Acadm"      
+[11] "Acadl"       "Olr1"        "Plin1"       "Cyp27a1"     "Cyp4a32"    
+[16] "Ubc"         "Ucp1"        "Nr1h3"       "Cyp4a29-ps"  "Acaa1b"     
+[21] "Slc27a1"     "Slc27a4"     "Cyp4a12a"    "Scd3"        "Acsbg2"     
+[26] "Scd4"        "Acsl5"       "Cyp4a30b-ps" "Acsl4"       "Fads2"      
+[31] "Angptl4"     "Apoa5"       "Cyp4a31"     "Ehhadh"      "Acsl3"      
+[36] "Pck2"        "Cpt1c"       "Acox3"       "Mmp1a"       "Mmp1b"      
+[41] "Acox2"       "Acsbg1"      "Me1"         "Pck1"        "Pdpk1"      
+[46] "Pltp"        "Scd1"        "Scd2"        "Scp2"        "Sorbs1"     
+[51] "Acsl6"       "Ilk"         "Hmgcs2"      "Fabp3"       "Gyk"        
+[56] "Gk2"         "Acsl1"       "Fabp1"       "Cyp4a10"     "Cyp4a12b"   
+[61] "Lpl"         "Cyp4a14"     "Cyp7a1"      "Cyp8b1"      "Dbi"        
+[66] "Cpt2"        "Cpt1b"       "Cpt1a"       "Abcb11"      "Amelx"      
+[71] "Cyp26a1"     "Cyp2b10"     "Dr1"         "Lipe"        "Mpo"        
+[76] "Abcc2"       "Mttp"        "Nr0b2"       "Pcx"         "Rare1"      
+[81] "Rare2"       "Srebf1"     
+
+$Rxrb
+ [1] "Apoc3"       "Cyp4a32"     "Plin1"       "Cyp27a1"     "Olr1"       
+ [6] "Acadl"       "Acadm"       "Acaa1a"      "Acox1"       "Adipoq"     
+[11] "Acsbg1"      "Acox2"       "Mmp1b"       "Mmp1a"       "Acox3"      
+[16] "Cpt1c"       "Pck2"        "Acsl3"       "Ehhadh"      "Cyp4a31"    
+[21] "Apoa5"       "Angptl4"     "Fads2"       "Acsl4"       "Cyp4a30b-ps"
+[26] "Acsl5"       "Scd4"        "Acsbg2"      "Scd3"        "Cyp4a12a"   
+[31] "Slc27a4"     "Slc27a1"     "Acaa1b"      "Cyp4a29-ps"  "Nr1h3"      
+[36] "Ucp1"        "Ubc"         "Acsl6"       "Sorbs1"      "Scp2"       
+[41] "Scd2"        "Scd1"        "Pltp"        "Pdpk1"       "Pck1"       
+[46] "Me1"         "Lpl"         "Ilk"         "Hmgcs2"      "Gyk"        
+[51] "Gk2"         "Acsl1"       "Fabp1"       "Fabp3"       "Dbi"        
+[56] "Cyp8b1"      "Cyp7a1"      "Cyp4a14"     "Cyp4a12b"    "Cyp4a10"    
+[61] "Cpt2"        "Cpt1b"       "Cpt1a"       "Cd36"        "Aqp7"       
+[66] "Apoa2"       "Apoa1"       "Fabp4"       "Pcx"        
+
+$Rxrg
+ [1] "Cyp4a32"     "Plin1"       "Cyp27a1"     "Olr1"        "Acadl"      
+ [6] "Acadm"       "Acaa1a"      "Acox1"       "Adipoq"      "Fabp4"      
+[11] "Apoa1"       "Apoa2"       "Apoc3"       "Aqp7"        "Cd36"       
+[16] "Cpt1a"       "Cpt1b"       "Cpt2"        "Cyp4a10"     "Cyp4a12b"   
+[21] "Cyp4a14"     "Cyp7a1"      "Cyp8b1"      "Dbi"         "Fabp3"      
+[26] "Fabp1"       "Acsl1"       "Gk2"         "Gyk"         "Hmgcs2"     
+[31] "Ilk"         "Lpl"         "Me1"         "Pck1"        "Pdpk1"      
+[36] "Pltp"        "Scd1"        "Scd2"        "Scp2"        "Sorbs1"     
+[41] "Acsl6"       "Ubc"         "Fads2"       "Angptl4"     "Apoa5"      
+[46] "Cyp4a31"     "Ehhadh"      "Acsl3"       "Pck2"        "Cpt1c"      
+[51] "Acox3"       "Mmp1a"       "Mmp1b"       "Acox2"       "Acsbg1"     
+[56] "Ucp1"        "Nr1h3"       "Cyp4a29-ps"  "Acaa1b"      "Slc27a1"    
+[61] "Slc27a4"     "Cyp4a12a"    "Scd3"        "Acsbg2"      "Scd4"       
+[66] "Acsl5"       "Cyp4a30b-ps" "Acsl4"      
+
+$Sfpi1
+ [1] "Cd72"    "Acp5"    "Aif1"    "Bcl2"    "Cd14"    "Csf1r"   "Csf2ra" 
+ [8] "Csf3r"   "Ctsk"    "Dab2"    "Enpep"   "Fcgr1"   "Fcgr3"   "Fli1"   
+[15] "Flii"    "G6pd2"   "Gpd2"    "Gsc"     "Gypa"    "Hes1"    "Hesx1"  
+[22] "Hgf"     "Igj"     "Il12b"   "Il12rb1" "Il4"     "Il5ra"   "Itgam"  
+[29] "Itgb2"   "Ltf"     "Ly9"     "Met"     "Mmp13"   "Mrc1"    "Msmb"   
+[36] "Myb"     "Nfkb1"   "Slc11a1" "Pip"     "Plau"    "Ptgs2"   "Ptprc"  
+[43] "Rb1"     "Msr1"    "Sfpi1"   "Tal1"    "Tbp"     "Tlr4"    "Camk1d" 
+[50] "Ebi3"    "Elane"   "Prg3"    "Aifm2"  
+
+$Sirt1
+ [1] "Fos"    "Abcb1a" "Bcl2l1" "Bclaf1" "Crp"    "Dkk1"   "Hes1"   "Il6"   
+ [9] "Mmp13"  "Mmp9"   "Nox1"   "Nr0b2"  "Nr1i2"  "Hcrtr2" "Parp1"  "Pparg" 
+[17] "Rela"   "Retn"   "Rictor" "Scnn1a" "Shc1"   "Sirt6"  "Smad3"  "Srebf1"
+[25] "Timp1"  "Trp53"  "Ucp2"  
+
+$Slc39a11
+[1] "mmu-miR-7a-5p"
+
+$Smad1
+ [1] "Id2"       "Id3"       "Id4"       "Col5a1"    "Id1"       "Bmp2"     
+ [7] "Cdkn1a"    "Col1a1"    "Col2a1"    "Col4a1"    "Col4a2"    "Creld2"   
+[13] "Dsg4"      "Hey1"      "Hhex"      "Ifi204"    "Msx2"      "Nkx2-5"   
+[19] "Ovol2"     "Runx1"     "Runx2"     "Smad6"     "Spp1"      "Tbx20"    
+[25] "Tlx2"      "Tnfrsf11b" "Tnfsf11"  
+
+$Smad2
+ [1] "Foxh1"   "Col1a1"  "Col5a1"  "Col3a1"  "Cdkn2b"  "Cdkn1a"  "Acvr1b" 
+ [8] "Myc"     "Gnrhr"   "Slc2a1"  "Tgfb1"   "Pitx2"   "Afp"     "Becn1"  
+[15] "Dapk1"   "Fbln5"   "Foxp3"   "Fshb"    "Gadd45b" "Gsc"     "H19"    
+[22] "Hes1"    "Hoxd11"  "Il2"     "Il9"     "Nanog"   "Pparg"   "Rgcc"   
+[29] "Skil"    "Acta2"  
+
+$Smad3
+ [1] "Bax"       "Nol3"      "Itga5"     "Gnrhr"     "Gast"      "Col1a1"   
+ [7] "Col5a1"    "Col3a1"    "Cebpd"     "Cebpb"     "Cdkn2b"    "Cdkn1a"   
+[13] "Cdk2"      "Ctnnb1"    "Bcl2"      "Acta2"     "Eif4enif1" "Dspp"     
+[19] "Erbb2ip"   "Sf3b2"     "Pex6"      "Tgfb1"     "Sstr2"     "Slc2a1"   
+[25] "Pparg"     "Pitx2"     "Pcna"      "Nkx3-1"    "Myc"       "Angptl2"  
+[31] "Ccl2"      "Cdh1"      "Cldn3"     "Col1a2"    "Col2a1"    "Ctgf"     
+[37] "Cxadr"     "Dapk1"     "Enpp1"     "Fbln5"     "Fn1"       "Foxp3"    
+[43] "Fshb"      "Gadd45b"   "Gsc"       "H19"       "Il2"       "Il23a"    
+[49] "Il31"      "Il9"       "Jun"       "Lgals9"    "Mir433"    "Mmp9"     
+[55] "Myocd"     "Nedd9"     "Nov"       "Ocln"      "Plau"      "Ppargc1a" 
+[61] "Psme3"     "Rif1"      "Runx2"     "Serpine1"  "Sirt1"     "Smad7"    
+[67] "Snai1"     "Tagln"     "Tnfsf13b"  "Tpsab1"    "Tpt1"      "Vegfa"    
+
+$Smad4
+ [1] "Cdkn1a"   "Cdkn2b"   "Cebpb"    "Id1"      "Id2"      "Id3"     
+ [7] "Id4"      "Slc2a1"   "Myc"      "Pitx2"    "Afp"      "Bmpr1b"  
+[13] "Cdh1"     "Cldn3"    "Col2a1"   "Cxadr"    "Dapk1"    "Dsg4"    
+[19] "Fshb"     "Gadd45b"  "Gast"     "Gsc"      "H19"      "Hgf"     
+[25] "Hhex"     "Ifi204"   "Il10"     "Il9"      "Jun"      "Mmp7"    
+[31] "Muc5ac"   "Nkx2-1"   "Nkx2-5"   "Ocln"     "Pparg"    "Scnn1a"  
+[37] "Skil"     "Smad7"    "Snai1"    "Sstr2"    "Tgfb1"    "Tgfbr2"  
+[43] "Tlx2"     "Tnfsf13b" "Tpsab1"   "Vegfa"   
+
+$Smad5
+ [1] "Id2"    "Id4"    "Id3"    "Id1"    "Bmp2"   "Col2a1" "Creld2" "Dsg4"  
+ [9] "Ifi204" "Ovol2"  "Smad6"  "Nr2e1" 
+
+$Smad6
+[1] "Map3k7" "Cdk6"   "Col1a2" "Id1"    "Runx1" 
+
+$Smad7
+ [1] "Col1a1"   "Muc4"     "Acvr1b"   "Col3a1"   "Col5a1"   "Col1a2"  
+ [7] "Glb1"     "Met"      "Nfkbia"   "Smad3"    "Tgfb1"    "Tnfsf13b"
+[13] "Vegfa"   
+
+$Smad9
+[1] "Id3"    "Id4"    "Id1"    "Id2"    "Bmpr1b"
+
+$Sos1
+ [1] "Spred3" "Spred1" "Spred2" "Bcl2l1" "Ccnd1"  "Ccnd2"  "Ccnd3"  "Myc"   
+ [9] "Spry4"  "Spry2"  "Spry1"  "Spry3" 
+
+$Sos2
+ [1] "Myc"    "Spry3"  "Spry1"  "Ccnd1"  "Spry2"  "Ccnd2"  "Spry4"  "Ccnd3" 
+ [9] "Bcl2l1" "Spred2" "Spred1" "Spred3"
+
+$Sp1
+  [1] "Col1a1"     "Setdb1"     "Nol3"       "Lcn8"       "Mtch1"     
+  [6] "Adar"       "Nup210"     "Atp2a3"     "Dlc1"       "Hdac1"     
+ [11] "Tnfsf15"    "Zfp354c"    "Pttg1"      "Gyg"        "Abcd2"     
+ [16] "Ppia"       "Mapk3"      "Mapk1"      "Cldn19"     "Yy1"       
+ [21] "Vim"        "Vdr"        "Ugcg"       "Ucp2"       "Tyms"      
+ [26] "Tnfrsf8"    "Tnfrsf10b"  "Ptx3"       "Rac2"       "Rag2"      
+ [31] "Rel"        "Acta1"      "Ahr"        "Ahrr"       "Alpl"      
+ [36] "Prdx3"      "Birc5"      "Aprt"       "Mmp28"      "Rhob"      
+ [41] "Akr1b7"     "Bach1"      "Bak1"       "Bax"        "Bcl3"      
+ [46] "Bdkrb1"     "Brca1"      "Bsg"        "Pdia4"      "Casp9"     
+ [51] "Cbx2"       "Ccnd1"      "Ccnd2"      "Ccnd3"      "Cd14"      
+ [56] "Cd24a"      "Cd34"       "Cd5"        "Cdc25a"     "Cdk1"      
+ [61] "Cdh1"       "Cdh5"       "Cdkn2b"     "Chga"       "Chgb"      
+ [66] "Cited1"     "Ckmt1"      "Col4a1"     "Col7a1"     "Col1a2"    
+ [71] "Cox4i1"     "Cpt1b"      "Csrp2"      "Pcyt1a"     "Ctsl"      
+ [76] "Cyp26a1"    "Dck"        "Dhfr"       "Dffb"       "Dlx3"      
+ [81] "Slc26a2"    "Epor"       "Etv2"       "F3"         "Fas"       
+ [86] "Fasl"       "Fcgr2b"     "Fgl2"       "Fst"        "Gdnf"      
+ [91] "Ggh"        "Pdpn"       "Grin2b"     "Gstm2"      "H19"       
+ [96] "Hba-a1"     "Hck"        "Htt"        "Hoxa4"      "Hpn"       
+[101] "Hras1"      "Hspa1b"     "Hsp90aa1"   "Htr3a"      "Slc6a4"    
+[106] "Ifngr2"     "Cd79b"      "Il10"       "Il13"       "Il2"       
+[111] "Il3ra"      "Itgav"      "Jund"       "Kit"        "Ldlr"      
+[116] "Lgals1"     "Lhcgr"      "Ltf"        "Mbp"        "Abcc1"     
+[121] "Mertk"      "Met"        "Mmp2"       "Mmp9"       "Mdh2"      
+[126] "Mdh1"       "Msx1"       "Mt1"        "Mt3"        "Muc2"      
+[131] "Myc"        "Myh11"      "Myh2"       "Myod1"      "Ncam1"     
+[136] "Nes"        "Neu1"       "Neurl1a"    "Nf1"        "Nefm"      
+[141] "Nkx3-1"     "Nqo2"       "Npr1"       "Olfr54"     "Oprd1"     
+[146] "Pax8"       "Penk"       "Per1"       "Prf1"       "Pgk1"      
+[151] "Pkd1"       "Pkd2"       "Plat"       "Plau"       "Pou5f1"    
+[156] "Prm2"       "Prph"       "Psap"       "Ptger2"     "Ren1"      
+[161] "Rgn"        "Scd2"       "Ccl17"      "Ccl2"       "Sfpi1"     
+[166] "St6galnac2" "Six5"       "Slc19a1"    "Slc2a4"     "Sstr2"     
+[171] "Spink3"     "Srf"        "Stat3"      "Syn2"       "Tagln"     
+[176] "Tal1"       "Tapbp"      "Tbxa2r"     "Tead2"      "Tgfb3"     
+[181] "Tgm1"       "Thy1"       "Tk1"        "Abca1"      "Abcb1a"    
+[186] "Abcc6"      "Acaca"      "Acsbg1"     "Acsl4"      "Acss1"     
+[191] "Acta2"      "Adcy4"      "Adcyap1r1"  "Agt"        "Aldh3a1"   
+[196] "Alox5"      "Alox8"      "Aplp1"      "Apoe"       "App"       
+[201] "Ar"         "Arntl"      "Asah1"      "Ascl2"      "Atp12a"    
+[206] "Atxn3"      "Bace1"      "Bfsp1"      "Bglap"      "Bglap2"    
+[211] "Bhlhe40"    "Bmp2"       "Bmp4"       "Bmp7"       "Bsx"       
+[216] "Btk"        "Cadm1"      "Ccna1"      "Cd1d2"      "Cd55"      
+[221] "Cd79a"      "Cdk5r1"     "Cdk5r2"     "Cdk6"       "Cdkn1a"    
+[226] "Cdkn1c"     "Cdkn2c"     "Cdkn2d"     "Cebpa"      "Cebpd"     
+[231] "Cend1"      "Ces1d"      "Ces2c"      "Cirbp"      "Col2a1"    
+[236] "Col5a1"     "Cops5"      "Cox17"      "Csf1"       "Csf1r"     
+[241] "Csf2"       "Ctse"       "Cxadr"      "Cyp11a1"    "Dmd"       
+[246] "Dnm1"       "Dnmt1"      "Ecm1"       "Egfr"       "Egr1"      
+[251] "Epas1"      "Esrra"      "Ets1"       "Fabp6"      "Fbln1"     
+[256] "Fmr1"       "Fos"        "Gabra6"     "Gfap"       "Gfpt2"     
+[261] "Ghr"        "Slc2a1"     "Gpc4"       "Gstk1"      "Hba-x"     
+[266] "Hdac7"      "Heca"       "Hgf"        "Hinfp"      "Hmga1"     
+[271] "Hmga2"      "Hmgcl"      "Hmgcr"      "Hrasls5"    "Htr1a"     
+[276] "Icam1"      "Ifitm5"     "Igfbp3"     "Il5ra"      "Il6"       
+[281] "Insr"       "Irs1"       "Itga5"      "Itga6"      "Ivl"       
+[286] "Jak3"       "Jun"        "Kcna5"      "Kcnn3"      "Kctd13"    
+[291] "Kdm5a"      "Klf16"      "Krt5"       "Lama1"      "Lhx4"      
+[296] "Lipe"       "Lmna"       "Lor"        "Lpl"        "Mfn2"      
+[301] "Mgarp"      "Mgp"        "Mgst1"      "Mif"        "Riox2"     
+[306] "Me1"        "Mrc1"       "Mta2"       "Muc5ac"     "Myb"       
+[311] "Nkx2-1"     "Nanog"      "Napepld"    "Nat2"       "Ndrg1"     
+[316] "Nfatc1"     "Ngb"        "Ngfr"       "Nos3"       "Notch1"    
+[321] "Nr1h2"      "Nr1h3"      "Nr5a1"      "Nrgn"       "Nrp1"      
+[326] "Oprk1"      "Oprm1"      "Parg"       "Parp1"      "Pde6a"     
+[331] "Pde6b"      "Pemt"       "Pgr"        "Phgdh"      "Pla2g16"   
+[336] "Plaur"      "Pld2"       "Ppm1a"      "Prdx6"      "Prkar2b"   
+[341] "Prkra"      "Proc"       "Ptdss1"     "Ptges2"     "Ptgs1"     
+[346] "Ptgs2"      "Nectin2"    "Rest"       "Rho"        "Rhox5"     
+[351] "Rnf141"     "Rnls"       "Runx2"      "Scarb1"     "Sct"       
+[356] "Sell"       "Serpine1"   "Sftpb"      "Sh3gl1"     "Sirt1"     
+[361] "Skil"       "Slc11a1"    "Slc25a4"    "Slc2a3"     "Slc3a2"    
+[366] "Slc5a1"     "Slc5a2"     "Slc7a5"     "Slc9a2"     "Smad7"     
+[371] "Smarcc1"    "Socs3"      "Sod2"       "Sod3"       "Sp1"       
+[376] "Sp4"        "Sparc"      "Src"        "Srebf1"     "St8sia1"   
+[381] "Star"       "Sult1a1"    "Tec"        "Tert"       "Tesc"      
+[386] "Tfap2c"     "Tgfbr2"     "Thra"       "Timp3"      "Tlr2"      
+[391] "Tnf"        "Tnfaip3"    "Tnfsf11"    "Tnk1"       "Tpt1"      
+[396] "Trf"        "Tspo"       "Txlng"      "Ucp3"       "Vegfa"     
+[401] "Wnt9a"      "Zbtb14"    
+
+$Sp2
+ [1] "Hspa1b"   "Pcyt1a"   "Alox8"    "Ucp2"     "Mt3"      "B4galnt1"
+ [7] "Col2a1"   "Dhfr"     "Ets1"     "Id3"      "Mgp"     
+
+$Sp3
+  [1] "Abcc1"    "Mertk"    "Met"      "Mmp9"     "Muc2"     "Nkx3-1"  
+  [7] "Pou5f1"   "Psap"     "Ptger2"   "Col1a2"   "Acta2"    "Aebp1"   
+ [13] "Ahr"      "Rac2"     "Ahrr"     "Alox8"    "Mmp28"    "Bax"     
+ [19] "Ren1"     "Ccl2"     "Col7a1"   "Cdkn1a"   "Cdh5"     "Serpinh1"
+ [25] "Six5"     "Slc1a3"   "Tal1"     "Tgm1"     "Tk1"      "Ucp2"    
+ [31] "Vegfa"    "Slc9a2"   "Tubb4b"   "Ces2c"    "Nr5a1"    "Reck"    
+ [37] "Mtch1"    "Gpx4"     "C1qtnf3"  "Gpd2"     "Pdpn"     "Il10"    
+ [43] "Klf4"     "Lama1"    "Dck"      "Dnmt1"    "Fas"      "Fbln1"   
+ [49] "Fgl2"     "G6pd2"    "Gcgr"     "Gh"       "Csf1"     "Pcyt1a"  
+ [55] "Cyp26a1"  "Acaca"    "Acsbg1"   "Adcy4"    "Ang2"     "Angpt2"  
+ [61] "Bmp2"     "Bsg"      "Cdk5r1"   "Cdk5r2"   "Cebpa"    "Col2a1"  
+ [67] "Dmd"      "Dnm1"     "Epas1"    "Gabra6"   "Ghr"      "Gpc4"    
+ [73] "Hgf"      "Hmga2"    "Hrasls5"  "Ifitm5"   "Il6"      "Itga6"   
+ [79] "Kcnn3"    "Lipe"     "Lmna"     "Lpl"      "Mapk1"    "Mgp"     
+ [85] "Riox2"    "Muc5ac"   "Nanog"    "Nes"      "Nos3"     "Nrgn"    
+ [91] "Oas1g"    "Oprd1"    "Oprm1"    "Pde6b"    "Pgr"      "Pla2g16" 
+ [97] "Prkra"    "Proc"     "Ptdss1"   "Ptgs2"    "Rest"     "Rho"     
+[103] "Sdc1"     "Setdb1"   "Slc2a3"   "Socs3"    "Sod3"     "Sp1"     
+[109] "Star"     "Tert"     "Tesc"     "Tfap2c"   "Tnk1"     "Tspo"    
+[115] "Txlng"    "Ucp3"     "Zfp143"  
+
+$Sp4
+ [1] "G6pd2"  "Gpd2"   "Myh6"   "Psap"   "T"      "Slc9a2" "Mtch1"  "Cdk5r1"
+ [9] "Gria1"  "Nrgn"   "Pde6b"  "Ptdss1" "Rho"    "Vegfa" 
+
+$Srf
+ [1] "Fos"     "Acta2"   "Actg2"   "Aqp2"    "Barx2"   "Ckm"     "Ctgf"   
+ [8] "Egr1"    "Hmgxb4"  "Kcnmb1"  "Klf3"    "Mmp14"   "Mmp2"    "Myh11"  
+[15] "Mylk"    "Myod1"   "Nppa"    "Tagln"   "Tgfb1i1"
+
+$Stat1
+ [1] "Cxcl11"  "Bcl6"    "Ciita"   "Casp4"   "Ccnd1"   "Ccnd2"   "Ccnd3"  
+ [8] "Socs3"   "Socs1"   "Fas"     "Figf"    "Cxcl10"  "Il2ra"   "Cxcl9"  
+[15] "Mt1"     "Myc"     "Myd88"   "Nos2"    "Pgf"     "Pik3r1"  "Pim1"   
+[22] "Pparg"   "Socs7"   "Shh"     "Socs2"   "Nkx2-1"  "Scgb1a1" "Krtap15"
+[29] "Mapk1"   "Gbp5"    "Vegfc"   "Tnfrsf8" "Socs4"   "Socs5"   "Vegfa"  
+[36] "Vegfb"   "Pfkp"    "App"     "Bace1"   "Cd36"    "Cd40"    "Cebpd"  
+[43] "Cfb"     "Duox2"   "Egr1"    "Fcgr1"   "Gbp2"    "Gfi1"    "Ifnb1"  
+[50] "Ifng"    "Il27"    "Il6"     "Irf1"    "Irf7"    "Irf9"    "Mdm2"   
+[57] "Pdcd1"   "Pou3f1"  "Rc3h1"   "Runx2"   "Tbx21"   "Trp53"   "Upp1"   
+
+$Stat2
+ [1] "Socs3" "Socs1" "Myc"   "Pim1"  "Socs7" "Socs2" "Socs5" "Socs4" "Ccnd1"
+[10] "Ccnd2" "Ccnd3" "Irf7"  "Pdcd1" "Trp53"
+
+$Stat3
+  [1] "Dmbt1"    "Cpt1c"    "Crip2"    "Socs4"    "Socs5"    "Pfkp"    
+  [7] "Krtap15"  "Mapk1"    "Vegfc"    "Vegfb"    "Vegfa"    "Trh"     
+ [13] "Tnfrsf8"  "Tnf"      "Socs2"    "Stat3"    "Sfrp4"    "Apcs"    
+ [19] "Socs7"    "Ppargc1a" "Pim2"     "Pim1"     "Pik3r1"   "Pgf"     
+ [25] "Myd88"    "Myc"      "Mt1"      "Mcl1"     "Lep"      "Il6"     
+ [31] "Il2ra"    "Hsp90ab1" "Hif1a"    "Figf"     "Crp"      "Cpt1b"   
+ [37] "Cpt1a"    "Socs1"    "Socs3"    "Cebpd"    "Cebpb"    "Ccnd3"   
+ [43] "Ccnd2"    "Ccnd1"    "Akt1"     "Bace1"    "Batf"     "Bcl2"    
+ [49] "Bcl2l1"   "Cav1"     "Ccl20"    "Cdkn1b"   "Cdkn2d"   "Col1a1"  
+ [55] "Cxcl11"   "S1pr1"    "Eed"      "Egr1"     "Entpd1"   "Epor"    
+ [61] "Fos"      "Gfap"     "Gfi1"     "Hamp"     "Hgf"      "Igfbp5"  
+ [67] "Il10"     "Il12a"    "Il17f"    "Il21"     "Il23a"    "Jak3"    
+ [73] "Klf4"     "Lif"      "Ly6a"     "Maf"      "Mdc1"     "Mir21a"  
+ [79] "Mmp1a"    "Mmp2"     "Mmp9"     "Muc1"     "Nhlh2"    "Nkx2-5"  
+ [85] "Nos2"     "Nostrin"  "Nr0b1"    "Nt5e"     "Pcsk1"    "Phb"     
+ [91] "Pkd1"     "Pnp"      "Prdm1"    "Pten"     "Rc3h1"    "Reg3g"   
+ [97] "Rela"     "Rnls"     "Slc9a3"   "Sox6"     "Spi1"     "Srebf1"  
+[103] "Tcf4"     "Tgfb1"    "Trp53"    "Twist1"   "Twist2"   "Vip"     
+[109] "Wnt3a"   
+
+$Stat4
+ [1] "Socs4"   "Socs5"   "Socs2"   "Socs7"   "Socs3"   "Ccnd3"   "Ccnd2"  
+ [8] "Ccnd1"   "Pim1"    "Myc"     "Socs1"   "Ifng"    "Il18r1"  "Irf4"   
+[15] "Nos2"    "Prdx3"   "Tbx21"   "Ifngas1"
+
+$Stat5a
+ [1] "Bcl2l1" "Pim2"   "Socs7"  "Socs2"  "Ccnd3"  "Socs3"  "Socs1"  "Myc"   
+ [9] "Clnk"   "Socs5"  "Socs4"  "Pim1"   "Ccnd2"  "Ccnd1"  "Ar"     "Cdkn2b"
+[17] "Csf2"   "Csf3"   "Csn1s1" "Csn2"   "Dpagt1" "Dpf3"   "Epor"   "Fam89b"
+[25] "Grb10"  "Il10"   "Il2ra"  "Il9"    "Mir21a" "Nr3c1"  "Pck1"   "Pdk4"  
+[33] "Prf1"   "Psap"   "Sftpb" 
+
+$Stat5b
+ [1] "Socs3"   "Ccnd2"   "Ccnd3"   "Cel"     "Bcl2l1"  "Ccnd1"   "Socs5"  
+ [8] "Socs4"   "Socs2"   "Socs7"   "Pim2"    "Pim1"    "Myc"     "Socs1"  
+[15] "Ar"      "Csn2"    "Dpf3"    "Slc10a1"
+
+$Stat6
+ [1] "Itgb3"  "Ccnd1"  "Adam8"  "Ccnd2"  "Ccnd3"  "Socs3"  "Socs1"  "Ighg1" 
+ [9] "Il1r1"  "Il6"    "Myc"    "Ncoa3"  "Pim1"   "Socs7"  "Socs2"  "Tnf"   
+[17] "Socs5"  "Socs4"  "Bcl2l1" "Csn2"   "Egr1"   "Fcer2a" "Foxp3"  "Gata3" 
+[25] "Gfi1"   "Hand2"  "Il24"   "Il4"    "Il9"    "Tfec"   "Zfp157"
+
+$Tal1
+ [1] "Lmo2"     "Kdr"      "Epb4.2"   "Csnk2a1"  "Rnf41"    "Ccnd1"   
+ [7] "Epb42"    "Erg"      "Kit"      "Myog"     "Pdzk1ip1" "Runx1"   
+[13] "Smad6"    "Tcf3"     "Tfdp2"   
+
+$Tcf3
+ [1] "mmu-miR-709"  "mmu-miR-451a" "Acta2"        "Adipoq"       "Aicda"       
+ [6] "Atxn3"        "Ccl21a"       "Ccl21b"       "Ccl21c"       "Ccnd3"       
+[11] "Cd19"         "Cd5"          "Cd7"          "Cd79a"        "Cdh1"        
+[16] "Cdkn1a"       "Ckm"          "Cldn4"        "Col2a1"       "Ebf1"        
+[21] "Epb42"        "Esrrb"        "Foxo1"        "Foxp3"        "Id1"         
+[26] "Igk"          "Igll1"        "Insm1"        "Kit"          "Lef1"        
+[31] "Mir302a"      "Myl2"         "Nanog"        "Neurog1"      "Notch1"      
+[36] "Nr0b2"        "Nr5a2"        "Pax5"         "Ptcra"        "Smarcc1"     
+[41] "Tcl1"         "Tcra"         "Tpt1"         "Ube2i"        "Ung"         
+[46] "Vcam1"       
+
+$Tcf7
+ [1] "Ccnd2"  "Ccnd1"  "Birc5"  "Ppard"  "Myc"    "Mmp7"   "Mitf"   "Jun"   
+ [9] "Fosl1"  "Ccnd3"  "Bcl2l1" "Cd4"    "Runx2" 
+
+$Tcf7l1
+ [1] "Ccnd3" "Ccnd2" "Ccnd1" "Birc5" "Ppard" "Myc"   "Mmp7"  "Mitf"  "Jun"  
+[10] "Fosl1"
+
+$Tcf7l2
+ [1] "Fosl1" "Ccnd3" "Ccnd2" "Ppard" "Myc"   "Mmp7"  "Mitf"  "Jun"   "Birc5"
+[10] "Ccnd1" "Cd44"  "Cdx1"  "Myod1"
+
+$Tfap2a
+  [1] "Klf16"   "Prdx3"   "Apex1"   "Atp2a2"  "Atp10a"  "Bfsp1"   "Bgn"    
+  [8] "Bsg"     "Cacna1e" "Pdia4"   "Ccnd2"   "Cd24a"   "Cdh1"    "Cdkn1a" 
+ [15] "Cited1"  "Ckm"     "Ckmt1"   "Clgn"    "Col7a1"  "Col1a2"  "Crx"    
+ [22] "Crygc"   "Csf2"    "Ncan"    "Csrp2"   "Ctsl"    "Dhx9"    "Erbb2"  
+ [29] "Ptprv"   "Fbln1"   "Fgfr1"   "Fgfr3"   "Fli1"    "Flii"    "Fos"    
+ [36] "Fst"     "Gfap"    "B4galt1" "Ggt1"    "Gja5"    "Gm2a"    "Gpc3"   
+ [43] "H19"     "Hck"     "Htt"     "Hfe"     "Hgf"     "Hpgd"    "Hpn"    
+ [50] "Hsd17b1" "Hsd17b2" "Slc6a4"  "Ifngr2"  "Igfbp5"  "Il13"    "Il3ra"  
+ [57] "Il7r"    "Itga7"   "Itpr1"   "Kdr"     "Kit"     "Krt10"   "Lamb3"  
+ [64] "Lhcgr"   "Madcam1" "Man2b1"  "Mmp2"    "Mmp9"    "Msx1"    "Mt3"    
+ [71] "Myod1"   "Nthl1"   "Oaz1"    "Oprd1"   "Sigmar1" "Pax8"    "Abcb1b" 
+ [78] "Abcb1a"  "Pkd1"    "Pkd2"    "Plat"    "Plk1"    "Pomc"    "Prph"   
+ [85] "Psen1"   "Ptger2"  "Ptgs2"   "Ptma"    "Ptx3"    "Rgn"     "Sat1"   
+ [92] "Scd1"    "Ccl17"   "Sparc"   "Stat3"   "Syn2"    "Sdc4"    "Tbxa2r" 
+ [99] "Tgfb3"   "Ucp2"    "Ugcg"    "Vegfa"   "Vegfb"   "Vegfc"   "Pggt1b" 
+[106] "Slc26a1" "Kctd13"  "Setd1a"  "Ceacam2" "Mapk3"   "Ppia"    "Abcd2"  
+[113] "Dlc1"    "Mogs"    "Slc29a1" "Glis2"   "Apoe"    "Cebpa"   "Dmd"    
+[120] "Hoxa7"   "Hoxa9"   "Meis1"  
+
+$Tfap2c
+ [1] "Adar"   "Cdk6"   "Cdkn1a" "Dmrt1"  "Dnmt3b" "Dnmt3l" "Fgf4"   "Hsd3b6"
+ [9] "Kit"    "Klf4"   "Nanos3" "Sfrp1" 
+
+$Tfdp1
+[1] "Myc"    "Ccne1"  "Ccne2"  "Ccnd1"  "Cdkn1a" "Mybl2"  "Tcf3"   "Trp53" 
+
+$Tfdp2
+[1] "Ccne1" "Ccne2" "Myc"  
+
+$Tlx1
+[1] "Aldh1a1"
+
+$Tnf
+[1] "Sele"  "Icam1" "Vcam1" "Casp3" "Mmp9" 
+
+$Trp53
+  [1] "Rprm"          "Trp53inp1"     "Pmaip1"        "Lrdd"         
+  [5] "Psrc1"         "Sfn"           "Ramp2"         "Ppm1d"        
+  [9] "Banp"          "Chek2"         "Rrm2b"         "Fkbp3"        
+ [13] "Gtse1"         "Polk"          "Ccnb1"         "Ppia"         
+ [17] "Mapk3"         "Rfwd2"         "Ing1"          "Cables2"      
+ [21] "Gdf15"         "Gadd45g"       "Scn3b"         "Daglb"        
+ [25] "Sesn2"         "Pias3"         "Gsn"           "Aamp"         
+ [29] "Wrn"           "Zmat3"         "Upp1"          "Tyrp1"        
+ [33] "Tyr"           "Tsc2"          "Trp73"         "Trp63"        
+ [37] "Traf4"         "Tnfrsf10b"     "Thbs1"         "Tert"         
+ [41] "Terc"          "Tep1"          "Ssrp1"         "Spp1"         
+ [45] "Serpinb5"      "Siah2"         "Siah1b"        "Siah1a"       
+ [49] "S100a4"        "Rrm2"          "Ret"           "Ptgs2"        
+ [53] "Pten"          "Prodh"         "Pml"           "Serpine1"     
+ [57] "Pik3ca"        "Abcb1a"        "Abcb1b"        "Nos2"         
+ [61] "Nkx3-1"        "Gadd45b"       "Mmp2"          "Mki67"        
+ [65] "Mgmt"          "Met"           "Mdm4"          "Mdm2"         
+ [69] "Bbc3"          "Stmn1"         "Krt19"         "Kit"          
+ [73] "Irs3"          "Inha"          "Igfbp3"        "Hras1"        
+ [77] "Hnrnpab"       "Hipk1"         "Hic1"          "Gja5"         
+ [81] "Fdxr"          "Fas"           "Sesn1"         "Expi"         
+ [85] "Erbb2"         "Epha2"         "Ei24"          "Egr1"         
+ [89] "Egfr"          "Eef1a2"        "Eef1a1"        "Dnmt1"        
+ [93] "Gadd45a"       "Cyp1b1"        "Csnk2a2"       "Csn3"         
+ [97] "Plk3"          "Chek1"         "Cdkn2a"        "Cdkn1b"       
+[101] "Cdkn1a"        "Cdc42"         "Cdc25c"        "Cd82"         
+[105] "Ccng2"         "Ccng1"         "Ccnd1"         "Bdkrb2"       
+[109] "Bcl2"          "Bax"           "Atm"           "Rhob"         
+[113] "Rhoa"          "Aqp3"          "Birc5"         "Apaf1"        
+[117] "Akt1"          "Acta1"         "Ddb2"          "Bai1"         
+[121] "Topors"        "Sirt1"         "Sgpp1"         "Sesn3"        
+[125] "Ddit4"         "Glipr1"        "2300009N04Rik" "Steap3"       
+[129] "Rchy1"         "Shisa5"        "Perp"          "Cables1"      
+[133] "Abcc1"         "Afp"           "Agt"           "Agtr1a"       
+[137] "Amelx"         "Ankrd1"        "Atf3"          "Axl"          
+[141] "Adgrb1"        "Bak1"          "Btg2"          "Casp3"        
+[145] "Casp6"         "Casp7"         "Casp8"         "Ccna2"        
+[149] "Ccnb2"         "Cdc2b"         "Cdk2"          "Cdk5"         
+[153] "Cdkn1c"        "Cdkn2c"        "Ckap2"         "Ckm"          
+[157] "Cks1b"         "Col2a1"        "Cxcr2"         "D7Ertd443e"   
+[161] "Dusp1"         "Dusp2"         "Dusp4"         "Dyrk1a"       
+[165] "E2f1"          "E4f1"          "Edil3"         "Elf4"         
+[169] "Epcam"         "Uhrf1bp1"      "Fos"           "Foxm1"        
+[173] "Foxo3"         "Foxp3"         "Fpr1"          "Gabre"        
+[177] "Gap43"         "Gsk3b"         "Hdgf"          "Hgf"          
+[181] "Hipk2"         "Hmox1"         "Hras"          "Hspa1b"       
+[185] "Id2"           "Ifi202b"       "Igf1r"         "Ins2"         
+[189] "Insr"          "Klf2"          "Lif"           "Ltf"          
+[193] "Mxi1"          "Map4"          "Mapk1"         "Mcm7"         
+[197] "Mcts1"         "Mir34a"        "Mt1"           "Myc"          
+[201] "Myod1"         "Myog"          "Nanog"         "Ndrg1"        
+[205] "Neurod2"       "Nfkb1"         "Nkx2-5"        "Notch1"       
+[209] "Nr0b2"         "Nr3c1"         "Nupr1"         "Olfr17"       
+[213] "Pappa"         "Pax2"          "Pcbp2"         "Pcna"         
+[217] "Pdgfrb"        "Per2"          "Pkd1"          "Pla2g16"      
+[221] "Pmp2"          "Prnp"          "Prox1"         "Psen1"        
+[225] "Psme3"         "Ptgds"         "Ptk2"          "Ptprv"        
+[229] "Rap2b"         "Reep5"         "Rela"          "Rps6ka1"      
+[233] "Runx1"         "Sall2"         "Sin3a"         "Siva1"        
+[237] "Slc19a2"       "Slc2a4"        "Slc6a6"        "Smad3"        
+[241] "Smurf1"        "Sod2"          "Src"           "Srebf1"       
+[245] "Tcf4"          "Tcf7l2"        "Tff2"          "Tpt1"         
+[249] "Trp53"         "Tyms"          "Uhrf1"         "Zfp385a"      
+[253] "Klf4"         
+
+$Trp63
+ [1] "Hnrnpab" "Cdkn2a"  "Ssrp1"   "Ddit4"   "Cdkn1a"  "Evpl"    "Irf6"   
+ [8] "Krt14"   "Ptk2"    "Nectin1" "Satb1"   "Smarca4" "Smarcd3" "Vegfa"  
+
+$Trp73
+ [1] "mmu-miR-34a-5p" "Psrc1"          "Cables1"        "Bax"           
+ [5] "Bbc3"           "Casp8ap2"       "Cdkn1a"         "Cdkn1c"        
+ [9] "E2f1"           "Foxo3"          "Gls2"           "Hey2"          
+[13] "Itch"           "Mdm2"           "Ngfr"           "Nr3c1"         
+[17] "Pten"           "Pdgfrb"         "Pmaip1"         "Tpt1"          
+[21] "Trp53"         
+
+$Usf1
+ [1] "Col1a1"  "Slc2a5"  "Gabbr1"  "Ceacam2" "Ces2c"   "Tyms"    "Top3a"  
+ [8] "Tnfrsf8" "Thrsp"   "Trim25"  "Sdc1"    "Surf2"   "Spp1"    "Ren1"   
+[15] "Ptgs2"   "Pola2"   "Prkaca"  "Pdx1"    "Pax5"    "Oprd1"   "Npr1"   
+[22] "Nos2"    "Myoc"    "Mxi1"    "Mt1"     "Msx1"    "Klf4"    "Hoxb8"  
+[29] "Hoxb4"   "Hgf"     "Fshr"    "Fcgr3"   "Fasn"    "Dffb"    "Cryaa"  
+[36] "Cpt1a"   "Cited1"  "Cfh"     "Cebpa"   "Ciita"   "Bmp4"    "Bdnf"   
+[43] "Atp10a"  "Atp2a2"  "Speg"    "Chrna7"  "Acp5"    "Alx3"    "Apoa5"  
+[50] "Pf4"     "Cyp1a1"  "Fmr1"    "Gata5"   "Lipe"    "Pigr"    "Prnd"   
+[57] "Tnfaip3"
+
+$Usf2
+ [1] "Acp5"    "Thrsp"   "Tff3"    "Spp1"    "Rps14"   "Ren1"    "Ptgs2"  
+ [8] "Pola2"   "Prkaca"  "Pdx1"    "Pax5"    "Oprd1"   "Nos2"    "Myoc"   
+[15] "Mxi1"    "Mt1"     "Mitf"    "Hoxb8"   "Hgf"     "Fshr"    "Fasn"   
+[22] "Dffb"    "Cox5b"   "Col1a1"  "Cited1"  "Cfh"     "Bmp4"    "Bdnf"   
+[29] "Atp2a2"  "Speg"    "Chrna7"  "Slc2a5"  "Gabbr1"  "Ceacam2" "Top3a"  
+[36] "Tnfrsf8" "Alx3"    "Apoa5"   "Pf4"     "Fmr1"    "Hmox1"   "Lipe"   
+[43] "Pigr"   
+
+$Vdr
+ [1] "Trpv5"    "Calb1"    "S100g"    "Atp2b1"   "Trpv6"    "Slc8a1"  
+ [7] "Slc34a2"  "Ctnnb1"   "Cyp3a41a" "Igfbp3"   "Lrp5"     "Nphs1"   
+[13] "Runx2"    "Spp1"     "Tnfsf11" 
+
+$Wt1
+ [1] "Cat"      "Csf1"     "Egr1"     "Igf2"     "Mip"      "Slc22a6" 
+ [7] "Pax2"     "Slc22a8"  "Sdc1"     "Amh"      "Nr0b1"    "Glyat"   
+[13] "Spry1"    "Podxl"    "Nup210"   "Il2rb"    "Trpv6"    "Areg"    
+[19] "Bcl2"     "Nr5a1"    "Adamts16" "Amhr2"    "Coro1b"   "Epo"     
+[25] "Il10"     "Inha"     "Nphs1"    "Pou4f2"   "Snai2"    "Stim1"   
+[31] "Vegfa"    "Wnt4"    
+
+$Zbtb16
+[1] "Ccna1"  "Jup"    "Cdkn1a" "Ddit4" 
+
+$Zbtb17
+[1] "Cdkn2b"  "Mapk8"   "Slc11a1"
+
+$Aatf
+[1] "Bak1"   "Bax"    "Bbc3"   "Cdkn1a" "Tpt1"   "Trp53" 
+
+$Abl1
+[1] "Trp53" "Trp73"
+
+$Aebp2
+[1] "Jarid2" "Snai2" 
+
+$Aes
+[1] "Ihh"
+
+$Ahr
+ [1] "Abcc4"    "Apaf1"    "Cyp19a1"  "Cyp1a1"   "Cyp1a2"   "Cyp1b1"  
+ [7] "E2f2"     "Gata4"    "Gsta1"    "Il17a"    "Il6"      "Lhb"     
+[13] "Nkx2-5"   "Nqo1"     "Pla2g4a"  "Ptgs2"    "Serpinb2" "Sim1"    
+[19] "Smoc2"    "Snai2"    "Ugt1a6a"  "Vav3"    
+
+$Aire
+[1] "Bmp2" "F11" 
+
+$Alx4
+[1] "Fgf10"
+
+$Ankrd1
+[1] "Myl2" "Nppa"
+
+$Apbb1
+[1] "Lrp1"   "Notch1"
+
+$Apc
+[1] "Ctnnb1" "Myc"    "Spp1"   "Tcf4"   "Trp53" 
+
+$Apex1
+[1] "Apod"  "Blk"   "Ccl12" "Nfkb1" "Pax5"  "Ptgs2" "Rela"  "Tlr4" 
+
+$Arid3a
+[1] "Cr2" "Igh"
+
+$Arid3b
+[1] "Igh"
+
+$Arid5b
+[1] "Sox9"
+
+$Arl6ip5
+[1] "Parp1" "Xrcc1"
+
+$Arntl2
+[1] "Thbd"
+
+$Arx
+[1] "Kdm5c" "Shh"  
+
+$Ascl1
+[1] "Bub1"   "Cdkn2d" "Dll3"   "Dll4"   "Hes5"   "Pdgfra" "Phox2a" "Rnd3"  
+[9] "Tph2"  
+
+$Ash1l
+[1] "Tgfb1" "Timp1"
+
+$Asxl1
+[1] "Fabp4"
+
+$Atm
+[1] "Cdkn1a" "Sp7"    "Trp53" 
+
+$Atoh1
+[1] "Barhl1" "Hes6"   "Nr2f6"  "Pou4f3"
+
+$Bach1
+[1] "Hbb"   "Hmox1" "Mmp1a" "Trp53"
+
+$Bach2
+[1] "Prdm1"
+
+$Barx2
+[1] "Acta2" "L1cam" "Pax1" 
+
+$Batf2
+[1] "Ccl5" "Nos2" "Tnf" 
+
+$Batf3
+[1] "Irf8"
+
+$Bcl11a
+[1] "Frzb"
+
+$Bcl11b
+[1] "Ahr"    "Bcl2l1" "Cdkn1b" "Foxp3"  "Gfi1"   "Il10"   "Notch1" "Runx3" 
+[9] "Zbtb7b"
+
+$Bcl6b
+[1] "Rbpj"
+
+$Bhlhe40
+[1] "Il2ra"
+
+$Bmi1
+ [1] "Cdk1"   "Cdkn1a" "Cdkn2a" "Cdkn2d" "Dkk1"   "E4f1"   "Hmga2"  "Ikzf1" 
+ [9] "Nanog"  "Nfkb1"  "Pmaip1" "Pten"  
+
+$Bmp4
+[1] "Chst11"
+
+$Bmp6
+[1] "Mycn"
+
+$Brca2
+[1] "Cdkn1a"
+
+$Btg2
+[1] "Atoh1" "Creb1"
+
+$Bub3
+[1] "Apod"
+
+$Cbfa2t3
+[1] "Epb42"
+
+$Cbx6
+[1] "Ccne1"
+
+$Ccnd1
+[1] "Cdkn2a"
+
+$Cd7
+[1] "Nfkb1"
+
+$Cdx1
+[1] "Ccl25" "Cdx2"  "Mafb" 
+
+$Cdx2
+ [1] "Ccl25"  "Cdh17"  "Cdx1"   "Cdx4"   "Glb1"   "Heph"   "Kitl"   "Mgam"  
+ [9] "Nanog"  "Pou5f1" "Shh"    "Sis"    "Xist"  
+
+$Cdx4
+[1] "Hoxa9"
+
+$Cebpz
+[1] "Hspa1b"
+
+$Chd1
+[1] "Ubtfl1"
+
+$Chd4
+[1] "Cd4"  "Id2"  "Jun"  "Ngfr"
+
+$Chd7
+[1] "Gli3"  "Jag1"  "Mycn"  "Sox11" "Sox4" 
+
+$Chd8
+[1] "Brca1" "Myc"   "Stat3" "Tcf4" 
+
+$Ciita
+[1] "Col1a2" "Nfatc1" "Oscar" 
+
+$Cited2
+ [1] "Cebpa" "Fgf9"  "Ldhb"  "Ldhd"  "Mmp9"  "Nr5a1" "Pdk2"  "Pdk4"  "Pparg"
+[10] "Smad3" "Wnt4" 
+
+$Cnot3
+[1] "Myc" "Zfx"
+
+$Cnot7
+[1] "Tob1"
+
+$Cops5
+[1] "Hand2"
+
+$Crebzf
+[1] "Adipoq"
+
+$Crtc1
+[1] "Creb1"
+
+$Crx
+ [1] "Fam161a" "Kcnv2"   "Nr2e3"   "Pde6a"   "Pde6b"   "Rbp3"    "Rho"    
+ [8] "Rs1"     "Sag"     "Samd11"  "Samd7"  
+
+$Cry1
+[1] "Per2"
+
+$Csf1
+[1] "Cd36"
+
+$Csf2
+[1] "Itgb3"
+
+$Ctcf
+[1] "Atxn7"  "Celsr3" "Csf2"   "Igf2"   "Irak2"  "Mgat5b" "Pax6"  
+
+$Ctcfl
+[1] "Gal3st1"
+
+$Ctf1
+[1] "Tgfb1"
+
+$Ctr9
+[1] "Il6"
+
+$Cux1
+ [1] "Atp6v1e2" "Ccna2"    "Cdkn1a"   "Cdkn1b"   "Dctn6"    "Fam89b"  
+ [7] "Hist2h4"  "Mar1"     "Myc"      "Ncam1"    "Pola1"    "Runx2"   
+[13] "Sis"     
+
+$Cux2
+[1] "Cdkn1b"
+
+$Dab2
+[1] "Axin1"
+
+$Dach1
+[1] "Ccnd1"  "Cdkn1b" "Cxcl15" "Klf4"   "Lin28a" "Nanog"  "Sox2"  
+
+$Dach2
+[1] "Myog"
+
+$Daxx
+[1] "Birc2"    "Birc3"    "Nr5a1"    "Mapk8ip1" "Trp53"   
+
+$Dbp
+[1] "Arnt" "Bik"  "Per1"
+
+$Ddx5
+[1] "Igf2"
+
+$Ddx54
+[1] "Mbp"
+
+$Ddx58
+[1] "Ifnb1"
+
+$Deaf1
+[1] "Eif4g3"
+
+$Dlx1
+[1] "Arx"
+
+$Dlx2
+[1] "Amelx"  "Arx"    "Dlx6"   "Foxj1"  "Nrp2"   "Pagr1a"
+
+$Dlx3
+[1] "Bglap"  "Dspp"   "Hsd3b6" "Mmp9"   "Pgf"    "Runx2" 
+
+$Dlx5
+[1] "Alpl"   "Dspp"   "Gbx2"   "Ibsp"   "Igfbp3" "Myc"    "Runx2"  "Sp7"   
+[9] "Wnt5a" 
+
+$Dmap1
+[1] "Bmi1"
+
+$Dmbx1
+[1] "Crx"  "Otx1" "Otx2"
+
+$Dmp1
+[1] "Trp53"
+
+$Dmrt1
+[1] "Sox2"
+
+$Dmrt2
+[1] "Myf5"
+
+$Dmtf1
+[1] "Areg"   "Ccnd2"  "Cdkn2a" "Egr1"   "Ets1"   "Ets2"   "Junb"   "Tsp1"  
+
+$Dnajc2
+[1] "Id1"
+
+$Dnmt1
+[1] "Cdkn1a" "Dnmt1"  "Mt1"    "Epcam"  "Trp53" 
+
+$Dnmt3a
+[1] "Dpp6"   "Ifng"   "Mdm2"   "Mt1"    "Nanog"  "Pou5f1" "Rb1"    "Vtn"   
+
+$Dnmt3b
+[1] "Nanog"  "Pou5f1" "Vtn"   
+
+$Dot1l
+[1] "Scnn1a"
+
+$Dtx1
+[1] "Smarcc1"
+
+$E2f8
+[1] "E2f1"
+
+$E4f1
+[1] "Ccna2" "Ids"  
+
+$Ebf1
+[1] "Blk"    "Cd79a"  "Igll1"  "Omp"    "Pax5"   "Pparg"  "Tac4"   "Zfp423"
+[9] "Zfp521"
+
+$Edn1
+[1] "Ren1"
+
+$Egr4
+[1] "Nfkb1"   "Slc12a5"
+
+$Ehf
+[1] "Tlr11"
+
+$Ehmt1
+[1] "Ccnd1"
+
+$Ehmt2
+[1] "Ccnd1"  "Cdkn1a" "Fgf21"  "Pou5f1" "Pparg"  "Wnt10a"
+
+$Eif2ak2
+[1] "Stat1"
+
+$Elf1
+ [1] "Cd1d1"  "Csf1r"  "Dntt"   "Epha7"  "Fcer1a" "Fcer1g" "Fli1"   "Il3"   
+ [9] "Lyl1"   "Rhox5"  "Tal1"   "Tollip"
+
+$Elf2
+[1] "Cd3d"
+
+$Elf3
+[1] "Angpt1" "Tgfb1"  "Tgfbr2" "Tlr11" 
+
+$Elf4
+[1] "Bglap"   "Dlx5"    "Mab21l1" "Msx2"    "Trp53"  
+
+$Elf5
+[1] "Ccnd2"  "Stat5a"
+
+$Ell3
+[1] "Trp53" "Zeb1"  "Zeb2" 
+
+$Elp2
+[1] "Pou5f1"
+
+$Elp3
+[1] "Pou5f1"
+
+$Emx2
+[1] "Alx1" "Pax6"
+
+$En1
+[1] "Elf1"  "Gbx2"  "Pax5"  "Wnt7a"
+
+$En2
+[1] "Pax5"
+
+$Eomes
+[1] "Ebf1"  "Il17a" "Mesp1" "Prf1"  "Rorc"  "Sox2" 
+
+$Epc1
+[1] "Tagln"
+
+$Epo
+[1] "Osm"
+
+$Epor
+[1] "Cish"
+
+$Erf
+[1] "Utrn"
+
+$Esrra
+[1] "Acadm"    "Apoa4"    "Nrip1"    "Ppara"    "Ppargc1a" "Rb1cc1"  
+[7] "Spp1"     "Trp53"   
+
+$Esrrb
+[1] "Nanog"   "Nr0b1"   "Usp17le"
+
+$Esrrg
+[1] "Mir127" "Mir433" "Nr0b1"  "Yy1"   
+
+$Etv1
+[1] "Ebf1"  "Fgf10" "Nab2"  "Pomc"  "Th"   
+
+$Etv2
+[1] "Fli1" "Lmo2" "Plau" "Sox9" "Spi1" "Tek" 
+
+$Etv5
+[1] "Cav1"  "Elmo1" "Il17a" "Il17f" "Parg"  "Ptgs2"
+
+$Etv6
+[1] "Fli1" "Mmp3"
+
+$Ewsr1
+[1] "Fgf10" "Tert"  "Upp1" 
+
+$Eya1
+[1] "Atoh1"
+
+$Eya2
+[1] "Mtor"
+
+$Ezh1
+[1] "Tollip"
+
+$Ezh2
+ [1] "Bad"     "Bcl2l11" "Ccna2"   "Creb3l1" "Dkk1"    "Hey2"    "Il17a"  
+ [8] "Il17f"   "Il9"     "Nanog"   "Neurog1" "Tbx21"   "Trp53"   "Unc5b"  
+
+$Fhl2
+[1] "Fos"
+
+$Fmr1
+[1] "Rac1"
+
+$Fosl1
+[1] "Fos"    "Jun"    "Mmp2"   "Nfe2l2" "Prdm1"  "Thbs1"  "Thbs2" 
+
+$Fosl2
+[1] "Adipoq" "Relb"   "Tcirg1" "Tgfb1"  "Tgfb3" 
+
+$Foxa1
+ [1] "Afp"     "Cbx5"    "Gcg"     "Muc2"    "Pdx1"    "Scgb1a1" "Sftpa1" 
+ [8] "Sftpb"   "Sftpc"   "Sftpd"  
+
+$Foxa3
+[1] "Cdx2"
+
+$Foxc1
+[1] "Cxcl12" "Cxcr4"  "Dll4"   "Hey2"   "Msx2"   "Runx2"  "Snai1"  "Tbx1"  
+
+$Foxc2
+[1] "Cxcr4" "Dll4"  "Gja4"  "Hand1" "Hey2"  "Itgb3" "Tbx1" 
+
+$Foxd1
+[1] "Lhb" "Pgf"
+
+$Foxd3
+[1] "Grb2"
+
+$Foxg1
+[1] "Cdkn1a"   "Cdkn2b"   "Dmrt3"    "Dmrta1"   "Ebf2"     "Ebf3"    
+[7] "Eya2"     "Serpine1"
+
+$Foxh1
+[1] "Gsc"   "Mef2c" "Mixl1" "Nodal" "Smad2"
+
+$Foxi1
+[1] "Slc4a9"
+
+$Foxj1
+[1] "Amelx" "Foxa1"
+
+$Foxj3
+[1] "Mef2c"
+
+$Foxl1
+[1] "Ccnd1" "Wnt3a" "Wnt7b"
+
+$Foxl2
+[1] "Fshb" "Mc2r" "Sf1" 
+
+$Foxm1
+ [1] "Axin2"   "Brip1"   "Cdh1"    "Cdkn2a"  "Ikbkb"   "Lama4"   "Lif"    
+ [8] "Myc"     "Mycn"    "Nfkb2"   "Nr4a2"   "Pou5f1"  "Prrc2a"  "Ptgs2"  
+[15] "Pttg1"   "Scgb1a1" "Sftpb"   "Sftpc"   "Snai1"   "Snai2"   "Socs3"  
+[22] "Sox2"    "Stat3"  
+
+$Foxn1
+[1] "Dsg4"   "Notch1"
+
+$Foxn4
+[1] "Dll4"
+
+$Foxo4
+[1] "Anxa8"    "Bcl2l11"  "Ccnd1"    "Ccnd2"    "Gadd45a"  "Ppargc1a"
+[7] "Rbl2"    
+
+$Foxp1
+[1] "Fgf16"   "Fgf17"   "Fgf20"   "Fgf3"    "Lhx3"    "Scgb1a1"
+
+$Foxp2
+[1] "Scgb1a1" "Sftpc"   "Nkx2-1" 
+
+$Foxp3
+ [1] "Brca1"    "Ctla4"    "Erbb2"    "Ifng"     "Il17a"    "Il2"     
+ [7] "Il22"     "Il2ra"    "Nfkb1"    "Opn1sw"   "Skp2"     "Tnfrsf18"
+
+$Foxq1
+[1] "Cdh1" "Mylk"
+
+$Fus
+[1] "Mdm2" "Sod2"
+
+$Gabpa
+[1] "Chrne"  "Cox4i1" "Cyp7b1" "Il10"   "Il7r"   "Skp2"   "Sod3"  
+
+$Gabpb1
+[1] "Sod3"
+
+$Gata1
+ [1] "Ccna1"   "Cdc6"    "Cga"     "Pf4"     "Epb42"   "Fcer1g"  "Fli1"   
+ [8] "Hbb-ar"  "Itga2b"  "Nfe2"    "Spi1"    "Sigmar1" "Tal1"    "Tfdp2"  
+[15] "Usp17la" "Zbtb7a"  "Zfp26"  
+
+$Gata2
+ [1] "Angpt2" "Cebpa"  "Csf2"   "Lyl1"   "Nkx6-1" "Rc3h1"  "Spi1"   "Smad6" 
+ [9] "Tac2"   "Tshb"  
+
+$Gata3
+ [1] "Cdkn2c" "Cdx2"   "Dlc1"   "Erg"    "Fgf10"  "Foxp3"  "Ifng"   "Il10"  
+ [9] "Il13"   "Il24"   "Il3"    "Il4"    "Il5"    "Mycn"   "Rag2"   "Runx3" 
+[17] "Tbx21" 
+
+$Gata4
+ [1] "Adora1" "Amh"    "Ankrd1" "Bmp4"   "Ccnd2"  "Dmrt1"  "Epor"   "Hesx1" 
+ [9] "Hexim1" "Hhex"   "Hspa5"  "Id2"    "Ifi204" "Lhx9"   "Lrrc10" "Mef2c" 
+[17] "Myog"   "Nkx2-5" "Nppa"   "Nppb"   "Spdef"  "Star"  
+
+$Gata6
+ [1] "Bhlha15"  "Cav1"     "Cdx2"     "Mylk"     "Nkx2-1"   "Nox1"    
+ [7] "Ppp1r14a" "Rbpjl"    "Sftpa1"   "Sftpc"    "Shh"      "Spdef"   
+[13] "Tnnc1"    "Ttf1"     "Wnt7b"   
+
+$Gbx2
+[1] "Lhx9"  "Lmo3"  "Otx2"  "Robo1" "Shh"  
+
+$Gcfc2
+[1] "Egfr"
+
+$Gcgr
+[1] "Crh"  "G6pc"
+
+$Gcm2
+[1] "Pth"
+
+$Gfi1b
+[1] "Elf4"  "Gfi1"  "Gfi1b" "Meis1" "Rag1"  "Rag2"  "Rcor2" "Socs1" "Socs3"
+
+$Glis2
+[1] "Ins2"
+
+$Glis3
+[1] "Neurog3"
+
+$Grin1
+[1] "Cox4i1"
+
+$Gsc
+[1] "Foxh1" "Gsc2"  "Mixl1"
+
+$Gsx2
+[1] "Ppp1r1b"
+
+$Gtf2a1
+[1] "Prm1" "Tnp1"
+
+$Gtf2a2
+[1] "Bglap"
+
+$Gtf2b
+[1] "Hspb1"
+
+$Gtf2h1
+[1] "Keap1"
+
+$Gtf2i
+ [1] "Akap12" "Ccl7"   "Ccnd1"  "Cfdp1"  "Csrp2"  "Dlk1"   "Folr1"  "Fos"   
+ [9] "Gsc"    "Hspa5"  "Id1"    "Igh"    "Nsd1"   "Sec23a" "Tgfb2"  "Tgfbr2"
+
+$Gtf2ird1
+[1] "Ccl7"   "Csrp2"  "Dlk1"   "Folr1"  "Tgfb2"  "Tgfbr2"
+
+$Gzf1
+[1] "Hoxa10"
+
+$Hand2
+[1] "Dbh"    "Dlx5"   "Dlx6"   "Msx1"   "Phox2b" "Runx2" 
+
+$Havcr2
+[1] "Nelfcd"
+
+$Hbp1
+[1] "Myod1" "Myog" 
+
+$Hcfc1
+[1] "Rb1"
+
+$Hcls1
+[1] "Ighg2b"
+
+$Hdac11
+[1] "Il10"
+
+$Hdac2
+ [1] "Bmp7"    "Ccl12"   "Ccne1"   "Cd1d2"   "Cdkn1a"  "Grm2"    "Nfkbia" 
+ [8] "Nos2"    "Smarca4" "Star"   
+
+$Hdac3
+[1] "Bcl2l1" "Cdkn1b" "Fos"    "Jun"    "Nfkbia" "Nr4a2"  "Phlpp1"
+
+$Hdac4
+[1] "Runx2"
+
+$Hdgf
+[1] "Vegfa" "Vegfb"
+
+$Hes1
+[1] "Ascl1"  "Cdkn1b" "Cdkn1c" "Coro1a" "Htr1a"  "Map2"  
+
+$Hes6
+[1] "Hes1"  "Htr1a"
+
+$Hes7
+[1] "Lfng"  "Mesp2"
+
+$Hesx1
+[1] "Cga"    "Dnmt1"  "Fshb"   "Lhb"    "Pou1f1" "Prop1" 
+
+$Hexim1
+[1] "Ccnd1" "Vegfa"
+
+$Hey1
+[1] "Gata4" "Gata6" "Id1"   "Nppa"  "Olig2" "Runx2"
+
+$Hey2
+[1] "Gata4" "Gata6" "Mmp10" "Nppa" 
+
+$Heyl
+[1] "Nppa"
+
+$Hgf
+[1] "Met"
+
+$Hhex
+[1] "Esm1"
+
+$Hic1
+[1] "Atoh1" "Efna1"
+
+$Hivep2
+[1] "Bglap2" "Pparg" 
+
+$Hltf
+[1] "Scgb3a1"
+
+$Hlx
+[1] "Il12a" "Il12b"
+
+$Hmga1
+[1] "Brca1" "Insr"  "Rag2"  "Rbp4" 
+
+$Hmga2
+[1] "Cdh1"    "Igf2bp2" "Mia"     "Nfkb1"   "Nkx2-5"  "Snai1"   "Snai2"  
+[8] "Twist1" 
+
+$Hmgb2
+[1] "Runx2"
+
+$Hmgn3
+[1] "Slc2a2"
+
+$Hnf1b
+[1] "Egr2"    "Kif12"   "Mafb"    "Onecut1" "Pde4c"   "Pkhd1"   "Socs3"  
+
+$Hnrnpd
+[1] "Cry1" "Thy1"
+
+$Hnrnpk
+[1] "Slc1a2"
+
+$Hoxa2
+[1] "Meox1" "Pcp4"  "Runx2" "Six2" 
+
+$Hoxa3
+[1] "Hoxd3"
+
+$Hoxa9
+[1] "Erg"  "Flt3" "Lmo2" "Myb"  "Sox4" "Spp1"
+
+$Hoxb8
+[1] "Acta2" "Mylk"  "Tagln"
+
+$Hoxd13
+[1] "Bmp4"  "Runx2"
+
+$Hr
+[1] "Dlx3"
+
+$Hsf4
+[1] "Hspb1"
+
+$Hspb1
+[1] "Cdkn1a"
+
+$Htatip2
+[1] "Igf1"  "Myc"   "Wisp2"
+
+$Id1
+ [1] "Alpl"   "Bglap2" "Cdkn1a" "Cdkn2a" "Ifng"   "Myod1"  "Rel"    "Rorc"  
+ [9] "Runx2"  "Thbs1"  "Tnf"   
+
+$Id2
+ [1] "Alpl"   "Bglap2" "Ccna2"  "Col1a2" "Tcf3"   "Il10"   "Lipe"   "Runx2" 
+ [9] "Spi1"   "Tpt1"   "Zbtb16"
+
+$Id3
+[1] "Adipoq"  "Alpl"    "Bglap2"  "Col1a2"  "Notch1"  "Runx2"   "Smarcc1"
+[8] "Vcam1"  
+
+$Id4
+[1] "Esr1"  "Foxa1"
+
+$Ifi204
+[1] "Bglap2"
+
+$Ifih1
+[1] "Ifnb1"
+
+$Ikbkb
+ [1] "Ccl19"   "Cxcl10"  "Cxcl11"  "Cxcl2"   "Cxcl9"   "Cxcr4"   "Nfkb1"  
+ [8] "Nfkbia"  "Ptgs2"   "Rps6kb1" "Tnf"     "Trp53"  
+
+$Ikzf1
+ [1] "Casz1"  "Cd4"    "Cd79a"  "Fgfr4"  "Igll1"  "Il10"   "Il2"    "Il7r"  
+ [9] "Myc"    "Nos2"   "Notch1" "Oprd1"  "Oprk1"  "Osr1"   "Prom1"  "Rag1"  
+
+$Ikzf2
+[1] "Il2"   "Rc3h1"
+
+$Ikzf3
+[1] "Igll1" "Myc"  
+
+$Il10
+[1] "Foxc1"
+
+$Il17a
+[1] "Il1b" "Tnf" 
+
+$Il4
+[1] "Itgb3"
+
+$Ilf2
+[1] "Acrv1"
+
+$Ilf3
+[1] "Acrv1" "Ccne1" "Il2"  
+
+$Ilk
+[1] "Mmp9"
+
+$Ing1
+[1] "Dgcr8"
+
+$Ing4
+[1] "Trp53"
+
+$Insm1
+[1] "Gata2" "Lmx1b" "Pet1"  "Tph2" 
+
+$Irf2
+[1] "Cxcl11"  "Hist2h4" "Ifnb1"  
+
+$Irf4
+ [1] "Cdkn2b" "Cxcl9"  "Il10"   "Il1b"   "Il4"    "Il9"    "Nfatc2" "Prdm1" 
+ [9] "Runx3"  "Spi1"   "Zbtb20"
+
+$Irf6
+[1] "Nectin4"
+
+$Irf9
+[1] "Ifnb1" "Irf7"  "Mast1" "Ptf1a"
+
+$Irx3
+[1] "Gja1"
+
+$Irx5
+[1] "Kcnd2"
+
+$Isl1
+[1] "Arx"    "Fgf10"  "Mef2c"  "Msx1"   "Pbx1"   "Pou4f2" "Tbx5"  
+
+$Jarid2
+[1] "Ccnd1"  "Notch1"
+
+$Jazf1
+[1] "Mef2c" "Myf6" 
+
+$Jdp2
+[1] "Atf3"  "Ccna2" "Dctn2" "Trp53"
+
+$Jmjd1c
+[1] "Cyp17a1"
+
+$Kat2b
+[1] "Gata4" "Irs1"  "Mef2c" "Myod1" "Npr1" 
+
+$Kat5
+[1] "Col2a1" "Nppa"   "Pax6"   "Sox9"   "Tpt1"   "Trp53" 
+
+$Kcnip3
+[1] "Cacna1c" "Fos"     "Grin1"   "Hrk"     "Ndor1"   "Pdyn"    "Slc8a3" 
+[8] "Tnfaip3"
+
+$Kdm6b
+[1] "Eomes"
+
+$Keap1
+[1] "Nfe2l2"
+
+$Khdrbs1
+[1] "Ece1"
+
+$Klf1
+[1] "Dnase2a" "Epb42"   "Hbb"     "Il12b"   "Klf8"   
+
+$Klf10
+[1] "Arntl" "Mycn"  "Smad2"
+
+$Klf11
+[1] "Ins2"
+
+$Klf12
+[1] "Tfap2a"
+
+$Klf13
+[1] "Ccl5"
+
+$Klf15
+[1] "Acss1"  "Clcnkb" "Mcm2"   "Rbp3"   "Rho"   
+
+$Klf16
+[1] "Drd1"  "Drd2"  "Klf16"
+
+$Klf2
+[1] "Pparg" "Reln"  "Sell"  "Thbd" 
+
+$Klf3
+[1] "Acta1"   "Ckm"     "Hbb-bh1" "Hbb-y"   "Klf8"    "Six4"   
+
+$Klf4
+ [1] "Agrp"     "Bglap2"   "Ccnd2"    "Cdh1"     "Cdkn2b"   "Cebpb"   
+ [7] "Dmp1"     "Dspp"     "Lefty1"   "Muc5ac"   "Nanog"    "Nos2"    
+[13] "Ptgs2"    "Rlim"     "Serpine1" "Slurp1"   "Snai2"    "Sprr2a1" 
+[19] "Tsix"    
+
+$Klf5
+ [1] "Egr1"     "Ltf"      "Mcm2"     "Nanog"    "Nos2"     "Pdgfa"   
+ [7] "Pou5f1"   "Runx2"    "Serpine1" "Tcl1"     "Vegfa"   
+
+$Klf6
+[1] "Asah1"    "Cdkn1a"   "Pttg1"    "Serpinh1"
+
+$Klf7
+[1] "Ntrk1"
+
+$Klf8
+[1] "Mmp14"
+
+$Klf9
+[1] "Txnrd2"
+
+$Kpna2
+[1] "Klf2" "Klf4"
+
+$Lbx1
+[1] "Lmx1a" "Pax3"  "Satb2"
+
+$Ldb1
+ [1] "Arx"   "Bmp7"  "Epb42" "Fgf10" "Glp1r" "Igf1"  "Lhx6"  "Mafa"  "Nlrp2"
+[10] "Runx1" "Tcf3" 
+
+$Ldb2
+[1] "Fgf10"
+
+$Lhx2
+[1] "Cga"     "Olfr151" "Rarres2" "Rax"     "Rig1"    "Robo2"   "Tshb"   
+
+$Lhx3
+[1] "Cga"
+
+$Lhx9
+[1] "Rig1"
+
+$Lmo2
+[1] "Epb42" "Erg"   "Gypa"  "Runx1"
+
+$Lmo4
+[1] "Bmp7"
+
+$Lmo7
+[1] "Myf5"  "Myod1" "Pax3" 
+
+$Lmx1b
+[1] "Fgf8"  "Nphs2" "Pax2"  "Pet1"  "Tph2"  "Wnt1" 
+
+$Lyl1
+[1] "Erg"
+
+$Maf
+[1] "Ccnd2" "Cryaa" "Cryab" "Gcg"   "Il4"   "Maf"   "Pdx1"  "Trp53"
+
+$Mafb
+[1] "Cd5l"  "Hoxa3" "Mmp12" "Nrf1"  "Pth"  
+
+$Mafg
+[1] "Nqo1" "Nrf1"
+
+$Mafk
+[1] "Hmox1" "Nqo1"  "Nrf1" 
+
+$Map3k7
+[1] "Nfkb1"
+
+$Maz
+[1] "Clcnkb" "Htr1a"  "Rag2"   "Sp4"   
+
+$Mbd1
+[1] "Fgf2"  "Htr2c"
+
+$Mbd2
+[1] "Oprd1"
+
+$Mbd3
+[1] "Cdk2"
+
+$Mcm3
+[1] "Il4"
+
+$Mcm6
+[1] "Cd40"
+
+$Mdm2
+[1] "Trp53"
+
+$Mdm4
+[1] "Trp53"
+
+$Mecp2
+ [1] "Aff1"   "Ddc"    "Dlk1"   "Eya2"   "Fkbp5"  "Fxyd1"  "Igfbp3" "Irak1" 
+ [9] "Mobp"   "Oprm1"  "Per1"   "Per2"   "Plagl1" "Prodh"  "S100a9" "Slc2a3"
+
+$Med1
+[1] "Crabp1" "Fam89b" "Pparg" 
+
+$Med23
+[1] "Cd52" "Egr1" "Egr2"
+
+$Med6
+[1] "Fabp4"
+
+$Med8
+[1] "Fabp4"
+
+$Mef2a
+[1] "Cox6a1"   "Dpf3"     "Mef2a"    "Mmp10"    "Nrf1"     "Ppargc1a"
+[7] "Slc2a4"  
+
+$Mef2c
+ [1] "Ampd1"  "Bglap"  "Bglap2" "Calr"   "Capn2"  "Ckm"    "Des"    "Dlx5"  
+ [9] "Dlx6"   "Frzb"   "Hand2"  "Hdac4"  "Il10"   "Il1rn"  "Jun"    "Myh4"  
+[17] "Myh1"   "Myog"   "Myom1"  "Myom2"  "Myom3"  "Myoz2"  "Rgr"    "Rho"   
+[25] "Runx2"  "Sfrp2"  "Socs2"  "Sp7"   
+
+$Mef2d
+[1] "Atm"  "Myh1"
+
+$Meis1
+[1] "Pf4"    "Flt3"   "Krt19"  "Myog"   "Pax6"   "Ptch1"  "Tgfbr2"
+
+$Meis2
+[1] "Cdh1"   "Cdkn2b" "Egr2"   "Krt19"  "Pax6"   "Tgfbr2"
+
+$Men1
+[1] "Axin2"   "Ezh2"    "Gbx2"    "Gli1"    "Hoxa9"   "Jund"    "Mafa"   
+[8] "Suv39h1" "Yap1"   
+
+$Meox1
+[1] "Nkx3-2" "Pax3"   "Tbx18"  "Uncx"  
+
+$Meox2
+[1] "Myf5"
+
+$Mixl1
+[1] "Gsc"    "Kdr"    "Pdgfra"
+
+$Mkl1
+[1] "Edn1"  "Id3"   "Srf"   "Tagln"
+
+$Mkx
+[1] "Myod1" "Scx"   "Tgfb2"
+
+$Mllt3
+[1] "Hoxd4"  "Scnn1a"
+
+$Mlxipl
+ [1] "Acaca" "Acacb" "Acc"   "Fas"   "Fasn"  "Gck"   "Gpam"  "Ins1"  "Ins2" 
+[10] "Mafa"  "Mstn"  "Pdx1"  "Pklr"  "Scd1"  "Txnip"
+
+$Mmp9
+[1] "Fos" "Jun"
+
+$Mnt
+[1] "Ccnd2" "Cdk4" 
+
+$Msc
+[1] "Gata4" "Gjd3" 
+
+$Msx2
+ [1] "Alpl"    "Atoh1"   "Neurod6" "Bglap"   "Bglap2"  "Dkk1"    "Dlx2"   
+ [8] "Dlx5"    "Dspp"    "Enpp1"   "Ets1"    "Ihh"     "Lss"     "Mepe"   
+[15] "Myocd"   "Pparg"   "Runx2"   "Sp7"     "Srf"     "Tagln"  
+
+$Mta1
+[1] "Cdkn1a"  "Clock"   "Pax5"    "Pten"    "Rnf144a" "Six3"    "Timp2"  
+[8] "Rrm2b"  
+
+$Mta2
+[1] "Fshr"
+
+$Mtf1
+[1] "Dnmt1"    "Ep300"    "Mt1"      "Pgf"      "Selenow"  "Slc39a10"
+
+$Mtf2
+[1] "Cdkn2a" "Shh"   
+
+$Mxd1
+[1] "Bcl6"
+
+$Mxi1
+[1] "Ift20"  "Igfbp3" "Myc"   
+
+$Mybbp1a
+[1] "Per2"
+
+$Mycn
+[1] "Acp5"   "Hdac2"  "Igfbp2" "Igfbp6" "Ndrg1"  "Nrgn"   "Otx2"   "Ptdss1"
+[9] "Smad4" 
+
+$Myef2
+[1] "Myl2"
+
+$Myf5
+ [1] "Ccnd3"  "Cdkn1a" "Des"    "Myf6"   "Myh7b"  "Myod1"  "Myog"   "Rb1"   
+ [9] "Sp7"    "Trp73" 
+
+$Myf6
+[1] "Ampd1"  "Ccnd3"  "Cdkn1a" "Des"    "Myog"   "Rb1"    "Reck"   "Trp73" 
+
+$Myocd
+[1] "Acta2"   "Mylk"    "Tagln"   "Tgfb1i1"
+
+$Myod1
+ [1] "Acacb"    "Acta2"    "Actc1"    "Aldh1a1"  "Ankrd2"   "Arnt"    
+ [7] "Atp6v1e1" "Atp9a"    "Atxn3"    "Barx2"    "Bmp5"     "Ccnd1"   
+[13] "Ccnd3"    "Cdc6"     "Cdh15"    "Cdkn1a"   "Cdkn1c"   "Cdo1"    
+[19] "Cdon"     "Ckm"      "Crebbp"   "Dcx"      "Des"      "Fosl1"   
+[25] "Ifi204"   "Igh"      "Inpp5k"   "Itga7"    "Maf"      "Myf6"    
+[31] "Myf5"     "Myh7b"    "Myl1"     "Myl2"     "Myl6"     "Myog"    
+[37] "Ppargc1a" "Rb1"      "Reck"     "Sdc1"     "Selenow"  "Sgca"    
+[43] "Sgcg"     "Smad7"    "Smarca4"  "Smtnl1"   "Snai2"    "Sp7"     
+[49] "Trp73"    "Zbtb18"  
+
+$Myog
+ [1] "Art1"   "Barx2"  "Ccnd3"  "Cdkn1a" "Des"    "Itga7"  "Myef2"  "Myf6"  
+ [9] "Myh7b"  "Myl1"   "Myod1"  "Pax7"   "Rb1"    "Trp73" 
+
+$Mzf1
+[1] "Sell" "Sod3"
+
+$Nab1
+[1] "Egr1"   "Egr2"   "Ifngr1" "Lhb"   
+
+$Nab2
+[1] "Egr2"    "Id2"     "Id4"     "Tnfsf10"
+
+$Nanog
+ [1] "Bglap2"  "Bmi1"    "Cdx2"    "Dkk1"    "Eras"    "Esrrb"   "Gata6"  
+ [8] "Idh1"    "Lin28a"  "Mir290a" "Mir295"  "Mir302a" "Nfkb1"   "Nr0b1"  
+[15] "Snai1"   "Tcf3"    "Xist"    "Zfp42"   "Zfp57"   "Zfp819" 
+
+$Ncoa1
+ [1] "Adipoq"  "Ar"      "Cdkn1a"  "Esr1"    "Gata4"   "Itga5"   "Mef2c"  
+ [8] "Nfkbia"  "Psat1"   "Twist1"  "Usp17le"
+
+$Ncoa2
+[1] "Adipoq" "Ar"     "Esrra"  "G6pc"   "Nfkbia"
+
+$Ncoa3
+[1] "Clock"  "Igfbp3" "Klf4"   "Nanog"  "Nfkbia" "Npas2"  "Nr0b1"  "Pparg" 
+[9] "Tbx3"  
+
+$Ncoa4
+[1] "Ar"
+
+$Ncoa5
+[1] "Myc"
+
+$Ncoa6
+[1] "Fos"   "Socs1"
+
+$Ncor1
+[1] "Hdac3"  "Hes1"   "Mybl2"  "Nfkbia" "Tshb"  
+
+$Ncor2
+[1] "Hes1"   "Klkb1"  "Mybl2"  "Nfkbia" "Sirt1" 
+
+$Ndn
+[1] "Cdk1"   "Cdkn2a" "Dlx2"   "Myc"   
+
+$Neurod6
+[1] "Plppr4" "Ybx1"  
+
+$Neurog1
+[1] "Atoh1" "Dll3" 
+
+$Neurog2
+[1] "Dll3"    "Eomes"   "Epha5"   "Neurod1" "Rnd2"    "Sema3c" 
+
+$Nf1
+[1] "Adam8"  "Fam89b" "Mt1"   
+
+$Nfatc2ip
+[1] "Il2"
+
+$Nfe2
+ [1] "Abcc6"  "Epb42"  "Gcm2"   "Hbb"    "Hbb-b1" "Hbb-bs" "Hmbs"   "Il2"   
+ [9] "Tnf"    "Tyms"  
+
+$Nfe2l2
+ [1] "Abcc2"    "Abcc3"    "Abcc4"    "Akr1b3"   "Areg"     "Bcl2"    
+ [7] "Bglap"    "Bglap3"   "Calcoco2" "Cd36"     "Cdkn2c"   "Cebpb"   
+[13] "Cox17"    "Cyp2a5"   "Fas"      "Fmo3"     "Fos"      "Gclc"    
+[19] "Gsta1"    "Gsta2"    "Hmox1"    "Il10"     "Keap1"    "Krt16"   
+[25] "Mcm7"     "Mdm2"     "Mgst1"    "Mir106b"  "Mt1"      "Nfatc1"  
+[31] "Nfe2l2"   "Nfkb1"    "Nqo1"     "Pparg"    "Prdx1"    "Prdx2"   
+[37] "Ptgds"    "Runx2"    "Scarb1"   "Sdha"     "Slc40a1"  "Slc7a11" 
+[43] "Sod2"     "Sp7"      "Sqstm1"   "Srxn1"    "Sult1e1"  "Tgfb1"   
+[49] "Tnfsf11"  "Txnip"    "Txnrd1"   "Ugt1a6a"  "Il1rn"   
+
+$Nfe2l3
+[1] "Pla2g7"
+
+$Nfib
+[1] "Col2a1" "Fam89b"
+
+$Nfil3
+ [1] "Abcb1a" "Abcb4"  "Arnt"   "Bmp4"   "Cyp7a1" "Eomes"  "Fgf21"  "Id2"   
+ [9] "Per2"   "Ptgs2" 
+
+$Nfix
+[1] "Ckm"    "Fam89b"
+
+$Nfkbia
+[1] "Nfkb1" "Ptgs2"
+
+$Nfkbiz
+[1] "Nfkb1"  "Nfkbiz"
+
+$Nhlh2
+[1] "Maoa"  "Mc4r"  "Pcsk1" "Pcsk2" "Pkd1" 
+
+$`Nkx2-1`
+ [1] "Abca3"   "Foxj1"   "Hcrtr2"  "Pax8"    "Prdm13"  "Scgb1a1" "Sftpb"  
+ [8] "Sftpc"   "Shh"     "Sox17"   "Wnt7b"  
+
+$`Nkx2-3`
+[1] "Madcam1"
+
+$`Nkx2-5`
+ [1] "Adora1"  "Calr"    "Csl"     "Etv2"    "Fgf10"   "Gjc1"    "Hand1"  
+ [8] "Hexim1"  "Id2"     "Ifi204"  "Jarid2"  "Lrrc10"  "Mef2c"   "Mov10l1"
+[15] "Msx2"    "Mycn"    "Myl2"    "Myocd"   "Nppa"    "Nppb"    "Pitx2"  
+[22] "Tbx5"    "Tll1"    "Tlx2"    "Trp53"  
+
+$`Nkx2-9`
+[1] "Akip1"
+
+$`Nkx3-1`
+[1] "Acta2" "Actg2" "Ar"   
+
+$`Nkx3-2`
+[1] "Pax3"  "Runx2"
+
+$`Nkx6-1`
+[1] "Mafa"
+
+$Nono
+[1] "Col2a1" "Mia"   
+
+$Notch1
+ [1] "Casp3"   "Ccnd1"   "Ccne1"   "Cdkn1a"  "Ctnnb1"  "Dll4"    "Dtx1"   
+ [8] "Efnb2"   "Gata2"   "Hes5"    "Hey1"    "Hey2"    "Nfkb1"   "Nrarp"  
+[15] "Pax7"    "Rbpj"    "Runx2"   "Scgb3a2" "Smarcc1" "Sox9"    "Sp7"    
+[22] "Spi1"    "Tcf3"   
+
+$Notch2
+[1] "Gzmb"   "Hes1"   "Notch3" "Tcf3"  
+
+$Notch3
+[1] "Foxp3" "Hes5"  "Nrarp" "Ptcra"
+
+$Notch4
+[1] "Dlk1" "Hes1" "Hey1"
+
+$Npas1
+[1] "Th"
+
+$Nr0b1
+ [1] "Cyp11a1" "Cyp19a1" "Esrrg"   "Hnf4a"   "Nr5a1"   "Pou5f1"  "Pparg"  
+ [8] "Rlf"     "Sf1"     "Srebf1"  "Star"   
+
+$Nr1d2
+[1] "Gja1"
+
+$Nr1h2
+[1] "Arg2"  "Csrp1" "Fasn"  "Nos2" 
+
+$Nr1h3
+ [1] "Abca1"   "Abcg1"   "Apoe"    "Arg2"    "Bhlhe40" "Cyp7b1"  "Cyp7a1" 
+ [8] "F3"      "Lipe"    "Map3k8"  "Mlxipl"  "Nos2"    "Nr1h3"   "Plin1"  
+[15] "Pltp"    "Srebf1"  "Ucp1"   
+
+$Nr1i2
+ [1] "Akr1b7"   "Cd36"     "Cdkn1a"   "Cyp24a1"  "Cyp2b10"  "Cyp2c29" 
+ [7] "Cyp3a11"  "Cyp3a41a" "E2f1"     "Insig1"   "Msx2"     "Ppara"   
+
+$Nr1i3
+ [1] "Akr1b7"   "Atp6v1e1" "Cpt1a"    "Cyp2b10"  "Cyp3a11"  "Cyp7a1"  
+ [7] "Mcl1"     "Pck1"     "Ppara"    "Ppig"     "Sqle"     "Thrsp"   
+
+$Nr2c1
+[1] "Esr1"  "Gata1"
+
+$Nr2c2
+[1] "Ikbkb" "Junb"  "Nfkb1"
+
+$Nr2e1
+[1] "Atn1"
+
+$Nr2e3
+[1] "Rho"
+
+$Nr2f1
+[1] "Calr"   "Fabp7"  "Pou5f1" "Rnd2"  
+
+$Nr2f2
+ [1] "Ar"     "Atp1a1" "Bglap"  "Cyp7a1" "Dr1"    "Dspp"   "Flt1"   "Insl3" 
+ [9] "Mttp"   "Oxt"    "Pou5f1" "Ppara"  "Rarb"   "Rare1"  "Rare2"  "Ren1"  
+[17] "Shh"    "Slc2a4" "Vegfa" 
+
+$Nr2f6
+[1] "Il17a" "Oxt"   "Ren1" 
+
+$Nr3c1
+ [1] "Abcc2"   "Brca1"   "Ccnd3"   "Cdk4"    "Cdk6"    "Ch25h"   "Crh"    
+ [8] "Fam89b"  "Hes1"    "Nfkbia"  "Npas4"   "Nr0b1"   "Pdhx"    "Ptgs2"  
+[15] "Ptx3"    "Runx2"   "Slc10a1" "Trim63"  "Vdr"    
+
+$Nr4a1
+ [1] "Ar"       "Cyp21a1"  "Edn1"     "Fasl"     "Hsd3b1"   "Kcnb1"   
+ [7] "Nkx2-5"   "Prl"      "Prmt1"    "Serpine1"
+
+$Nr4a2
+ [1] "Apom"    "Foxp3"   "Gch1"    "Kcnb1"   "Mmp1a"   "Nrp1"    "Pitx3"  
+ [8] "Ptpru"   "Slc18a2" "Slc6a3"  "Spp1"    "Tnc"    
+
+$Nr4a3
+[1] "Kcnb1" "Ucp1" 
+
+$Nr5a1
+ [1] "Abcg2"   "Adcy4"   "Akr1b7"  "Amh"     "Cnr1"    "Cyp11a1" "Cyp11b2"
+ [8] "Cyp17a1" "Cyp19a1" "Cyp21a1" "Fgf9"    "Inha"    "Insl3"   "Lhb"    
+[15] "Mc2r"    "Nos1"    "Nr0b1"   "Nr5a1"   "Pbx1"    "Pou5f1"  "Sox9"   
+[22] "Star"    "Wnt4"   
+
+$Nr5a2
+ [1] "Apoa1"   "Ccnd1"   "Ccne1"   "Cyp19a1" "Cyp7a1"  "Cyp8b1"  "Kiss1"  
+ [8] "Kras"    "Nanog"   "Nr0b1"   "Pou5f1"  "Ptf1a"   "Ptgds"   "Scarb1" 
+[15] "Slc10a2" "Slc51a"  "Slc51b"  "Tnf"    
+
+$Nrf1
+ [1] "Atp1a1" "Atp1b1" "Cd47"   "Cox17"  "Cox4i1" "Fcgr3"  "Fmr1"   "Gria2" 
+ [9] "Grin1"  "Grin2b" "Hmox1"  "Ide"    "Il1rn"  "Kif17"  "Mt1"    "Nos1"  
+[17] "Nr3c1"  "Pvr"    "Sdha"   "Sirt6"  "Sp7"    "Tfam"  
+
+$Nrip1
+[1] "Cidea"  "Pou5f1" "Ucp1"  
+
+$Nrl
+ [1] "Kcnv2"   "Mef2c"   "Nr2e3"   "Pde6a"   "Pde6b"   "Ppp2r5c" "Prph2"  
+ [8] "Rbp3"    "Rho"     "Sag"    
+
+$Nupr1
+[1] "Ccna2"  "Ep300"  "Gcg"    "Hmox1"  "Paxip1" "Tcf19" 
+
+$Olig1
+[1] "Smad3"
+
+$Olig2
+[1] "Gfap"   "Pdgfra" "Sox10" 
+
+$Otx2
+[1] "Crx"    "Fgf15"  "Gnrh1"  "Nkx2-2" "Tyr"    "Tyrp1" 
+
+$Ovol1
+[1] "Ovol2"
+
+$Parp1
+ [1] "Apod"   "E2f1"   "Fn1"    "Il10"   "Mmp9"   "Nfkb1"  "Nkx2-1" "Nos2"  
+ [9] "Rela"   "Sh3bp2" "Vcam1" 
+
+$Pax4
+[1] "Ins2" "Mnx1" "Pax6" "Pdx1"
+
+$Pax7
+[1] "Ets1"  "Id3"   "Myf5"  "Myod1" "Nfix"  "Pax3" 
+
+$Pax9
+[1] "Bmp4"
+
+$Pbrm1
+[1] "Il10"
+
+$Pbx1
+ [1] "Alx1"    "Cdh1"    "Cdkn2b"  "Pf4"     "Cyp17a1" "Dcc"     "Fgf10"  
+ [8] "Hoxb1"   "Mc2r"    "Myog"    "Pax3"    "Pax6"    "Pbx1"   
+
+$Pbx2
+[1] "Pf4"  "Pax6"
+
+$Pbx4
+[1] "Pgk2"
+
+$Pcbp2
+[1] "Trp53"
+
+$Pcgf2
+[1] "Hif1a" "Il17a" "Il17f"
+
+$Peg3
+[1] "Zim1"
+
+$Pelp1
+[1] "Jun"   "Nfkb1" "Nr3c1" "Nr4a1" "Srf"  
+
+$Per1
+[1] "Arntl"   "Bhlhe40" "Clock"   "Crem"    "Cry2"    "Egr1"    "Fxyd5"  
+[8] "Scnn1a"  "Slc12a3"
+
+$Per2
+[1] "Ctnnb1" "Maoa"   "Ucp2"  
+
+$Phf12
+[1] "Lgals4"
+
+$Phf2
+[1] "Sox9"
+
+$Phox2a
+[1] "Dbh"   "Ncam1"
+
+$Phox2b
+[1] "Dbh"   "Fos"   "Gata2" "Gata3" "Tlx2" 
+
+$Pias1
+[1] "Nkx2-2"
+
+$Pias3
+[1] "Jak2"  "Mitf"  "Stat3"
+
+$Pias4
+[1] "Ccl20"
+
+$Pitx1
+[1] "Barx1" "Fshb"  "Lhb"   "Tbx1"  "Tbx4"  "Tert" 
+
+$Pitx2
+ [1] "Amelx"   "Bmp4"    "Depdc1b" "Dlx2"    "Foxj1"   "Fshb"    "Gad1"   
+ [8] "Gata4"   "Hesx1"   "Isl1"    "Lef1"    "Mef2c"   "Mga"     "Myf5"   
+[15] "Myod1"   "Nr5a1"   "Plod1"   "Tbx1"    "Tbx15"   "Tbx2"    "Tbx4"   
+[22] "Tbx5"    "Tbx6"    "Tpt1"   
+
+$Pitx3
+[1] "Aldh1a1" "Bdnf"    "En1"     "Foxe3"   "Slc18a2" "Slc6a3" 
+
+$Pknox1
+[1] "Pbx2"  "Pgk2"  "Ptpn6" "Syp"  
+
+$Plag1
+[1] "Egr1"      "Fas"       "Igf2"      "Nkx3-1"    "Tnfrsf10b" "Trp53"    
+
+$Plagl2
+[1] "Igf2"  "Mpl"   "Sftpc"
+
+$Pnn
+[1] "Cdx2"
+
+$Pou1f1
+[1] "C1qtnf3" "Gh"      "Ghr"     "Neurod4" "Prl"     "Trh"     "Tshb"   
+
+$Pou2af1
+ [1] "Aldh1a7" "Btk"     "Cd79b"   "Cxcr5"   "Id2"     "Id3"     "Igh"    
+ [8] "Igk"     "Lgals1"  "Pou2f1"  "Pou2f2"  "Slc22a1" "Spi1"    "Spib"   
+
+$Pou2f3
+[1] "Lor"
+
+$Pou3f4
+[1] "Epha4" "Otx2" 
+
+$Pou4f1
+[1] "Bax"    "Bcl2"   "Bcl2l1" "Cdkn1a" "Pmaip1" "Pou4f2" "Runx3"  "Syt1"  
+
+$Pou4f2
+[1] "Eomes"
+
+$Pou4f3
+[1] "Myo6"
+
+$Ppargc1a
+ [1] "Apoa4"   "Cav3"    "Cidea"   "Cpt1b"   "Cyp11b2" "G6pc"    "Hamp"   
+ [8] "Hnf4a"   "Lhb"     "Mbp"     "Nr1i2"   "Nrf1"    "Pdhx"    "Pitx3"  
+[15] "Ppara"   "Srebf2"  "Tfam"    "Tfb1m"   "Tfb2m"   "Ucp1"   
+
+$Ppargc1b
+[1] "Esrra" "Foxa2" "Mfn2" 
+
+$Prdm1
+ [1] "Bcl6"     "Bmp5"     "Cxcr5"    "Id3"      "Ifnb1"    "Map3k5"  
+ [7] "Nlrp12"   "Pax5"     "Pdcd1"    "Tnfrsf17" "Xbp1"    
+
+$Prdm13
+[1] "Ascl1" "Tlx1"  "Tlx3" 
+
+$Prdm16
+[1] "Pparg" "Rbl1" 
+
+$Prdm5
+[1] "Col1a1"
+
+$Prdm8
+[1] "Cdh11"
+
+$Prl
+[1] "Csn2"
+
+$Prop1
+[1] "Fshb"   "Notch2"
+
+$Prox1
+ [1] "Calcrl" "Ccne1"  "Crygd"  "Cyp7a1" "Esrra"  "Flt4"   "Gfi1"   "Ifng"  
+ [9] "Nkx2-5" "Notch1" "Olig2"  "Pdpn"   "Rgs4"   "Twist1"
+
+$Prrx1
+[1] "Sox9"  "Tgfb3" "Tnc"  
+
+$Prrx2
+[1] "Serpine2" "Tnc"     
+
+$Ptf1a
+[1] "Atoh7"   "Neurog2" "Nr5a2"   "Prdm13" 
+
+$Pth
+[1] "Ccnd1"
+
+$Pthlh
+[1] "Ccnd1" "Cdk1" 
+
+$Pttg1
+[1] "Pttg1ip"
+
+$Pura
+[1] "E2f1" "Mbp" 
+
+$Pwp1
+[1] "Stat3"
+
+$Pygo2
+[1] "Pax6"
+
+$Raf1
+[1] "Mapk1"
+
+$Rala
+[1] "Fos"
+
+$Rax
+[1] "Otx2"
+
+$Rb1
+ [1] "Atf2"     "Bglap2"   "Bin1"     "Birc5"    "Tdgf1"    "Ccnd1"   
+ [7] "Cdkn1a"   "Dnmt1"    "E2f1"     "Elf1"     "Fos"      "Fosl1"   
+[13] "H2-Ea-ps" "Ifi202b"  "Igf2"     "Jun"      "Mybl2"    "Robo3"   
+[19] "Sp1"      "Spi1"    
+
+$Rbl2
+ [1] "Alb"    "Birc5"  "Brca1"  "Ccna2"  "Cdc25a" "Cdk2"   "Pcna"   "Rad51" 
+ [9] "Sox2"   "Stmn1" 
+
+$Rbmx
+[1] "Jund"
+
+$Rere
+[1] "Rarb"
+
+$Rest
+ [1] "Bdnf"    "Brinp1"  "Bsx"     "Cacna1h" "Celsr3"  "Dyrk1a"  "Gjd2"   
+ [8] "Grin2b"  "Kcnn4"   "Npas4"   "Oprm1"   "Penk"    "Scn8a"   "Srrm4"  
+[15] "Tph2"   
+
+$Rfx1
+[1] "Fgf1"  "Map1a"
+
+$Rfx3
+[1] "Gck"
+
+$Rfx4
+[1] "Msi1"
+
+$Rnf2
+[1] "Fezf2"  "Hoxb4"  "Hoxb6"  "Hoxb8"  "Scnn1a" "Sox2"   "Trp63"  "Zfp42" 
+
+$Rora
+ [1] "Apoa1"  "Apoc3"  "Arntl"  "Cav3"   "Cpt1b"  "Cyp7b1" "E2f1"   "Lamb1" 
+ [9] "Npsr1"  "Pcp2"   "Ppara" 
+
+$Rps6ka5
+[1] "Fos"
+
+$Runx2
+ [1] "Alpl"    "Asrgl1"  "Atf6"    "Axin2"   "Bax"     "Bglap"   "Bglap2" 
+ [8] "Bmp2"    "COX2"    "Col10a1" "Col1a1"  "Col1a2"  "Col2a1"  "Crebzf" 
+[15] "Csn2"    "Cyp11a1" "Cyp19a1" "Ddx5"    "Dkk1"    "Dspp"    "Elanee" 
+[22] "Enpp1"   "Fgr18"   "Fgf18"   "Fgf3"    "Gdf10"   "Gja3"    "Hbegf"  
+[29] "Hes1"    "Ibsp"    "Ifi204"  "Ihh"     "Ikzf1"   "Lef1"    "Lgals3" 
+[36] "Mcm3"    "Mgp"     "Mmp13"   "Nr2f2"   "Olfr17"  "Osr1"    "Panx3"  
+[43] "Pparg"   "Pttg1ip" "Shox2"   "Smad6"   "Smurf1"  "Sox5"    "Sox6"   
+[50] "Sox9"    "Sp7"     "Spp1"    "Tcf7"    "Tg"      "Thbs1"   "Tnfsf11"
+[57] "Zfp64"  
+
+$Runx3
+[1] "Ccr7"     "Cd4"      "Cldn7"    "Ifng"     "Itgae"    "Pirb"    
+[7] "Slc22a17" "Thbs1"   
+
+$Ruvbl2
+[1] "Cdkn2c"
+
+$Sall1
+[1] "Kif26b"
+
+$Sall2
+[1] "Bax"    "Cdkn1a"
+
+$Sall4
+[1] "Hoxa9"  "Pou5f1" "Pten"   "Sall4" 
+
+$Satb1
+[1] "Bcl2"  "Cr2"   "Il4"   "Nanog" "Nes"   "Spi1" 
+
+$Satb2
+[1] "Trp63" "Upf3b"
+
+$Scx
+[1] "Col2a1"
+
+$Sertad1
+[1] "E2f1"  "Tfdp1"
+
+$Setbp1
+[1] "Hoxa10"
+
+$Sf1
+ [1] "Abcg2"   "Amh"     "Cga"     "Cyp11a1" "Cyp17a1" "Cyp26b1" "Gnrh1"  
+ [8] "Hsd3b4"  "Inha"    "Lhb"     "Nr0b1"   "Pou5f1"  "Sox9"    "Star"   
+[15] "Vnn1"   
+
+$Sfpq
+[1] "Cyp11a1"
+
+$Shh
+[1] "Gli1"
+
+$Shox2
+[1] "Bmp4"   "Hcn4"   "Nkx2-5"
+
+$Sim1
+[1] "Pou3f2"
+
+$Sim2
+[1] "Myod1" "Otp"  
+
+$Sin3a
+[1] "Cebpb"   "Map4"    "Nos2"    "Rest"    "Smarca4" "Sp3"     "Star"   
+
+$Sin3b
+[1] "Bmi1"
+
+$Sirt5
+[1] "Hmgcs2"
+
+$Six1
+ [1] "Atoh1"   "Ccna2"   "Ccnd1"   "Dusp6"   "Mtor"    "Myf5"    "Myod1"  
+ [8] "Myog"    "Neurod1" "Neurog1" "Pax2"    "Sall1"   "Six2"    "Vegfc"  
+
+$Six2
+[1] "Fgf8" "Gdnf" "Osr1" "Wnt4" "Zeb2"
+
+$Six3
+[1] "Crygd" "Pax6"  "Shh"   "Wnt1"  "Wnt8b"
+
+$Six4
+[1] "Myf5"
+
+$Six5
+[1] "Igfbp5"
+
+$Six6
+[1] "Cdkn1b"
+
+$Ski
+[1] "Cck"    "Myog"   "Srebf1"
+
+$Skil
+[1] "Adam12" "Afp"    "Itch"   "Tpt1"   "Trp53" 
+
+$Sla2
+[1] "Cd3e"  "Csf1r"
+
+$Smarca2
+[1] "Calm1"   "Ccna2"   "Cd44"    "Cdh1"    "Tmem50a"
+
+$Smarca4
+ [1] "Adamts1" "Calm1"   "Cd44"    "Cdh1"    "Cdkn1a"  "Epb42"   "Hmox1"  
+ [8] "Il4"     "Mitf"    "Myog"    "Nanog"   "Nfkbia"  "Pou5f1"  "Rest"   
+[15] "Sall4"   "Sftpb"   "Sox2"    "Sparc"   "Tbx5"   
+
+$Smarca5
+[1] "Dido1"
+
+$Smarcc1
+[1] "Nanog" "Psat1"
+
+$Smarcd1
+[1] "Arntl" "G6pc" 
+
+$Smarce1
+[1] "Nanog"
+
+$Smurf1
+[1] "Smad6"
+
+$Smurf2
+[1] "Mavs"  "Rap1b" "Runx2"
+
+$Smyd1
+[1] "Hand2"
+
+$Snai1
+ [1] "Cdh1"    "Cdx2"    "Cldn3"   "Col2a1"  "Ctnnb1"  "Cxadr"   "Fn1"    
+ [8] "Hnf4a"   "Id1"     "Itgb4"   "Kit"     "Lin28a"  "Llgl2"   "Mir290a"
+[15] "Mir295"  "Mmp2"    "Nanog"   "Nr5a2"   "Ocln"    "Phgdh"   "Ptgs2"  
+[22] "Runx2"   "Snai1"   "Tcl1"    "Tfcp2l1" "Thbd"    "Tjp1"    "Trp53"  
+[29] "Mmp15"  
+
+$Snai2
+ [1] "Bbc3"   "Cdh1"   "Cdx2"   "Col2a1" "Ctnnb1" "Dsg2"   "Lpar2"  "H19"   
+ [9] "Ocln"   "Tjp1"  
+
+$Snd1
+[1] "E2f1"
+
+$Sox10
+ [1] "Aatk"  "Dct"   "Dhh"   "Egr2"  "Hes5"  "L1cam" "Mitf"  "Mpz"   "Olig2"
+[10] "Ret"   "Sufu"  "Tyr"  
+
+$Sox11
+[1] "Gdf5" "Tank" "Wnt4"
+
+$Sox14
+[1] "Calb2"
+
+$Sox15
+[1] "Casp3" "Hrc"  
+
+$Sox17
+ [1] "Macc1"  "Ccnd1"  "Cer1"   "Ctnnb1" "Foxa2"  "Foxj1"  "Lama1"  "Lef1"  
+ [9] "Mbp"    "Nepn"   "Sftpc" 
+
+$Sox18
+[1] "Oprm1" "Prox1"
+
+$Sox2
+ [1] "Atoh1"   "Birc5"   "Ccnd1"   "Cdkn1b"  "Egfr"    "Fgf4"    "Gli3"   
+ [8] "Jag1"    "Lef1"    "Lefty1"  "Ly6a"    "Mir302a" "Mycn"    "Nanog"  
+[15] "Neurod1" "Neurog1" "Nkx2-1"  "Nr2e1"   "Pou1f1"  "Pou5f1"  "Sema6a" 
+[22] "Shh"     "Six3"    "Sox2"    "Utf1"    "Xist"    "Zscan10" "Zfp819" 
+
+$Sox21
+[1] "Hes5"
+
+$Sox4
+[1] "Cald1"  "Ctnnb1" "Ezh2"   "Mecom"  "Spi1"   "Tcf4"  
+
+$Sox5
+[1] "Catsper1" "Ifi204"   "Nfkbib"   "Pthlh"    "Sox10"    "Spag6"   
+
+$Sox6
+[1] "Ccnd1" "Fgf3"  "Pthlh" "Trp53"
+
+$Sox7
+[1] "Fgf3"  "Lama1" "Sox4" 
+
+$Sox8
+[1] "Amh"    "Col1a1" "Sox10"  "Sox9"  
+
+$Sox9
+ [1] "Best1"    "Bmi1"     "Catsper1" "Cdh1"     "Cdkn1a"   "Col2a1"  
+ [7] "Ctgf"     "Ctnnb1"   "Cyp26b1"  "Etv2"     "Fgf9"     "Furin"   
+[13] "Lxn"      "Matn1"    "Mia"      "Neurog3"  "Nkx3-2"   "Pax3"    
+[19] "Pdx1"     "Phex"     "Pik3ca"   "Pthlh"    "Ret"      "Sgca"    
+[25] "Slc6a19"  "Sox10"    "Vegfa"    "Vnn1"     "Wwp2"    
+
+$Sp5
+[1] "Cdkn1a"
+
+$Sp7
+ [1] "Bglap"  "Bglap2" "Col5a1" "Col5a3" "Ctnnb1" "Dkk1"   "Dmp1"   "Dspp"  
+ [9] "Gja3"   "Ibsp"   "Ifitm5" "Mir93"  "Sp7"    "Satb2"  "Sost"   "Spp1"  
+[17] "Vegfa" 
+
+$Sp8
+[1] "Fgf10" "Fgf8"  "Nr2f1"
+
+$Sp9
+[1] "Fgf8"
+
+$Spdef
+[1] "Birc5"   "Cdkn1a"  "Foxj1"   "Scgb1a1" "Sftpc"   "Sox17"  
+
+$Spen
+[1] "Col2a1"
+
+$Spi1
+ [1] "Acp5"    "Aif1"    "Bcl2l11" "Ccl5"    "Cd1d1"   "Csf1r"   "Dcstamp"
+ [8] "Elane"   "Elf1"    "Fcer1g"  "Fes"     "Flt3"    "H2-Ab1"  "Igh"    
+[15] "Ighm"    "Igl"     "Il1b"    "Il7r"    "Il9"     "Irf8"    "Itga2b" 
+[22] "Itgb3"   "Med1"    "Mef2c"   "Mmp13"   "Mrc1"    "Ncf1"    "Ncf4"   
+[29] "Nfkb1"   "Oprm1"   "Pirb"    "Ptgds"   "Ptprc"   "Ptpro"   "Scn8a"  
+[36] "Tal1"    "Tal2"    "Tec"     "Tlr4"    "Tnf"    
+
+$Spib
+[1] "Blnk"   "Fcer2a" "Igl"    "Nfkb1"  "P2ry10"
+
+$Spic
+[1] "Cd5l"   "Fcer2a" "Fcgr2b" "Mmp12"  "Nfkb1" 
+
+$Srebf1
+ [1] "Abca3"    "Abcd2"    "Acaca"    "Acss2"    "Adipoq"   "Ankrd2"  
+ [7] "Cd5l"     "Cdkn1a"   "Cidea"    "Clu"      "Cyp8b1"   "Elovl3"  
+[13] "Elovl5"   "Fabp6"    "Fas"      "Fasn"     "Fbxw7"    "Gck"     
+[19] "Gpam"     "Hmgcr"    "Hmox1"    "Il17a"    "Kcnj3"    "Lep"     
+[25] "Lipe"     "Mstn"     "Nlrp1a"   "Npc1"     "Nr0b2"    "Pla2g6"  
+[31] "Ppargc1a" "Ptgds"    "Retn"     "Scd1"     "Slc2a4"   "Thrsp"   
+
+$Srebf2
+ [1] "Acss2"   "Cdkn1a"  "Cyp3a11" "Fabp6"   "Hmgcr"   "Hmgcs1"  "Hmox1"  
+ [8] "Hnf4a"   "Mvk"     "Npc1"    "Pcsk9"   "Srd5a2" 
+
+$Srrt
+[1] "Sox2"
+
+$Sry
+[1] "Sox9" "Wt1" 
+
+$Ssb
+[1] "Lamb1"
+
+$Sufu
+[1] "Gli2" "Gli3"
+
+$Suz12
+[1] "Bcl2l11" "Cdh1"    "Dkk1"    "Mir200b"
+
+$Syt1
+[1] "Cdh5" "Myc" 
+
+$Taf12
+[1] "Cyp24a1"
+
+$Taf4b
+[1] "Zbtb16" "Ret"    "Stra8" 
+
+$Taf9
+[1] "Trp53"
+
+$Tardbp
+[1] "Add2" "Ran" 
+
+$Tax1bp3
+[1] "Myod1"
+
+$Tbp
+[1] "Csrp3"  "Fgf23"  "Fos"    "Nf1"    "Ntrk1"  "Polr2f" "Prg2"  
+
+$Tbpl1
+[1] "Nf1"  "Prm1" "Prm2" "Tnp1"
+
+$Tbr1
+[1] "Auts2"
+
+$Tbx1
+[1] "C1qbp"   "Fgf10"   "Fgf8"    "Flt4"    "Mef2c"   "Pitx2"   "Ripply3"
+[8] "Ywhae"  
+
+$Tbx18
+[1] "Snai2"
+
+$Tbx19
+[1] "Pomc"
+
+$Tbx2
+[1] "Cdkn1a" "Cdkn1b" "Cdkn2a" "Gja1"   "Gja3"   "Grem1"  "Mycn"   "Nppa"  
+[9] "Tyrp1" 
+
+$Tbx20
+[1] "Mef2c"  "Nkx2-5" "Nppa"   "Tbx2"  
+
+$Tbx21
+ [1] "Gata3"   "Hand2"   "Ifng"    "Il21"    "Il23r"   "Il4"     "Il7"    
+ [8] "S1pr5"   "Spp1"    "Ifngas1"
+
+$Tbx3
+ [1] "Bglap"   "Cdkn1a"  "Gja1"    "Gja5"    "Hnf1b"   "Ibsp"    "Nppa"   
+ [8] "Onecut1" "Runx2"   "Sp7"    
+
+$Tbx4
+[1] "Shox2"
+
+$Tbx5
+[1] "Atp2a2" "Fgf10"  "Id2"    "Ifi204" "Nppa"  
+
+$Tbx6
+[1] "Dll1"  "Hes7"  "Mesp2" "Myf5" 
+
+$Tcf12
+[1] "Acta2"   "Cldn4"   "Id2"     "Myog"    "Ptcra"   "Smarcc1" "Tcra"   
+
+$Tcf19
+[1] "Ccne1"
+
+$Tcf20
+[1] "Mmp3"
+
+$Tcf21
+[1] "Akr1b8" "Ar"     "Cdkn1a" "Nr5a1"  "Rhox5"  "Sf1"   
+
+$Tcf4
+ [1] "Notum" "Acta2" "Cd44"  "Cdh1"  "Cdx2"  "Cops5" "Edn1"  "Fgf18" "Fn1"  
+[10] "Hmga1" "Id2"   "Id3"   "Mitf"  "Myc"   "Plaur" "Ptgs2" "Smc3"  "Sstr2"
+[19] "Hnf1a"
+
+$Tcfl5
+[1] "Tcfl5"
+
+$Tead2
+[1] "Fgfr4" "Pax3"  "Trp53"
+
+$Tead4
+[1] "Acta2"    "Fgfr4"    "Ppp1r16a" "Vegfb"   
+
+$Tef
+[1] "Bik"
+
+$Tfap2b
+[1] "Adipoq"
+
+$Tfap2d
+[1] "Bhlhe23" "Pou4f3" 
+
+$Tfcp2
+[1] "Tyms"
+
+$Tfe3
+[1] "Ppargc1a" "Txnip"   
+
+$Tgfb1
+[1] "Col1a2" "Foxp3"  "Klf6"   "Mycn"   "Tbx21" 
+
+$Tgfb1i1
+[1] "Ar"    "Ccl2"  "Rgcc"  "Tgfb1" "Tpt1" 
+
+$Thra
+[1] "Abcd2" "Jag1" 
+
+$Thrap3
+[1] "Cebpa" "Fabp4" "Pparg"
+
+$Thrb
+[1] "Abcd2"  "Ccnd1"  "Mlxipl" "Tshb"  
+
+$Tial1
+[1] "Thy1"
+
+$Tle2
+[1] "Arx"    "Hes1"   "Nkx2-2" "Nkx6-1"
+
+$Tle3
+[1] "Nanog"  "Nkx2-2"
+
+$Tlr4
+[1] "Csf3"
+
+$Tlx3
+[1] "Pou4f1" "Prrxl1" "Ret"   
+
+$Tnfaip3
+[1] "Bax"   "Ppara"
+
+$Tob1
+[1] "Ccnd1"
+
+$Trim13
+[1] "Apoa1" "Ppig" 
+
+$Trim24
+[1] "Stat1"
+
+$Trim28
+[1] "Hbb-y" "Myc"   "Sox9"  "Zfx"  
+
+$Trim32
+[1] "Ccl20"
+
+$Trp53bp1
+[1] "Atm"   "Brca1" "Chek2" "Hc1"  
+
+$Trps1
+[1] "Bglap" "Dspp"  "Runx1" "Runx2" "Stat3"
+
+$Trrap
+[1] "Mitf"
+
+$Tsg101
+[1] "Mdm2"
+
+$Tshz3
+[1] "Myog"
+
+$Ttf1
+[1] "Sftpc"
+
+$Ttf2
+[1] "Tg"  "Tpo"
+
+$Twist1
+ [1] "Abcg2"   "Alx3"    "Brd4"    "Cdh1"    "Cdkn1a"  "Ckm"     "Col2a1" 
+ [8] "Dkk1"    "Esr1"    "Fgf10"   "Fgf2"    "Fgfr2"   "Hoxa9"   "Il12rb2"
+[15] "Il6ra"   "Mme"     "Pdgfra"  "Postn"   "Runx3"   "Shh"     "Sox10"  
+[22] "Sox9"    "Tbx20"   "Tbx21"   "Tek"     "Tnf"     "Trp53"   "Zeb1"   
+[29] "Zyx"    
+
+$Twist2
+[1] "Add1"   "Cdkn1a" "Ckm"    "Dkk1"   "Msx1"   "Srebf1"
+
+$Ube2k
+[1] "Nfe2l2"
+
+$Utf1
+[1] "Tcf3"
+
+$Vax2
+[1] "Pax6"
+
+$Vezf1
+[1] "Edn1"    "Morf4l1" "Mrgbp"   "Stmn1"  
+
+$Vhl
+[1] "Epo"   "Hif1a" "Tfam" 
+
+$Vsx2
+[1] "Mitf" "Nes"  "Vsx1"
+
+$Whsc1l1
+[1] "Cyp17a1"
+
+$Wnt1
+[1] "Ccnd1"  "Ccnd3"  "Cdkn1b" "Coro1a"
+
+$Wnt5a
+[1] "Ptx3" "Ret" 
+
+$Wwp1
+[1] "Trp53"
+
+$Wwtr1
+[1] "Glis3" "Ofd1"  "Tsc1"  "Zeb1" 
+
+$Xbp1
+ [1] "Bhlha15" "Ern1"    "Fasn"    "Foxo1"   "Herpud1" "Irf4"    "Pax5"   
+ [8] "Pou2af1" "Prdm1"   "Setd7"   "Stard5"  "Tmbim6"  "Vegfa"  
+
+$Xpc
+[1] "Cetn2"
+
+$Xrcc5
+[1] "Apaf1" "Il2"  
+
+$Xrcc6
+[1] "Apaf1" "Bglap" "Il2"  
+
+$Ybx1
+[1] "Abcb1a" "Avp"    "Bmi1"   "Egfr"   "Mia"    "Nono"   "Slc2a3"
+
+$Yy1
+ [1] "Amelx"    "Cdh1"     "Cdkn2c"   "Col1a1"   "Cpox"     "Egf"     
+ [7] "Fos"      "H2-Ea-ps" "Hspa5"    "Id4"      "Ifnb1"    "Lama1"   
+[13] "Msx2"     "Nkx2-5"   "Nr3c1"    "Otx2"     "Pax2"     "Peg3"    
+[19] "Rb1"      "Rgs16"    "Serpine1" "Tcf4"     "Tnfrsf4"  "Top3a"   
+[25] "Trf"      "Trp53"    "Zhx1"    
+
+$Zbtb2
+[1] "Trp53"
+
+$Zbtb20
+[1] "Sox9"
+
+$Zbtb32
+[1] "Ciita"
+
+$Zbtb33
+[1] "Bcl6"   "Ctnnb1" "Mmp7"   "Rapsn"  "Wnt11"  "Zfp131"
+
+$Zbtb38
+[1] "Myog"
+
+$Zbtb7a
+[1] "Bcl2l11" "Ccna2"   "Cdkn2a"  "Comp"    "Creb3"   "Nfatc1" 
+
+$Zeb1
+ [1] "Ccng2"   "Cd4"     "Cdh1"    "Gata3"   "Il2"     "Itga4"   "Itga7"  
+ [8] "Mia"     "Mitf"    "Pkp3"    "Rbl2"    "St3gal5" "Tgfb1"   "Trp73"  
+
+$Zeb2
+[1] "Cdh1" "Ocln"
+
+$Zfp13
+[1] "Mpv17l"
+
+$Zfp143
+[1] "Nanog" "Tcp1" 
+
+$Zfp148
+[1] "Cdkn1a" "Gata1"  "Rnls"   "Spi1"   "Tal1"   "Tph1"  
+
+$Zfp263
+[1] "Col11a2"
+
+$Zfp277
+[1] "Cdkn2a"
+
+$Zfp281
+[1] "Nanog"
+
+$Zfp335
+[1] "Rest"
+
+$Zfp36
+[1] "Il2"   "Nfkb1"
+
+$Zfp384
+[1] "Nfkb1"
+
+$Zfp385a
+[1] "Cebpa" "Trp53"
+
+$Zfp410
+[1] "Mmp1a"
+
+$Zfp42
+[1] "Tsix"
+
+$Zfp423
+[1] "Ebf1"  "Pparg" "Smad1" "Smad4"
+
+$Zfp488
+[1] "Olig1"
+
+$Zfp513
+[1] "Arr3" "Pax6" "Rbp3" "Sp4" 
+
+$Zfp523
+[1] "Tcp1"
+
+$Zfp64
+[1] "Hes1" "Hey1"
+
+$Zfpm1
+[1] "Fcer1g" "Gata3"  "Hamp"   "Itga2b" "Ms4a2" 
+
+$Zfpm2
+[1] "Gata4" "Lhx9"  "Sox9" 
+
+$Zhx3
+[1] "Wt1"  "Zhx1" "Zhx2"
+
+$Zic1
+[1] "Abhd14a" "Atoh1"  
+
+$Zic2
+[1] "Afp"    "Epha4"  "Myf5"   "Robo3"  "Slc6a4"
+
+$Zic3
+[1] "Nanog"
+
+$Zscan10
+[1] "Nanog"  "Pou5f1"
+
